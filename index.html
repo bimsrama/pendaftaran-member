@@ -3,23 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pendaftaran Member Baru</title>
+    <title>Pendaftaran Info Kesehatan</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
-        /* --- ASG SOLUSI INSPIRED THEME --- */
+        /* --- GOLD LUXURY THEME --- */
         :root {
-            --primary-blue: #002a5c; /* Biru Tua Khas Korporat */
-            --secondary-blue: #004e92; /* Biru sedikit lebih terang untuk aksen */
-            --bg-light: #f4f7f9; /* Latar belakang abu kebiruan sangat muda */
-            --text-dark: #333333;
-            --text-light: #ffffff;
+            /* Palette Emas Mewah */
+            --gold-dark: #8E6E23;   /* Emas gelap/Bronze untuk teks kontras */
+            --gold-main: #B8860B;   /* Dark Golden Rod */
+            --gold-light: #DAA520;  /* Golden Rod terang */
+            --gold-gradient-start: #996515; /* Coklat Emas */
+            --gold-gradient-end: #D4AF37;   /* Emas Metalik */
+            
+            --bg-light: #fdfcf5;    /* Putih kekuningan sangat muda (Ivory) */
+            --text-dark: #4a4a4a;
+            --text-white: #ffffff;
         }
 
         body {
-            font-family: 'Poppins', sans-serif; /* Menggunakan font modern */
+            font-family: 'Poppins', sans-serif;
             background-color: var(--bg-light);
             display: flex;
             justify-content: center;
@@ -31,43 +36,49 @@
 
         .container {
             background-color: white;
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0, 42, 92, 0.1); /* Shadow biru halus */
+            border-radius: 15px;
+            box-shadow: 0 15px 35px rgba(184, 134, 11, 0.15); /* Bayangan emas halus */
             width: 100%;
             max-width: 450px;
-            overflow: hidden; /* Agar header biru tidak keluar border radius */
+            overflow: hidden;
+            border: 1px solid rgba(212, 175, 55, 0.2); /* Border emas tipis */
         }
 
-        /* HEADER SECTION DENGAN WARNA BRAND */
+        /* HEADER SECTION - GOLD GRADIENT */
         .form-header {
-            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
-            padding: 30px 25px;
+            background: linear-gradient(135deg, var(--gold-gradient-start), var(--gold-gradient-end));
+            padding: 35px 25px;
             text-align: center;
-            color: var(--text-light);
+            color: var(--text-white);
+            position: relative;
         }
 
-        /* Placeholder untuk LOGO jika ada */
-        .logo-placeholder {
-            font-weight: 800;
-            font-size: 24px;
-            letter-spacing: 1px;
-            margin-bottom: 10px;
-            display: inline-block;
+        /* Menambahkan efek kilau (sheen) pada header */
+        .form-header::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent 40%, rgba(255,255,255,0.2) 50%, transparent 60%);
+            pointer-events: none;
         }
-        /* Jika nanti punya gambar logo, ganti text di atas dengan img tag: 
-           <img src="logo.png" alt="Logo" style="max-width: 150px;"> 
-        */
 
-        h2 {
+        .headline-promo {
+            font-weight: 700;
+            font-size: 20px;
+            line-height: 1.4;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .subtitle {
             margin: 0;
-            font-weight: 600;
-            font-size: 22px;
-        }
-
-        p.subtitle {
-            margin: 5px 0 0 0;
             font-size: 14px;
-            opacity: 0.8;
+            opacity: 0.95;
             font-weight: 400;
         }
 
@@ -83,7 +94,7 @@
         label {
             display: block;
             margin-bottom: 8px;
-            color: var(--primary-blue); /* Warna label mengikuti brand */
+            color: var(--gold-dark); /* Label warna emas tua */
             font-weight: 600;
             font-size: 14px;
         }
@@ -91,47 +102,49 @@
         input, select {
             width: 100%;
             padding: 12px 15px;
-            border: 1px solid #dde2e8;
-            border-radius: 8px; /* Sudut sedikit membulat */
+            border: 1px solid #e0dace;
+            border-radius: 8px;
             box-sizing: border-box;
             font-family: 'Poppins', sans-serif;
             font-size: 15px;
             transition: all 0.3s ease;
-            background-color: #fafdff;
+            background-color: #fffcf7;
         }
 
         /* Efek saat input diklik (Fokus) */
         input:focus, select:focus {
-            border-color: var(--secondary-blue);
-            box-shadow: 0 0 0 3px rgba(0, 78, 146, 0.15); /* Glow biru */
+            border-color: var(--gold-main);
+            box-shadow: 0 0 0 3px rgba(218, 165, 32, 0.2); /* Glow emas */
             outline: none;
             background-color: #fff;
         }
 
-        /* TOMBOL SUBMIT */
+        /* TOMBOL SUBMIT - GOLD STYLE */
         .btn-submit {
             width: 100%;
             padding: 15px;
-            background-color: var(--primary-blue);
+            /* Gradient Emas */
+            background: linear-gradient(to right, var(--gold-gradient-start), var(--gold-gradient-end));
             color: white;
             border: none;
-            border-radius: 8px;
+            border-radius: 50px; /* Tombol bulat (Pill shape) lebih modern */
             font-size: 16px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0, 42, 92, 0.2);
+            box-shadow: 0 4px 15px rgba(184, 134, 11, 0.3);
+            letter-spacing: 0.5px;
         }
 
         .btn-submit:hover {
-            background-color: var(--secondary-blue);
-            transform: translateY(-2px); /* Tombol naik sedikit saat dihover */
-            box-shadow: 0 6px 20px rgba(0, 42, 92, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(184, 134, 11, 0.4);
+            filter: brightness(1.1); /* Sedikit lebih terang saat hover */
         }
 
         /* Loading State */
         .loading {
-            background-color: #9baec8; /* Warna biru pudar saat loading */
+            background: #ccc;
             cursor: not-allowed;
             transform: none !important;
             box-shadow: none !important;
@@ -142,9 +155,8 @@
 
     <div class="container">
         <div class="form-header">
-            <div class="logo-placeholder">ASG SOLUSI STYLE</div>
-            <h2>Registrasi Member</h2>
-            <p class="subtitle">Silakan lengkapi data diri Anda di bawah ini.</p>
+            <div class="headline-promo">✨ Ingin Dapat Informasi Kesehatan Lainnya?</div>
+            <p class="subtitle">Daftar sekarang untuk update tips sehat & promo eksklusif.</p>
         </div>
 
         <div class="form-body">
@@ -152,17 +164,17 @@
                 
                 <div class="form-group">
                     <label for="nama">Nama Lengkap</label>
-                    <input type="text" id="nama" name="nama" placeholder="Masukkan nama lengkap sesuai KTP" required>
+                    <input type="text" id="nama" name="nama" placeholder="Tulis nama Anda di sini..." required>
                 </div>
 
                 <div class="form-group">
-                    <label for="email">Alamat Email Aktif</label>
+                    <label for="email">Alamat Email</label>
                     <input type="email" id="email" name="email" placeholder="contoh@email.com" required>
                 </div>
 
                 <div class="form-group">
                     <label for="whatsapp">Nomor WhatsApp</label>
-                    <input type="number" id="whatsapp" name="whatsapp" placeholder="Contoh: 081234567890" required>
+                    <input type="number" id="whatsapp" name="whatsapp" placeholder="081234567890" required>
                 </div>
 
                 <div class="form-group">
@@ -170,17 +182,16 @@
                     <input type="text" id="domisili" name="domisili" placeholder="Contoh: Jakarta Selatan">
                 </div>
 
-                <button type="submit" class="btn-submit">Daftar Sekarang</button>
+                <button type="submit" class="btn-submit">Dapatkan Akses Sekarang</button>
             </form>
         </div>
     </div>
 
     <script>
         // ==========================================
-        // JANGAN LUPA MASUKKAN URL GOOGLE SCRIPT ANDA DI SINI
+        // MASUKKAN URL GOOGLE APPS SCRIPT ANDA DI BAWAH INI
         // ==========================================
         const scriptURL = 'MASUKKAN_URL_GOOGLE_APPS_SCRIPT_DISINI'; 
-        // Contoh: 'https://script.google.com/macros/s/AKfycbyB.../exec'
         
         const form = document.forms['submit-to-google-sheet'];
         const btnSubmit = document.querySelector('.btn-submit');
@@ -191,20 +202,19 @@
             
             // Ubah tombol jadi loading
             btnSubmit.classList.add('loading');
-            btnSubmit.innerHTML = '<span style="display:inline-block; animation: pulse 1s infinite;">⏳</span> Sedang Memproses...';
+            btnSubmit.innerHTML = '⏳ Sedang Memproses...';
 
             fetch(scriptURL, { method: 'POST', body: new FormData(form)})
                 .then(response => {
-                    // Jika sukses
-                    // Tampilkan pesan sukses yang lebih rapi (opsional bisa pakai sweetalert, tapi ini alert biasa dulu)
-                    alert('Registrasi Berhasil! Terima kasih telah mendaftar.');
+                    // Pesan sukses
+                    alert('Berhasil! Data Anda telah tersimpan.');
                     form.reset();
                     btnSubmit.classList.remove('loading');
                     btnSubmit.innerHTML = originalBtnText;
                 })
                 .catch(error => {
-                    // Jika gagal
-                    alert('Mohon maaf, terjadi kesalahan koneksi. Silakan coba lagi.');
+                    // Pesan error
+                    alert('Gagal mengirim data. Cek koneksi internet Anda.');
                     console.error('Error!', error.message);
                     btnSubmit.classList.remove('loading');
                     btnSubmit.innerHTML = originalBtnText;
