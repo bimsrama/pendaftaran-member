@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pendaftaran Member Baru</title>
+    <style>
+        /* CSS: Untuk mempercantik tampilan */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f4f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #666;
+            font-weight: bold;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box; /* Agar padding tidak merusak lebar */
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        .loading {
+            background-color: #ccc;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Form Member</h2>
+        <form name="submit-to-google-sheet">
+            
+            <div class="form-group">
+                <label for="nama">Nama Lengkap</label>
+                <input type="text" id="nama" name="nama" placeholder="Contoh: Bima Sakti" required>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Alamat Email</label>
+                <input type="email" id="email" name="email" placeholder="email@contoh.com" required>
+            </div>
+
+            <div class="form-group">
+                <label for="whatsapp">Nomor WhatsApp</label>
+                <input type="number" id="whatsapp" name="whatsapp" placeholder="08123456789" required>
+            </div>
+
+            <div class="form-group">
+                <label for="domisili">Kota Domisili</label>
+                <input type="text" id="domisili" name="domisili" placeholder="Contoh: Jakarta Selatan">
+            </div>
+
+            <button type="submit" class="btn-submit">Daftar Sekarang</button>
+        </form>
+    </div>
+
+    <script>
+        // JAVASCRIPT: Mengirim data ke Google Spreadsheet
+        
+        // PENTING: Ganti URL di bawah ini dengan URL Web App Google Script kamu nanti
+        const scriptURL = 'MASUKKAN_URL_GOOGLE_APPS_SCRIPT_DISINI'; 
+        
+        const form = document.forms['submit-to-google-sheet'];
+        const btnSubmit = document.querySelector('.btn-submit');
+
+        form.addEventListener('submit', e => {
+            e.preventDefault();
+            
+            // Ubah tombol jadi loading
+            btnSubmit.classList.add('loading');
+            btnSubmit.innerHTML = 'Sedang Mengirim...';
+
+            fetch(scriptURL, { method: 'POST', body: new FormData(form)})
+                .then(response => {
+                    // Jika sukses
+                    alert('Terima kasih! Data Anda berhasil terkirim.');
+                    form.reset();
+                    btnSubmit.classList.remove('loading');
+                    btnSubmit.innerHTML = 'Daftar Sekarang';
+                })
+                .catch(error => {
+                    // Jika gagal
+                    alert('Error! Cek koneksi internet Anda.');
+                    console.error('Error!', error.message);
+                    btnSubmit.classList.remove('loading');
+                    btnSubmit.innerHTML = 'Daftar Sekarang';
+                });
+        });
+    </script>
+
+</body>
+</html>
