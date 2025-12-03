@@ -4,126 +4,210 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pendaftaran Member Baru</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
     <style>
-        /* CSS: Untuk mempercantik tampilan */
+        /* --- ASG SOLUSI INSPIRED THEME --- */
+        :root {
+            --primary-blue: #002a5c; /* Biru Tua Khas Korporat */
+            --secondary-blue: #004e92; /* Biru sedikit lebih terang untuk aksen */
+            --bg-light: #f4f7f9; /* Latar belakang abu kebiruan sangat muda */
+            --text-dark: #333333;
+            --text-light: #ffffff;
+        }
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f4f4f9;
+            font-family: 'Poppins', sans-serif; /* Menggunakan font modern */
+            background-color: var(--bg-light);
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
             margin: 0;
+            padding: 20px;
         }
+
         .container {
             background-color: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 42, 92, 0.1); /* Shadow biru halus */
             width: 100%;
-            max-width: 400px;
+            max-width: 450px;
+            overflow: hidden; /* Agar header biru tidak keluar border radius */
         }
-        h2 {
+
+        /* HEADER SECTION DENGAN WARNA BRAND */
+        .form-header {
+            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+            padding: 30px 25px;
             text-align: center;
-            color: #333;
+            color: var(--text-light);
+        }
+
+        /* Placeholder untuk LOGO jika ada */
+        .logo-placeholder {
+            font-weight: 800;
+            font-size: 24px;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+            display: inline-block;
+        }
+        /* Jika nanti punya gambar logo, ganti text di atas dengan img tag: 
+           <img src="logo.png" alt="Logo" style="max-width: 150px;"> 
+        */
+
+        h2 {
+            margin: 0;
+            font-weight: 600;
+            font-size: 22px;
+        }
+
+        p.subtitle {
+            margin: 5px 0 0 0;
+            font-size: 14px;
+            opacity: 0.8;
+            font-weight: 400;
+        }
+
+        /* FORM BODY SECTION */
+        .form-body {
+            padding: 30px;
+        }
+
+        .form-group {
             margin-bottom: 20px;
         }
-        .form-group {
-            margin-bottom: 15px;
-        }
+
         label {
             display: block;
-            margin-bottom: 5px;
-            color: #666;
-            font-weight: bold;
+            margin-bottom: 8px;
+            color: var(--primary-blue); /* Warna label mengikuti brand */
+            font-weight: 600;
+            font-size: 14px;
         }
+
         input, select {
             width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            box-sizing: border-box; /* Agar padding tidak merusak lebar */
+            padding: 12px 15px;
+            border: 1px solid #dde2e8;
+            border-radius: 8px; /* Sudut sedikit membulat */
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            background-color: #fafdff;
         }
-        button {
+
+        /* Efek saat input diklik (Fokus) */
+        input:focus, select:focus {
+            border-color: var(--secondary-blue);
+            box-shadow: 0 0 0 3px rgba(0, 78, 146, 0.15); /* Glow biru */
+            outline: none;
+            background-color: #fff;
+        }
+
+        /* TOMBOL SUBMIT */
+        .btn-submit {
             width: 100%;
-            padding: 12px;
-            background-color: #28a745;
+            padding: 15px;
+            background-color: var(--primary-blue);
             color: white;
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
             font-size: 16px;
+            font-weight: 600;
             cursor: pointer;
-            transition: background 0.3s;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 42, 92, 0.2);
         }
-        button:hover {
-            background-color: #218838;
+
+        .btn-submit:hover {
+            background-color: var(--secondary-blue);
+            transform: translateY(-2px); /* Tombol naik sedikit saat dihover */
+            box-shadow: 0 6px 20px rgba(0, 42, 92, 0.3);
         }
+
+        /* Loading State */
         .loading {
-            background-color: #ccc;
-            pointer-events: none;
+            background-color: #9baec8; /* Warna biru pudar saat loading */
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important;
         }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <h2>Form Member</h2>
-        <form name="submit-to-google-sheet">
-            
-            <div class="form-group">
-                <label for="nama">Nama Lengkap</label>
-                <input type="text" id="nama" name="nama" placeholder="Contoh: Bima Sakti" required>
-            </div>
+        <div class="form-header">
+            <div class="logo-placeholder">ASG SOLUSI STYLE</div>
+            <h2>Registrasi Member</h2>
+            <p class="subtitle">Silakan lengkapi data diri Anda di bawah ini.</p>
+        </div>
 
-            <div class="form-group">
-                <label for="email">Alamat Email</label>
-                <input type="email" id="email" name="email" placeholder="email@contoh.com" required>
-            </div>
+        <div class="form-body">
+            <form name="submit-to-google-sheet">
+                
+                <div class="form-group">
+                    <label for="nama">Nama Lengkap</label>
+                    <input type="text" id="nama" name="nama" placeholder="Masukkan nama lengkap sesuai KTP" required>
+                </div>
 
-            <div class="form-group">
-                <label for="whatsapp">Nomor WhatsApp</label>
-                <input type="number" id="whatsapp" name="whatsapp" placeholder="08123456789" required>
-            </div>
+                <div class="form-group">
+                    <label for="email">Alamat Email Aktif</label>
+                    <input type="email" id="email" name="email" placeholder="contoh@email.com" required>
+                </div>
 
-            <div class="form-group">
-                <label for="domisili">Kota Domisili</label>
-                <input type="text" id="domisili" name="domisili" placeholder="Contoh: Jakarta Selatan">
-            </div>
+                <div class="form-group">
+                    <label for="whatsapp">Nomor WhatsApp</label>
+                    <input type="number" id="whatsapp" name="whatsapp" placeholder="Contoh: 081234567890" required>
+                </div>
 
-            <button type="submit" class="btn-submit">Daftar Sekarang</button>
-        </form>
+                <div class="form-group">
+                    <label for="domisili">Kota Domisili</label>
+                    <input type="text" id="domisili" name="domisili" placeholder="Contoh: Jakarta Selatan">
+                </div>
+
+                <button type="submit" class="btn-submit">Daftar Sekarang</button>
+            </form>
+        </div>
     </div>
 
     <script>
-        // JAVASCRIPT: Mengirim data ke Google Spreadsheet
-        
-        // PENTING: Ganti URL di bawah ini dengan URL Web App Google Script kamu nanti
+        // ==========================================
+        // JANGAN LUPA MASUKKAN URL GOOGLE SCRIPT ANDA DI SINI
+        // ==========================================
         const scriptURL = 'MASUKKAN_URL_GOOGLE_APPS_SCRIPT_DISINI'; 
+        // Contoh: 'https://script.google.com/macros/s/AKfycbyB.../exec'
         
         const form = document.forms['submit-to-google-sheet'];
         const btnSubmit = document.querySelector('.btn-submit');
+        const originalBtnText = btnSubmit.innerHTML;
 
         form.addEventListener('submit', e => {
             e.preventDefault();
             
             // Ubah tombol jadi loading
             btnSubmit.classList.add('loading');
-            btnSubmit.innerHTML = 'Sedang Mengirim...';
+            btnSubmit.innerHTML = '<span style="display:inline-block; animation: pulse 1s infinite;">⏳</span> Sedang Memproses...';
 
             fetch(scriptURL, { method: 'POST', body: new FormData(form)})
                 .then(response => {
                     // Jika sukses
-                    alert('Terima kasih! Data Anda berhasil terkirim.');
+                    // Tampilkan pesan sukses yang lebih rapi (opsional bisa pakai sweetalert, tapi ini alert biasa dulu)
+                    alert('Registrasi Berhasil! Terima kasih telah mendaftar.');
                     form.reset();
                     btnSubmit.classList.remove('loading');
-                    btnSubmit.innerHTML = 'Daftar Sekarang';
+                    btnSubmit.innerHTML = originalBtnText;
                 })
                 .catch(error => {
                     // Jika gagal
-                    alert('Error! Cek koneksi internet Anda.');
+                    alert('Mohon maaf, terjadi kesalahan koneksi. Silakan coba lagi.');
                     console.error('Error!', error.message);
                     btnSubmit.classList.remove('loading');
-                    btnSubmit.innerHTML = 'Daftar Sekarang';
+                    btnSubmit.innerHTML = originalBtnText;
                 });
         });
     </script>
