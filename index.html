@@ -25,7 +25,15 @@
 
         body {
             font-family: 'Poppins', sans-serif;
-            background-color: var(--bg-light);
+            
+            /* --- UPDATE BACKGROUND TUBUH SEHAT --- */
+            /* Menggunakan gambar tema wellness/kesehatan dari Unsplash */
+            background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://images.unsplash.com/photo-1544367563-12123d896889?q=80&w=2070&auto=format&fit=crop');
+            background-size: cover;       /* Agar gambar memenuhi layar */
+            background-position: center;  /* Agar fokus gambar di tengah */
+            background-repeat: no-repeat; /* Jangan diulang */
+            background-attachment: fixed; /* Efek diam saat discroll */
+            
             display: flex;
             justify-content: center;
             align-items: center;
@@ -35,13 +43,14 @@
         }
 
         .container {
-            background-color: white;
+            background-color: rgba(255, 255, 255, 0.95); /* Sedikit transparan agar menyatu */
             border-radius: 15px;
-            box-shadow: 0 15px 35px rgba(184, 134, 11, 0.15); /* Bayangan emas halus */
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3); /* Shadow dipertegas karena bg gelap */
             width: 100%;
             max-width: 450px;
             overflow: hidden;
-            border: 1px solid rgba(212, 175, 55, 0.2); /* Border emas tipis */
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            backdrop-filter: blur(5px); /* Efek blur kaca di belakang form */
         }
 
         /* HEADER SECTION - GOLD GRADIENT */
@@ -53,7 +62,6 @@
             position: relative;
         }
 
-        /* Menambahkan efek kilau (sheen) pada header */
         .form-header::after {
             content: '';
             position: absolute;
@@ -94,7 +102,7 @@
         label {
             display: block;
             margin-bottom: 8px;
-            color: var(--gold-dark); /* Label warna emas tua */
+            color: var(--gold-dark);
             font-weight: 600;
             font-size: 14px;
         }
@@ -111,23 +119,21 @@
             background-color: #fffcf7;
         }
 
-        /* Efek saat input diklik (Fokus) */
         input:focus, select:focus {
             border-color: var(--gold-main);
-            box-shadow: 0 0 0 3px rgba(218, 165, 32, 0.2); /* Glow emas */
+            box-shadow: 0 0 0 3px rgba(218, 165, 32, 0.2);
             outline: none;
             background-color: #fff;
         }
 
-        /* TOMBOL SUBMIT - GOLD STYLE */
+        /* TOMBOL SUBMIT */
         .btn-submit {
             width: 100%;
             padding: 15px;
-            /* Gradient Emas */
             background: linear-gradient(to right, var(--gold-gradient-start), var(--gold-gradient-end));
             color: white;
             border: none;
-            border-radius: 50px; /* Tombol bulat (Pill shape) lebih modern */
+            border-radius: 50px;
             font-size: 16px;
             font-weight: 600;
             cursor: pointer;
@@ -139,10 +145,9 @@
         .btn-submit:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(184, 134, 11, 0.4);
-            filter: brightness(1.1); /* Sedikit lebih terang saat hover */
+            filter: brightness(1.1);
         }
 
-        /* Loading State */
         .loading {
             background: #ccc;
             cursor: not-allowed;
@@ -188,9 +193,7 @@
     </div>
 
     <script>
-        // ==========================================
-        // URL SCRIPT GOOGLE ANDA SUDAH TERPASANG DI BAWAH INI
-        // ==========================================
+        // URL SCRIPT GOOGLE ANDA
         const scriptURL = 'https://script.google.com/macros/s/AKfycbz60TyDP9sE1JGXJJ9RZtvinrcQlOH-_UDRi2-baMbNHve1OjMfKRA0w-VI4xoLRQuY/exec'; 
         
         const form = document.forms['submit-to-google-sheet'];
@@ -200,20 +203,17 @@
         form.addEventListener('submit', e => {
             e.preventDefault();
             
-            // Ubah tombol jadi loading
             btnSubmit.classList.add('loading');
             btnSubmit.innerHTML = '⏳ Sedang Memproses...';
 
             fetch(scriptURL, { method: 'POST', body: new FormData(form)})
                 .then(response => {
-                    // Pesan sukses
                     alert('Berhasil! Data Anda telah tersimpan.');
                     form.reset();
                     btnSubmit.classList.remove('loading');
                     btnSubmit.innerHTML = originalBtnText;
                 })
                 .catch(error => {
-                    // Pesan error
                     alert('Gagal mengirim data. Cek koneksi internet Anda.');
                     console.error('Error!', error.message);
                     btnSubmit.classList.remove('loading');
@@ -224,4 +224,3 @@
 
 </body>
 </html>
-
