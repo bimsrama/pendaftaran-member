@@ -12,10 +12,26 @@
         .custom-input { background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(255, 255, 255, 0.1); }
         .custom-select { background-color: #000; color: white; border: 1px solid #333; padding: 12px; border-radius: 8px; width: 100%; }
         .btn-shine { background: linear-gradient(to right, #d97706, #f59e0b); }
+        
+        /* Animasi Popup */
+        @keyframes slideInUp {
+            from { transform: translateY(100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+        .fomo-popup {
+            animation: slideInUp 0.5s ease-out forwards, fadeOut 0.5s ease-in 3.5s forwards;
+        }
     </style>
 </head>
-<body class="min-h-screen flex items-center justify-center p-4 bg-neutral-900">
-    <div class="w-full max-w-md glass-panel rounded-3xl p-8 relative overflow-hidden">
+<body class="min-h-screen flex items-center justify-center p-4 bg-neutral-900 relative overflow-hidden">
+    
+    <div id="fomo-container" class="fixed bottom-4 left-4 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+    <div class="w-full max-w-md glass-panel rounded-3xl p-8 relative overflow-hidden z-10">
         <h1 class="text-2xl font-bold text-center mb-2 text-white">Cek Tipe Ususmu 🧬</h1>
         <p class="text-center text-xs text-neutral-400 mb-6">Jawab jujur agar tips harianmu akurat.</p>
 
@@ -41,14 +57,16 @@
                 </select>
             </div>
 
-            <button type="submit" id="btn-submit" class="btn-shine w-full mt-6 text-white font-bold py-3 rounded-xl shadow-lg">
+            <button type="submit" id="btn-submit" class="btn-shine w-full mt-6 text-white font-bold py-3 rounded-xl shadow-lg hover:scale-[1.02] transition-transform">
                 KIRIM JAWABAN
             </button>
         </form>
     </div>
 
     <script>
-        // GANTI URL INI
+        // ==========================================
+        // 1. SCRIPT SUBMIT FORM (Paste URL Anda)
+        // ==========================================
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx.../exec'; 
 
         document.getElementById('form-quiz').addEventListener('submit', function(e) {
@@ -60,16 +78,58 @@
             const q1 = document.getElementById('q1').value;
             const q2 = document.getElementById('q2').value;
             
-            // Logika Sederhana Penentuan Kategori
-            let kategori = 'D'; // Default Sehat
-            if(q1 === 'Jarang' || q2 === 'Keras') kategori = 'A'; // Sembelit
-            else if(q2 === 'Begah') kategori = 'B'; // Kembung
-            else if(q2 === 'Perih') kategori = 'C'; // GERD
+            let kategori = 'D'; 
+            if(q1 === 'Jarang' || q2 === 'Keras') kategori = 'A'; 
+            else if(q2 === 'Begah') kategori = 'B'; 
+            else if(q2 === 'Perih') kategori = 'C'; 
 
             fetch(SCRIPT_URL + '?action=quiz&whatsapp=' + encodeURIComponent(wa) + '&kategori=' + kategori + '&q1=' + q1 + '&q2=' + q2, { method: 'POST' })
             .then(res => { alert('Data tersimpan! Cek WA kamu.'); btn.innerHTML = 'KIRIM JAWABAN'; })
             .catch(err => { alert('Gagal.'); });
         });
+
+        // ==========================================
+        // 2. SCRIPT ANIMASI MEMBER POPUP
+        // ==========================================
+        const names = ["Budi", "Siti", "Rina", "Agus", "Dewi", "Fajar", "Lina", "Eko", "Maya", "Dian", "Rizky", "Putri", "Adi", "Nur", "Sari", "Bayu", "Indah", "Reza", "Fitri", "Tono"];
+        const categories = [
+            { name: "Si Sembelit", color: "text-red-400" },
+            { name: "Si Kembung", color: "text-yellow-400" },
+            { name: "Si Sensitif", color: "text-orange-400" },
+            { name: "Seimbang", color: "text-green-400" }
+        ];
+
+        function showFomoPopup() {
+            // Pilih nama & kategori acak
+            const randomName = names[Math.floor(Math.random() * names.length)];
+            const randomCat = categories[Math.floor(Math.random() * categories.length)];
+            
+            // Buat Element
+            const el = document.createElement('div');
+            el.className = 'fomo-popup bg-neutral-800/90 border border-neutral-700 p-3 rounded-xl shadow-2xl flex items-center gap-3 backdrop-blur-md min-w-[250px]';
+            el.innerHTML = `
+                <div class="w-8 h-8 rounded-full bg-neutral-700 flex items-center justify-center text-xs font-bold text-white border border-neutral-600">
+                    ${randomName.charAt(0)}
+                </div>
+                <div>
+                    <p class="text-[10px] text-neutral-400">Baru saja bergabung</p>
+                    <p class="text-xs font-bold text-white">${randomName} masuk <span class="${randomCat.color}">${randomCat.name}</span></p>
+                </div>
+            `;
+
+            // Masukkan ke layar
+            const container = document.getElementById('fomo-container');
+            container.appendChild(el);
+
+            // Hapus element setelah animasi selesai (4 detik) agar tidak memberatkan browser
+            setTimeout(() => {
+                el.remove();
+            }, 4000);
+        }
+
+        // Jalankan setiap 2.5 detik (Agar terlihat ramai tapi enak dibaca)
+        setInterval(showFomoPopup, 2500);
+        showFomoPopup(); // Jalankan langsung saat load
     </script>
 </body>
 </html>
