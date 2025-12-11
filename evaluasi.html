@@ -10,11 +10,27 @@
         body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #020202; color: #ffffff; }
         .glass-panel { background: rgba(20, 20, 20, 0.6); backdrop-filter: blur(24px); border: 1px solid rgba(255, 255, 255, 0.08); }
         .custom-input { background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(255, 255, 255, 0.1); width: 100%; color: white; padding: 12px; border-radius: 8px; }
-        .btn-shine { background: linear-gradient(to right, #10b981, #059669); } /* Green for evaluation */
+        .btn-shine { background: linear-gradient(to right, #10b981, #059669); } 
+        
+        /* Animasi Evaluasi Popup (Lebih Cepat) */
+        @keyframes slideInSide {
+            from { transform: translateX(-100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes fadeOutFast {
+            from { opacity: 1; transform: scale(1); }
+            to { opacity: 0; transform: scale(0.9); }
+        }
+        .eval-popup {
+            animation: slideInSide 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards, fadeOutFast 0.5s ease-in 2.5s forwards;
+        }
     </style>
 </head>
-<body class="min-h-screen flex items-center justify-center p-4 bg-neutral-900">
-    <div class="w-full max-w-md glass-panel rounded-3xl p-8">
+<body class="min-h-screen flex items-center justify-center p-4 bg-neutral-900 relative overflow-hidden">
+
+    <div id="eval-container" class="fixed bottom-0 left-0 w-full p-4 z-0 flex flex-col gap-2 pointer-events-none items-start md:items-center opacity-50 md:opacity-100"></div>
+
+    <div class="w-full max-w-md glass-panel rounded-3xl p-8 z-10 shadow-2xl">
         <h1 class="text-2xl font-bold text-center mb-2 text-white">Check Point 📋</h1>
         <p class="text-center text-xs text-neutral-400 mb-6">Bagaimana perkembanganmu sejauh ini?</p>
 
@@ -23,14 +39,16 @@
             
             <textarea id="feedback" rows="4" placeholder="Ceritakan perubahan yang kamu rasakan..." class="custom-input"></textarea>
 
-            <button type="submit" id="btn-submit" class="btn-shine w-full mt-6 text-white font-bold py-3 rounded-xl shadow-lg">
+            <button type="submit" id="btn-submit" class="btn-shine w-full mt-6 text-white font-bold py-3 rounded-xl shadow-lg hover:brightness-110 transition">
                 LAPORKAN PROGRESS
             </button>
         </form>
     </div>
 
     <script>
-        // GANTI URL INI
+        // ==========================================
+        // 1. SCRIPT SUBMIT FORM (Paste URL Anda)
+        // ==========================================
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx.../exec'; 
 
         document.getElementById('form-eval').addEventListener('submit', function(e) {
@@ -45,6 +63,47 @@
             .then(res => { alert('Laporan diterima! Semangat lanjut.'); btn.innerHTML = 'LAPORKAN PROGRESS'; })
             .catch(err => { alert('Gagal.'); });
         });
+
+        // ==========================================
+        // 2. SCRIPT ANIMASI TESTIMONI MASIF
+        // ==========================================
+        const feedbacks = [
+            { name: "Andi", text: "Perut udah gak begah lagi kak!" },
+            { name: "Susi", text: "BAB lancar tiap pagi, seneng bgt." },
+            { name: "Rudi", text: "Maag jarang kambuh padahal telat makan." },
+            { name: "Bella", text: "Badan rasanya enteng banget." },
+            { name: "Dimas", text: "Tidur jadi lebih nyenyak." },
+            { name: "Tina", text: "Udah gak ketergantungan obat warung." },
+            { name: "Joko", text: "Terasa banget bedanya di hari ke-10." },
+            { name: "Wulan", text: "Kulit jadi lebih bersih juga ternyata." },
+            { name: "Hendra", text: "Gas di perut berkurang drastis." },
+            { name: "Nia", text: "Celana jadi agak longgar nih hehe." }
+        ];
+
+        function showEvalPopup() {
+            const data = feedbacks[Math.floor(Math.random() * feedbacks.length)];
+            
+            const el = document.createElement('div');
+            // Style seperti bubble chat hijau
+            el.className = 'eval-popup bg-neutral-800 border-l-4 border-green-500 p-3 rounded-r-lg shadow-lg flex items-center gap-3 max-w-xs';
+            el.innerHTML = `
+                <div class="flex-1">
+                    <p class="text-[10px] text-green-400 font-bold mb-0.5">${data.name} Melaporkan:</p>
+                    <p class="text-xs text-white italic">"${data.text}"</p>
+                </div>
+                <span class="text-lg">✅</span>
+            `;
+
+            const container = document.getElementById('eval-container');
+            container.appendChild(el);
+
+            // Hilang setelah 3 detik
+            setTimeout(() => { el.remove(); }, 3000);
+        }
+
+        // Loop Cepat (0.8 detik) untuk efek "Banyak yang lapor"
+        setInterval(showEvalPopup, 800);
+        showEvalPopup();
     </script>
 </body>
 </html>
