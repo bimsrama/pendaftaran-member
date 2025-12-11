@@ -110,11 +110,12 @@
             });
         });
 
-        // Dummy Logic: Popup muncul setiap 50 Detik
+        // Dummy Logic: Popup muncul setiap 5 Detik
         const names = [
             "Sarah, Bandung", "Rizky, Surabaya", "Putri, Jakarta", 
             "Dina, Medan", "Budi, Jogja", "Citra, Bekasi", 
-            "Fajar, Malang", "Tiara, Bali"
+            "Fajar, Malang", "Tiara, Bali", "Agus, Semarang",
+            "Lia, Makassar", "Reza, Bogor", "Sinta, Depok"
         ];
         
         setInterval(() => {
@@ -127,12 +128,12 @@
             // Tampilkan Popup
             popup.classList.remove('hidden');
             
-            // Hilangkan setelah 4 detik
+            // Hilangkan setelah 4 detik (Jadi ada jeda 1 detik sebelum muncul lagi)
             setTimeout(() => { 
                 popup.classList.add('hidden'); 
             }, 4000); 
             
-        }, 50000); // 50000 ms = 50 detik
+        }, 5000); // 5000 ms = 5 detik (Lebih cepat)
     </script>
 </body>
 </html>
