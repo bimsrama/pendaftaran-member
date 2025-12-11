@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evaluasi Progress</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #020202; color: #ffffff; }
+        .glass-panel { background: rgba(20, 20, 20, 0.6); backdrop-filter: blur(24px); border: 1px solid rgba(255, 255, 255, 0.08); }
+        .custom-input { background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(255, 255, 255, 0.1); width: 100%; color: white; padding: 12px; border-radius: 8px; }
+        .btn-shine { background: linear-gradient(to right, #10b981, #059669); } /* Green for evaluation */
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4 bg-neutral-900">
+    <div class="w-full max-w-md glass-panel rounded-3xl p-8">
+        <h1 class="text-2xl font-bold text-center mb-2 text-white">Check Point 📋</h1>
+        <p class="text-center text-xs text-neutral-400 mb-6">Bagaimana perkembanganmu sejauh ini?</p>
+
+        <form id="form-eval" class="space-y-4">
+            <input type="tel" id="whatsapp" required placeholder="Nomor WhatsApp" class="custom-input">
+            
+            <textarea id="feedback" rows="4" placeholder="Ceritakan perubahan yang kamu rasakan..." class="custom-input"></textarea>
+
+            <button type="submit" id="btn-submit" class="btn-shine w-full mt-6 text-white font-bold py-3 rounded-xl shadow-lg">
+                LAPORKAN PROGRESS
+            </button>
+        </form>
+    </div>
+
+    <script>
+        // GANTI URL INI
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx.../exec'; 
+
+        document.getElementById('form-eval').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btn-submit');
+            btn.innerHTML = 'Mengirim...';
+            
+            const wa = document.getElementById('whatsapp').value;
+            const feedback = document.getElementById('feedback').value;
+
+            fetch(SCRIPT_URL + '?action=evaluasi&whatsapp=' + encodeURIComponent(wa) + '&feedback=' + encodeURIComponent(feedback), { method: 'POST' })
+            .then(res => { alert('Laporan diterima! Semangat lanjut.'); btn.innerHTML = 'LAPORKAN PROGRESS'; })
+            .catch(err => { alert('Gagal.'); });
+        });
+    </script>
+</body>
+</html>
