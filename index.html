@@ -3,51 +3,157 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Daftar Program Gut Health</title>
+    <title>Unlock Access | 30 Days Challenge</title>
     <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-green-50 min-h-screen flex items-center justify-center p-4 font-sans">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Outfit', sans-serif; background-color: #050505; color: #ffffff; }
+        
+        /* Gold Gradient Text */
+        .text-gradient-gold {
+            background: linear-gradient(to right, #FDE68A, #D97706, #FDE68A);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-size: 200% auto;
+            animation: shine 4s linear infinite;
+        }
 
-    <div class="max-w-md w-full bg-white shadow-xl rounded-2xl overflow-hidden">
-        <div class="bg-green-600 p-6 text-center text-white">
-            <h1 class="text-2xl font-bold">🌿 Daftar Program 30 Hari</h1>
-            <p class="text-sm opacity-90 mt-1">Dapatkan tips harian & perbaiki pencernaanmu.</p>
+        @keyframes shine {
+            to { background-position: 200% center; }
+        }
+
+        /* Glassmorphism Card */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Ambient Background Light */
+        .ambient-light {
+            position: fixed;
+            top: -20%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(217, 119, 6, 0.15) 0%, rgba(0,0,0,0) 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Input Styles */
+        .input-dark {
+            background-color: #000000;
+            border: 1px solid #333;
+            transition: all 0.3s ease;
+        }
+        .input-dark:focus {
+            border-color: #F59E0B;
+            box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.2);
+            outline: none;
+        }
+
+        /* Loader Gold */
+        .loader {
+            border: 3px solid rgba(0,0,0,0.1);
+            border-top: 3px solid #000;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
+
+    <div class="ambient-light"></div>
+
+    <div class="absolute top-20 right-10 w-24 h-24 bg-amber-600/10 rounded-full blur-3xl"></div>
+    <div class="absolute bottom-20 left-10 w-32 h-32 bg-yellow-600/10 rounded-full blur-3xl"></div>
+
+    <div class="w-full max-w-md glass-card rounded-[2rem] shadow-2xl relative z-10 overflow-hidden">
+        
+        <div class="pt-10 pb-2 text-center relative">
+            <div class="absolute top-6 left-1/2 transform -translate-x-1/2 w-20 h-20 bg-amber-500/20 rounded-full blur-xl"></div>
+            <div class="relative z-10 inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-neutral-800 to-black border border-amber-500/30 shadow-[0_0_20px_rgba(245,158,11,0.2)] mb-4">
+                <span class="text-3xl">💎</span>
+            </div>
+            <h1 class="text-3xl font-extrabold text-white tracking-tight">
+                Unlock <span class="text-gradient-gold">Access</span>
+            </h1>
+            <p class="text-neutral-500 text-sm mt-2 font-medium tracking-wide uppercase">30 Days Gut Health Journey</p>
         </div>
 
-        <div id="form-container" class="p-8">
-            <form id="form-register" class="space-y-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">Nama Panggilan</label>
-                    <input type="text" id="nama" required class="w-full mt-1 p-3 border rounded-lg focus:ring-green-500 focus:border-green-500" placeholder="Contoh: Budi">
+        <div id="form-container" class="p-8 space-y-6">
+            
+            <form id="form-register" class="space-y-5">
+                <div class="group">
+                    <label class="block text-xs font-bold text-neutral-500 uppercase tracking-wide mb-2 group-focus-within:text-amber-500 transition-colors">Call Name</label>
+                    <input type="text" id="nama" required 
+                        class="input-dark w-full text-white text-sm rounded-xl p-4 placeholder-neutral-700" 
+                        placeholder="Enter your name">
                 </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">Nomor WhatsApp</label>
-                    <input type="tel" id="whatsapp" required class="w-full mt-1 p-3 border rounded-lg focus:ring-green-500 focus:border-green-500" placeholder="08123xxxx">
-                    <p class="text-xs text-gray-500 mt-1">*Pastikan nomor aktif WA.</p>
+
+                <div class="group">
+                    <label class="block text-xs font-bold text-neutral-500 uppercase tracking-wide mb-2 group-focus-within:text-amber-500 transition-colors">WhatsApp Number</label>
+                    <input type="tel" id="whatsapp" required 
+                        class="input-dark w-full text-white text-sm rounded-xl p-4 placeholder-neutral-700" 
+                        placeholder="0812xxxx">
+                    <p class="text-[10px] text-neutral-600 mt-2 flex items-center gap-1">
+                        <svg class="w-3 h-3 text-amber-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"></path></svg>
+                        We respect your privacy. No spam.
+                    </p>
                 </div>
-                <button type="submit" id="btn-submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-lg transition">
-                    GABUNG SEKARANG
+
+                <button type="submit" id="btn-submit" class="w-full mt-4 bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-black font-extrabold py-4 rounded-xl shadow-lg shadow-amber-500/20 transform transition hover:scale-[1.02] flex items-center justify-center gap-2 tracking-wide">
+                    <span>SECURE MY SPOT</span>
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                 </button>
             </form>
+
+            <div class="text-center">
+                <p class="text-[10px] text-neutral-700 uppercase tracking-widest">Limited Slots Available • Batch 1</p>
+            </div>
         </div>
 
-        <div id="success-msg" class="hidden p-8 text-center">
-            <div class="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl">✅</div>
-            <h2 class="text-xl font-bold text-gray-800">Pendaftaran Berhasil!</h2>
-            <p class="mt-2 text-gray-600">Link untuk <strong>Test Gut Health</strong> telah dikirim ke WhatsApp Anda.</p>
-            <p class="mt-4 text-sm text-gray-500">Silakan cek WA sekarang.</p>
+        <div id="success-msg" class="hidden p-10 text-center min-h-[400px] flex flex-col items-center justify-center">
+            <div class="relative mb-6">
+                <div class="absolute inset-0 bg-amber-500/20 rounded-full animate-ping"></div>
+                <div class="relative bg-gradient-to-br from-amber-400 to-yellow-600 w-20 h-20 rounded-full flex items-center justify-center shadow-lg">
+                    <svg class="w-10 h-10 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                </div>
+            </div>
+            
+            <h2 class="text-2xl font-bold text-white mb-2">You're In!</h2>
+            <p class="text-neutral-400 text-sm leading-relaxed mb-8">
+                Official Access Link has been sent to your WhatsApp. Please check it now to start your Gut Health Test.
+            </p>
+
+            <a href="https://wa.me/" class="inline-flex items-center text-amber-400 hover:text-amber-300 font-bold text-sm transition-colors border-b border-amber-500/30 pb-1">
+                Open WhatsApp
+                <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+            </a>
         </div>
+
     </div>
 
     <script>
-        // GANTI DENGAN URL WEB APP SCRIPT ANDA
+        // *** GANTI URL INI DENGAN URL DEPLOY SCRIPT ANDA ***
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx.../exec'; 
 
         document.getElementById('form-register').addEventListener('submit', function(e) {
             e.preventDefault();
             const btn = document.getElementById('btn-submit');
-            btn.innerHTML = 'Memproses...';
+            const originalContent = btn.innerHTML;
+
+            // Loading State
+            btn.innerHTML = '<div class="loader"></div>';
             btn.disabled = true;
+            btn.classList.add('opacity-80', 'cursor-not-allowed');
 
             const nama = document.getElementById('nama').value;
             const wa = document.getElementById('whatsapp').value;
@@ -56,13 +162,18 @@
                 method: 'POST'
             })
             .then(res => {
+                // Hide Form, Show Success
                 document.getElementById('form-container').classList.add('hidden');
                 document.getElementById('success-msg').classList.remove('hidden');
+                
+                // Hide Header Badge/Title to make it cleaner
+                document.querySelector('.pt-10').classList.add('hidden');
             })
             .catch(err => {
-                alert("Gagal koneksi. Coba lagi.");
-                btn.innerHTML = 'GABUNG SEKARANG';
+                alert("⚠️ Connection Error. Please try again.");
+                btn.innerHTML = originalContent;
                 btn.disabled = false;
+                btn.classList.remove('opacity-80', 'cursor-not-allowed');
             });
         });
     </script>
