@@ -49,12 +49,13 @@
         </form>
     </div>
 
-    <div id="dummy-popup" class="fixed bottom-4 left-4 right-4 glass p-3 rounded-xl flex items-center gap-3 hidden popup-dummy max-w-sm mx-auto">
+    <div id="dummy-popup" class="fixed bottom-4 left-4 right-4 glass p-3 rounded-xl flex items-center gap-3 hidden popup-dummy max-w-sm mx-auto z-50">
         <div class="w-8 h-8 rounded-full bg-green-900 flex items-center justify-center text-[10px]">🧬</div>
         <div><p class="text-[10px] text-neutral-400">Analisa Selesai</p><p class="text-xs font-bold text-white" id="dummy-msg">User #882: Tipe Kembung</p></div>
     </div>
 
     <script>
+        // PASTE URL DEPLOY SCRIPT DISINI
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz60TyDP9sE1JGXJJ9RZtvinrcQlOH-_UDRi2-baMbNHve1OjMfKRA0w-VI4xoLRQuY/exec';
 
         document.getElementById('form-quiz').addEventListener('submit', function(e) {
@@ -69,18 +70,30 @@
 
             fetch(`${SCRIPT_URL}?action=quiz&whatsapp=${encodeURIComponent(wa)}&jawaban1=${q1}&jawaban2=${q2}`, { method: 'POST', mode: 'no-cors' })
             .then(() => {
-                alert('Analisa Selesai! Hasil dikirim ke WhatsApp.');
-                btn.textContent = 'SELESAI';
+                alert('Terima kasih telah mengisi quiz! Kami akan mengirimkan hasilnya ke WhatsApp.');
+                // Redirect ke WhatsApp (Membuka aplikasi WA)
+                window.location.href = "https://wa.me/"; 
+            })
+            .catch(err => {
+                console.error(err);
+                alert('Koneksi bermasalah, coba lagi nanti.');
+                btn.textContent = 'ANALISA SEKARANG';
+                btn.disabled = false;
             });
         });
 
-        // Dummy Popup Logic (50s)
-        const results = ["Tipe Seimbang", "Tipe Sembelit", "Tipe Kembung"];
+        // Dummy Popup Logic (Setiap 5 Detik)
+        const results = ["Tipe Seimbang", "Tipe Sembelit", "Tipe Kembung", "Tipe Sensitif"];
         setInterval(() => {
             document.getElementById('dummy-msg').textContent = `User #${Math.floor(Math.random()*900)+100}: ${results[Math.floor(Math.random()*results.length)]}`;
-            document.getElementById('dummy-popup').classList.remove('hidden');
-            setTimeout(() => document.getElementById('dummy-popup').classList.add('hidden'), 4000);
-        }, 50000);
+            
+            const popup = document.getElementById('dummy-popup');
+            popup.classList.remove('hidden');
+            
+            // Hilang setelah 4 detik
+            setTimeout(() => popup.classList.add('hidden'), 4000);
+            
+        }, 5000); // 5000ms = 5 Detik
     </script>
 </body>
 </html>
