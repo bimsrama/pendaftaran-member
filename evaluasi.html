@@ -3,107 +3,82 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Evaluasi Progress</title>
+    <title>Evaluasi Mingguan</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;500;700;800&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #020202; color: #ffffff; }
-        .glass-panel { background: rgba(20, 20, 20, 0.6); backdrop-filter: blur(24px); border: 1px solid rgba(255, 255, 255, 0.08); }
-        .custom-input { background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(255, 255, 255, 0.1); width: 100%; color: white; padding: 12px; border-radius: 8px; }
-        .btn-shine { background: linear-gradient(to right, #10b981, #059669); } 
-        
-        /* Animasi Evaluasi Popup (Lebih Cepat) */
-        @keyframes slideInSide {
-            from { transform: translateX(-100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-        @keyframes fadeOutFast {
-            from { opacity: 1; transform: scale(1); }
-            to { opacity: 0; transform: scale(0.9); }
-        }
-        .eval-popup {
-            animation: slideInSide 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards, fadeOutFast 0.5s ease-in 2.5s forwards;
-        }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #050505; color: white; }
+        .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .input-field { background: rgba(0,0,0,0.5); border: 1px solid #333; color: white; }
+        .rating input { display: none; }
+        .rating label { cursor: pointer; color: #444; font-size: 24px; transition: 0.3s; }
+        .rating input:checked ~ label, .rating label:hover, .rating label:hover ~ label { color: #fbbf24; }
+        .rating { display: flex; flex-direction: row-reverse; justify-content: center; gap: 5px; }
+        @keyframes slideIn { from { transform: translateY(100px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .popup-dummy { animation: slideIn 0.5s; }
     </style>
 </head>
-<body class="min-h-screen flex items-center justify-center p-4 bg-neutral-900 relative overflow-hidden">
+<body class="min-h-screen flex items-center justify-center p-4 bg-black">
 
-    <div id="eval-container" class="fixed bottom-0 left-0 w-full p-4 z-0 flex flex-col gap-2 pointer-events-none items-start md:items-center opacity-50 md:opacity-100"></div>
+    <div class="w-full max-w-md glass p-8 rounded-3xl text-center">
+        <h1 class="text-xl font-bold mb-2">Check-Point <span class="text-amber-500">Mingguan</span></h1>
+        <p class="text-xs text-neutral-400 mb-6">Bagaimana progres kesehatanmu minggu ini?</p>
 
-    <div class="w-full max-w-md glass-panel rounded-3xl p-8 z-10 shadow-2xl">
-        <h1 class="text-2xl font-bold text-center mb-2 text-white">Check Point 📋</h1>
-        <p class="text-center text-xs text-neutral-400 mb-6">Bagaimana perkembanganmu sejauh ini?</p>
+        <form id="form-eval" class="space-y-5 text-left">
+            <input type="tel" id="whatsapp" required class="input-field w-full px-4 py-3 rounded-xl text-sm" placeholder="Nomor WhatsApp">
 
-        <form id="form-eval" class="space-y-4">
-            <input type="tel" id="whatsapp" required placeholder="Nomor WhatsApp" class="custom-input">
-            
-            <textarea id="feedback" rows="4" placeholder="Ceritakan perubahan yang kamu rasakan..." class="custom-input"></textarea>
+            <div class="text-center">
+                <p class="text-xs text-neutral-500 mb-2">Rating Kondisi Perut</p>
+                <div class="rating">
+                    <input type="radio" name="rating" id="s5" value="5"><label for="s5">★</label>
+                    <input type="radio" name="rating" id="s4" value="4"><label for="s4">★</label>
+                    <input type="radio" name="rating" id="s3" value="3"><label for="s3">★</label>
+                    <input type="radio" name="rating" id="s2" value="2"><label for="s2">★</label>
+                    <input type="radio" name="rating" id="s1" value="1"><label for="s1">★</label>
+                </div>
+            </div>
 
-            <button type="submit" id="btn-submit" class="btn-shine w-full mt-6 text-white font-bold py-3 rounded-xl shadow-lg hover:brightness-110 transition">
-                LAPORKAN PROGRESS
+            <textarea id="saran" rows="3" class="input-field w-full px-4 py-3 rounded-xl text-sm" placeholder="Ceritakan perubahan yang dirasakan..."></textarea>
+
+            <button type="submit" id="btn-submit" class="w-full bg-neutral-800 border border-neutral-700 text-white font-bold py-3.5 rounded-xl hover:bg-neutral-700 transition">
+                KIRIM LAPORAN
             </button>
         </form>
     </div>
 
+    <div id="dummy-popup" class="fixed bottom-4 left-4 right-4 glass p-3 rounded-xl flex items-center gap-3 hidden popup-dummy max-w-sm mx-auto">
+        <div class="w-8 h-8 rounded-full bg-blue-900 flex items-center justify-center text-[10px]">📝</div>
+        <div><p class="text-[10px] text-neutral-400">Baru lapor progress</p><p class="text-xs font-bold text-white">User #112: "Perut makin enak!"</p></div>
+    </div>
+
     <script>
-        // ==========================================
-        // 1. SCRIPT SUBMIT FORM (Paste URL Anda)
-        // ==========================================
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx.../exec'; 
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz60TyDP9sE1JGXJJ9RZtvinrcQlOH-_UDRi2-baMbNHve1OjMfKRA0w-VI4xoLRQuY/exec';
 
         document.getElementById('form-eval').addEventListener('submit', function(e) {
             e.preventDefault();
             const btn = document.getElementById('btn-submit');
-            btn.innerHTML = 'Mengirim...';
-            
             const wa = document.getElementById('whatsapp').value;
-            const feedback = document.getElementById('feedback').value;
+            const saran = document.getElementById('saran').value;
+            const rating = document.querySelector('input[name="rating"]:checked')?.value || "0";
 
-            fetch(SCRIPT_URL + '?action=evaluasi&whatsapp=' + encodeURIComponent(wa) + '&feedback=' + encodeURIComponent(feedback), { method: 'POST' })
-            .then(res => { alert('Laporan diterima! Semangat lanjut.'); btn.innerHTML = 'LAPORKAN PROGRESS'; })
-            .catch(err => { alert('Gagal.'); });
+            btn.textContent = 'MENGIRIM...';
+            btn.disabled = true;
+
+            fetch(`${SCRIPT_URL}?action=evaluasi&whatsapp=${encodeURIComponent(wa)}&rating=${rating}&saran=${encodeURIComponent(saran)}`, { method: 'POST', mode: 'no-cors' })
+            .then(() => {
+                alert('Laporan diterima! Tetap semangat.');
+                btn.textContent = 'TERKIRIM ✅';
+            });
         });
 
-        // ==========================================
-        // 2. SCRIPT ANIMASI TESTIMONI MASIF
-        // ==========================================
-        const feedbacks = [
-            { name: "Andi", text: "Perut udah gak begah lagi kak!" },
-            { name: "Susi", text: "BAB lancar tiap pagi, seneng bgt." },
-            { name: "Rudi", text: "Maag jarang kambuh padahal telat makan." },
-            { name: "Bella", text: "Badan rasanya enteng banget." },
-            { name: "Dimas", text: "Tidur jadi lebih nyenyak." },
-            { name: "Tina", text: "Udah gak ketergantungan obat warung." },
-            { name: "Joko", text: "Terasa banget bedanya di hari ke-10." },
-            { name: "Wulan", text: "Kulit jadi lebih bersih juga ternyata." },
-            { name: "Hendra", text: "Gas di perut berkurang drastis." },
-            { name: "Nia", text: "Celana jadi agak longgar nih hehe." }
-        ];
-
-        function showEvalPopup() {
-            const data = feedbacks[Math.floor(Math.random() * feedbacks.length)];
-            
-            const el = document.createElement('div');
-            // Style seperti bubble chat hijau
-            el.className = 'eval-popup bg-neutral-800 border-l-4 border-green-500 p-3 rounded-r-lg shadow-lg flex items-center gap-3 max-w-xs';
-            el.innerHTML = `
-                <div class="flex-1">
-                    <p class="text-[10px] text-green-400 font-bold mb-0.5">${data.name} Melaporkan:</p>
-                    <p class="text-xs text-white italic">"${data.text}"</p>
-                </div>
-                <span class="text-lg">✅</span>
-            `;
-
-            const container = document.getElementById('eval-container');
-            container.appendChild(el);
-
-            // Hilang setelah 3 detik
-            setTimeout(() => { el.remove(); }, 3000);
-        }
-
-        // Loop Cepat (0.8 detik) untuk efek "Banyak yang lapor"
-        setInterval(showEvalPopup, 800);
-        showEvalPopup();
+        // Dummy Popup (50s)
+        const comments = ["Perut enteng", "Sudah lancar BAB", "Masih adaptasi", "Badan segar"];
+        setInterval(() => {
+            const txt = comments[Math.floor(Math.random()*comments.length)];
+            document.querySelector('#dummy-popup p:nth-child(2)').textContent = `User #${Math.floor(Math.random()*900)}: "${txt}"`;
+            document.getElementById('dummy-popup').classList.remove('hidden');
+            setTimeout(() => document.getElementById('dummy-popup').classList.add('hidden'), 4000);
+        }, 50000);
     </script>
 </body>
 </html>
