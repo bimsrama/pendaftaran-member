@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Join Batch 1 | Usus jadi Sehat</title>
+    <title>Gabung Batch 1 | Usus Sehat</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;500;700;800&display=swap" rel="stylesheet">
     <style>
@@ -37,70 +37,102 @@
         <div class="absolute bottom-[-10%] right-[-10%] w-96 h-96 bg-yellow-500/10 blur-[100px] rounded-full"></div>
     </div>
 
-    <div class="w-full max-w-md glass p-8 rounded-3xl relative">
-        <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-amber-500/10 border border-amber-500/20 text-amber-400 text-[10px] font-bold px-4 py-1 rounded-full uppercase tracking-widest">
-            🔥 Batch 1 Closing Soon
+    <div class="w-full max-w-md glass p-8 rounded-3xl relative shadow-2xl shadow-amber-900/20">
+        <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-amber-500/10 border border-amber-500/20 text-amber-400 text-[10px] font-bold px-4 py-1 rounded-full uppercase tracking-widest whitespace-nowrap">
+            🔥 Batch 1 Segera Tutup
         </div>
 
         <div class="text-center mt-4 mb-8">
-            <h1 class="text-4xl font-extrabold mb-2">30 Days <span class="text-gradient">Gut Health</span></h1>
-            <p class="text-neutral-400 text-sm">Join <span class="text-white font-bold">1.240+ people</span> healing their gut naturally.</p>
+            <h1 class="text-4xl font-extrabold mb-2 leading-tight">30 Hari <span class="text-gradient">Usus Sehat</span></h1>
+            <p class="text-neutral-400 text-sm">Gabung bareng <span class="text-white font-bold">1.240+ orang</span> yang menyehatkan pencernaan secara alami.</p>
         </div>
 
         <form id="form-register" class="space-y-4">
             <div>
                 <label class="text-xs font-bold text-neutral-500 uppercase ml-1">Nama Lengkap</label>
-                <input type="text" id="nama" required class="input-field w-full px-4 py-3.5 rounded-xl mt-1 text-sm" placeholder="Ex: Bims Rama">
+                <input type="text" id="nama" required class="input-field w-full px-4 py-3.5 rounded-xl mt-1 text-sm" placeholder="Cth: Budi Santoso">
             </div>
             <div>
                 <label class="text-xs font-bold text-neutral-500 uppercase ml-1">WhatsApp</label>
-                <input type="tel" id="whatsapp" required class="input-field w-full px-4 py-3.5 rounded-xl mt-1 text-sm" placeholder="Ex: 0812xxxx">
+                <input type="tel" id="whatsapp" required class="input-field w-full px-4 py-3.5 rounded-xl mt-1 text-sm" placeholder="Cth: 0812xxxx">
             </div>
-            <button type="submit" id="btn-submit" class="w-full bg-gradient-to-r from-amber-500 to-yellow-600 text-black font-bold py-4 rounded-xl mt-4 hover:scale-[1.02] transition-transform">
-                JOIN NOW 🚀
+            <button type="submit" id="btn-submit" class="w-full bg-gradient-to-r from-amber-500 to-yellow-600 text-black font-bold py-4 rounded-xl mt-4 hover:scale-[1.02] transition-transform shadow-lg shadow-amber-500/20">
+                GABUNG SEKARANG 🚀
             </button>
         </form>
+        
+        <p class="text-center text-[10px] text-neutral-600 mt-6">
+            🔒 Data aman 100%. Bebas spam.
+        </p>
     </div>
 
-    <div id="dummy-popup" class="fixed bottom-4 left-4 right-4 glass p-4 rounded-xl flex items-center gap-3 hidden popup-dummy max-w-sm mx-auto">
-        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-gray-700 to-black flex items-center justify-center text-xs">👤</div>
+    <div id="dummy-popup" class="fixed bottom-4 left-4 right-4 glass p-4 rounded-xl flex items-center gap-3 hidden popup-dummy max-w-sm mx-auto z-50">
+        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-gray-700 to-black flex items-center justify-center text-lg border border-white/10">👋</div>
         <div>
-            <p class="text-xs text-neutral-400">Baru saja mendaftar</p>
+            <p class="text-[10px] text-amber-400 font-bold uppercase tracking-wider">Baru saja bergabung</p>
             <p class="text-sm font-bold text-white" id="dummy-name">Amanda, Jakarta</p>
         </div>
         <span class="text-[10px] text-neutral-500 ml-auto">Barusan</span>
     </div>
 
     <script>
-        // GANTI URL INI
+        // ==========================================
+        // ⚠️ PASTE URL GOOGLE SCRIPT YANG BARU DI SINI
+        // ==========================================
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz60TyDP9sE1JGXJJ9RZtvinrcQlOH-_UDRi2-baMbNHve1OjMfKRA0w-VI4xoLRQuY/exec';
 
         document.getElementById('form-register').addEventListener('submit', function(e) {
             e.preventDefault();
             const btn = document.getElementById('btn-submit');
+            const originalText = btn.innerHTML;
             const nama = document.getElementById('nama').value;
             const wa = document.getElementById('whatsapp').value;
             
-            btn.innerHTML = 'PROCESSING...';
+            btn.innerHTML = 'MEMPROSES...';
             btn.disabled = true;
+            btn.classList.add('opacity-70', 'cursor-not-allowed');
 
             fetch(SCRIPT_URL + '?action=register&nama=' + encodeURIComponent(nama) + '&whatsapp=' + encodeURIComponent(wa), { method: 'POST', mode: 'no-cors' })
             .then(() => {
-                btn.innerHTML = 'SUCCESS! ✅';
-                alert('Pendaftaran Berhasil! Cek WhatsApp kamu sekarang.');
-                window.location.reload();
+                btn.innerHTML = 'BERHASIL! ✅';
+                // Delay sedikit biar user lihat status berhasil
+                setTimeout(() => {
+                    alert('Pendaftaran Berhasil! Link akses telah dikirim ke WhatsApp kamu.');
+                    window.location.reload();
+                }, 500);
+            })
+            .catch(err => {
+                console.error(err);
+                alert("Gagal terhubung. Cek koneksi internet.");
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+                btn.classList.remove('opacity-70', 'cursor-not-allowed');
             });
         });
 
-        // Dummy Logic 50 Detik
-        const names = ["Sarah, Bandung", "Rizky, Surabaya", "Putri, Jakarta", "Dina, Medan", "Budi, Jogja"];
+        // Dummy Logic: Popup muncul setiap 50 Detik
+        const names = [
+            "Sarah, Bandung", "Rizky, Surabaya", "Putri, Jakarta", 
+            "Dina, Medan", "Budi, Jogja", "Citra, Bekasi", 
+            "Fajar, Malang", "Tiara, Bali"
+        ];
+        
         setInterval(() => {
             const popup = document.getElementById('dummy-popup');
             const nameEl = document.getElementById('dummy-name');
+            
+            // Pilih nama acak
             nameEl.textContent = names[Math.floor(Math.random() * names.length)];
+            
+            // Tampilkan Popup
             popup.classList.remove('hidden');
-            setTimeout(() => { popup.classList.add('hidden'); }, 4000); // Hilang setelah 4 detik
-        }, 50000); // Muncul setiap 50 detik
+            
+            // Hilangkan setelah 4 detik
+            setTimeout(() => { 
+                popup.classList.add('hidden'); 
+            }, 4000); 
+            
+        }, 50000); // 50000 ms = 50 detik
     </script>
 </body>
 </html>
