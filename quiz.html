@@ -3,133 +3,84 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gut Health Quiz</title>
+    <title>Gut Type Quiz</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;500;700;800&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #020202; color: #ffffff; }
-        .glass-panel { background: rgba(20, 20, 20, 0.6); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid rgba(255, 255, 255, 0.08); }
-        .custom-input { background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(255, 255, 255, 0.1); }
-        .custom-select { background-color: #000; color: white; border: 1px solid #333; padding: 12px; border-radius: 8px; width: 100%; }
-        .btn-shine { background: linear-gradient(to right, #d97706, #f59e0b); }
-        
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #050505; color: white; }
+        .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .input-field { background: rgba(0,0,0,0.5); border: 1px solid #333; color: white; transition: 0.3s; }
+        .input-field:focus { border-color: #d97706; outline: none; }
         /* Animasi Popup */
-        @keyframes slideInUp {
-            from { transform: translateY(100%); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-        @keyframes fadeOut {
-            from { opacity: 1; }
-            to { opacity: 0; }
-        }
-        .fomo-popup {
-            animation: slideInUp 0.5s ease-out forwards, fadeOut 0.5s ease-in 3.5s forwards;
-        }
+        @keyframes slideIn { from { transform: translateY(100px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .popup-dummy { animation: slideIn 0.5s; }
     </style>
 </head>
-<body class="min-h-screen flex items-center justify-center p-4 bg-neutral-900 relative overflow-hidden">
-    
-    <div id="fomo-container" class="fixed bottom-4 left-4 z-50 flex flex-col gap-2 pointer-events-none"></div>
+<body class="min-h-screen flex items-center justify-center p-4 relative bg-black">
 
-    <div class="w-full max-w-md glass-panel rounded-3xl p-8 relative overflow-hidden z-10">
-        <h1 class="text-2xl font-bold text-center mb-2 text-white">Cek Tipe Ususmu 🧬</h1>
-        <p class="text-center text-xs text-neutral-400 mb-6">Jawab jujur agar tips harianmu akurat.</p>
+    <div class="w-full max-w-md glass p-8 rounded-3xl">
+        <h1 class="text-2xl font-bold mb-1 text-center">Cek Tipe <span class="text-amber-500">Ususmu</span></h1>
+        <p class="text-xs text-neutral-400 text-center mb-6">Agar kami bisa memberikan tips yang 100% akurat.</p>
 
         <form id="form-quiz" class="space-y-4">
-            <input type="tel" id="whatsapp" required placeholder="Nomor WhatsApp (Harus sama saat daftar)" class="custom-input w-full p-3 rounded-xl text-sm text-white mb-4">
+            <input type="tel" id="whatsapp" required class="input-field w-full px-4 py-3 rounded-xl text-sm" placeholder="Nomor WhatsApp (Saat Daftar)">
             
-            <div class="space-y-2">
-                <label class="text-xs text-amber-500 font-bold">1. Seberapa sering kamu BAB?</label>
-                <select id="q1" class="custom-select text-sm">
-                    <option value="Jarang">Jarang (< 3x seminggu)</option>
-                    <option value="Rutin">Rutin (Tiap hari/2 hari sekali)</option>
-                    <option value="Sering">Sering/Diare (> 3x sehari)</option>
+            <div>
+                <label class="text-xs text-neutral-400 block mb-2">1. Seberapa sering kamu BAB?</label>
+                <select id="q1" class="input-field w-full px-4 py-3 rounded-xl text-sm">
+                    <option value="Lancar">Setiap Hari (Lancar)</option>
+                    <option value="Jarang">Jarang (Sembelit)</option>
+                    <option value="Sering">Terlalu Sering (Diare)</option>
                 </select>
             </div>
 
-            <div class="space-y-2">
-                <label class="text-xs text-amber-500 font-bold">2. Apa keluhan utama perutmu?</label>
-                <select id="q2" class="custom-select text-sm">
-                    <option value="Begah">Sering Kembung/Begah</option>
-                    <option value="Perih">Perih/Panas (Asam Lambung)</option>
-                    <option value="Keras">BAB Keras/Sakit</option>
-                    <option value="Aman">Tidak ada keluhan berat</option>
+            <div>
+                <label class="text-xs text-neutral-400 block mb-2">2. Keluhan utama setelah makan?</label>
+                <select id="q2" class="input-field w-full px-4 py-3 rounded-xl text-sm">
+                    <option value="Aman">Tidak ada</option>
+                    <option value="Kembung">Perut Kembung/Begah</option>
+                    <option value="Mual">Mual/Perih</option>
                 </select>
             </div>
 
-            <button type="submit" id="btn-submit" class="btn-shine w-full mt-6 text-white font-bold py-3 rounded-xl shadow-lg hover:scale-[1.02] transition-transform">
-                KIRIM JAWABAN
+            <button type="submit" id="btn-submit" class="w-full bg-amber-600 text-white font-bold py-3.5 rounded-xl hover:bg-amber-500 transition">
+                ANALISA SEKARANG
             </button>
         </form>
     </div>
 
+    <div id="dummy-popup" class="fixed bottom-4 left-4 right-4 glass p-3 rounded-xl flex items-center gap-3 hidden popup-dummy max-w-sm mx-auto">
+        <div class="w-8 h-8 rounded-full bg-green-900 flex items-center justify-center text-[10px]">🧬</div>
+        <div><p class="text-[10px] text-neutral-400">Analisa Selesai</p><p class="text-xs font-bold text-white" id="dummy-msg">User #882: Tipe Kembung</p></div>
+    </div>
+
     <script>
-        // ==========================================
-        // 1. SCRIPT SUBMIT FORM (Paste URL Anda)
-        // ==========================================
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx.../exec'; 
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz60TyDP9sE1JGXJJ9RZtvinrcQlOH-_UDRi2-baMbNHve1OjMfKRA0w-VI4xoLRQuY/exec';
 
         document.getElementById('form-quiz').addEventListener('submit', function(e) {
             e.preventDefault();
             const btn = document.getElementById('btn-submit');
-            btn.innerHTML = 'Menyimpan...';
-            
             const wa = document.getElementById('whatsapp').value;
             const q1 = document.getElementById('q1').value;
             const q2 = document.getElementById('q2').value;
-            
-            let kategori = 'D'; 
-            if(q1 === 'Jarang' || q2 === 'Keras') kategori = 'A'; 
-            else if(q2 === 'Begah') kategori = 'B'; 
-            else if(q2 === 'Perih') kategori = 'C'; 
 
-            fetch(SCRIPT_URL + '?action=quiz&whatsapp=' + encodeURIComponent(wa) + '&kategori=' + kategori + '&q1=' + q1 + '&q2=' + q2, { method: 'POST' })
-            .then(res => { alert('Data tersimpan! Cek WA kamu.'); btn.innerHTML = 'KIRIM JAWABAN'; })
-            .catch(err => { alert('Gagal.'); });
+            btn.textContent = 'MENGANALISA...';
+            btn.disabled = true;
+
+            fetch(`${SCRIPT_URL}?action=quiz&whatsapp=${encodeURIComponent(wa)}&jawaban1=${q1}&jawaban2=${q2}`, { method: 'POST', mode: 'no-cors' })
+            .then(() => {
+                alert('Analisa Selesai! Hasil dikirim ke WhatsApp.');
+                btn.textContent = 'SELESAI';
+            });
         });
 
-        // ==========================================
-        // 2. SCRIPT ANIMASI MEMBER POPUP
-        // ==========================================
-        const names = ["Budi", "Siti", "Rina", "Agus", "Dewi", "Fajar", "Lina", "Eko", "Maya", "Dian", "Rizky", "Putri", "Adi", "Nur", "Sari", "Bayu", "Indah", "Reza", "Fitri", "Tono"];
-        const categories = [
-            { name: "Si Sembelit", color: "text-red-400" },
-            { name: "Si Kembung", color: "text-yellow-400" },
-            { name: "Si Sensitif", color: "text-orange-400" },
-            { name: "Seimbang", color: "text-green-400" }
-        ];
-
-        function showFomoPopup() {
-            // Pilih nama & kategori acak
-            const randomName = names[Math.floor(Math.random() * names.length)];
-            const randomCat = categories[Math.floor(Math.random() * categories.length)];
-            
-            // Buat Element
-            const el = document.createElement('div');
-            el.className = 'fomo-popup bg-neutral-800/90 border border-neutral-700 p-3 rounded-xl shadow-2xl flex items-center gap-3 backdrop-blur-md min-w-[250px]';
-            el.innerHTML = `
-                <div class="w-8 h-8 rounded-full bg-neutral-700 flex items-center justify-center text-xs font-bold text-white border border-neutral-600">
-                    ${randomName.charAt(0)}
-                </div>
-                <div>
-                    <p class="text-[10px] text-neutral-400">Baru saja bergabung</p>
-                    <p class="text-xs font-bold text-white">${randomName} masuk <span class="${randomCat.color}">${randomCat.name}</span></p>
-                </div>
-            `;
-
-            // Masukkan ke layar
-            const container = document.getElementById('fomo-container');
-            container.appendChild(el);
-
-            // Hapus element setelah animasi selesai (4 detik) agar tidak memberatkan browser
-            setTimeout(() => {
-                el.remove();
-            }, 4000);
-        }
-
-        // Jalankan setiap 2.5 detik (Agar terlihat ramai tapi enak dibaca)
-        setInterval(showFomoPopup, 2500);
-        showFomoPopup(); // Jalankan langsung saat load
+        // Dummy Popup Logic (50s)
+        const results = ["Tipe Seimbang", "Tipe Sembelit", "Tipe Kembung"];
+        setInterval(() => {
+            document.getElementById('dummy-msg').textContent = `User #${Math.floor(Math.random()*900)+100}: ${results[Math.floor(Math.random()*results.length)]}`;
+            document.getElementById('dummy-popup').classList.remove('hidden');
+            setTimeout(() => document.getElementById('dummy-popup').classList.add('hidden'), 4000);
+        }, 50000);
     </script>
 </body>
 </html>
