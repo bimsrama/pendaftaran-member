@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Check-In | Gut Health</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;500;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #050505; color: white; }
+        .glass {
+            background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .input-field {
+            background: rgba(0,0,0,0.5); border: 1px solid #333; color: white; transition: 0.3s;
+        }
+        .input-field:focus { border-color: #d97706; outline: none; box-shadow: 0 0 15px rgba(217, 119, 6, 0.3); }
+        
+        /* Tombol Glowing */
+        .btn-glow {
+            background: linear-gradient(to right, #fbbf24, #d97706);
+            box-shadow: 0 0 20px rgba(217, 119, 6, 0.4);
+        }
+        .btn-glow:hover { box-shadow: 0 0 40px rgba(217, 119, 6, 0.6); transform: scale(1.02); }
+
+        /* Animasi Popup Cepat */
+        @keyframes popUp {
+            0% { transform: translateY(50px) scale(0.8); opacity: 0; }
+            20% { transform: translateY(0) scale(1); opacity: 1; }
+            80% { transform: translateY(0) scale(1); opacity: 1; }
+            100% { transform: translateY(-20px) scale(0.9); opacity: 0; }
+        }
+        .dummy-anim { animation: popUp 1.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center p-6 relative overflow-hidden">
+
+    <div class="fixed inset-0 z-0">
+        <div class="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-amber-600/10 blur-[120px] rounded-full"></div>
+        <div class="absolute bottom-[-10%] left-[-10%] w-[500px] h-[500px] bg-yellow-600/5 blur-[120px] rounded-full"></div>
+    </div>
+
+    <div class="w-full max-w-sm glass p-8 rounded-3xl relative z-10 text-center">
+        <div class="inline-block p-3 rounded-full bg-amber-500/10 mb-4 border border-amber-500/20">
+            <svg class="w-8 h-8 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        </div>
+        
+        <h1 class="text-3xl font-extrabold mb-2">Daily Check-In</h1>
+        <p class="text-neutral-400 text-sm mb-8">Absen dulu biar konsisten, Bestie! 🌱</p>
+
+        <form id="form-checkin" class="space-y-5">
+            <div class="text-left">
+                <label class="text-[10px] font-bold text-neutral-500 uppercase ml-1 tracking-widest">WhatsApp Terdaftar</label>
+                <input type="tel" id="whatsapp" required class="input-field w-full px-4 py-4 rounded-xl mt-1 text-sm font-medium" placeholder="0812xxxx">
+            </div>
+
+            <button type="submit" id="btn-submit" class="w-full btn-glow text-black font-bold py-4 rounded-xl transition-all duration-300">
+                CHECK IN SEKARANG 🔥
+            </button>
+        </form>
+    </div>
+
+    <div id="toast-container" class="fixed bottom-6 left-6 z-50 flex flex-col-reverse gap-3 pointer-events-none">
+        </div>
+
+    <script>
+        // ⚠️ PASTE URL SCRIPT ANDA DISINI
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz60TyDP9sE1JGXJJ9RZtvinrcQlOH-_UDRi2-baMbNHve1OjMfKRA0w-VI4xoLRQuY/exec';
+
+        // --- Logic Submit ---
+        document.getElementById('form-checkin').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btn-submit');
+            const wa = document.getElementById('whatsapp').value;
+            const originalText = btn.innerHTML;
+
+            btn.innerHTML = '<span class="animate-pulse">Loading...</span>';
+            btn.disabled = true;
+
+            fetch(SCRIPT_URL + '?action=checkin&whatsapp=' + encodeURIComponent(wa), { method: 'POST', mode: 'no-cors' })
+            .then(() => {
+                btn.innerHTML = 'BERHASIL! ✅';
+                btn.classList.replace('bg-gradient-to-r', 'bg-green-500'); // Ubah jadi hijau
+                setTimeout(() => {
+                    alert("Check-in Berhasil! Cek WhatsApp kamu untuk suntikan motivasi hari ini! 💪");
+                    window.location.href = "https://wa.me/"; // Redirect ke WA
+                }, 800);
+            })
+            .catch(err => {
+                alert("Gagal koneksi. Cek internet.");
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            });
+        });
+
+        // --- Logic Dummy Popup (Setiap 2 Detik) ---
+        const names = [
+            "Rina, Jakarta", "Dimas, Bandung", "Putri, SBY", "Alya, Medan", "Budi, Jogja",
+            "Sinta, Bali", "Fajar, Bekasi", "Tio, Malang", "Dina, Depok", "Reza, Bogor",
+            "Lia, Makassar", "Agus, Semarang", "Vivi, Tangerang", "Eko, Solo"
+        ];
+
+        function showDummyPopup() {
+            const container = document.getElementById('toast-container');
+            const name = names[Math.floor(Math.random() * names.length)];
+            
+            // Buat Element Popup
+            const div = document.createElement('div');
+            div.className = "dummy-anim glass px-4 py-3 rounded-xl flex items-center gap-3 w-max border-l-4 border-green-500";
+            div.innerHTML = `
+                <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse shadow-[0_0_10px_#22c55e]"></div>
+                <div>
+                    <p class="text-[10px] text-neutral-400 font-bold uppercase">Baru saja Check-in</p>
+                    <p class="text-xs font-bold text-white">${name} 🔥</p>
+                </div>
+            `;
+
+            // Masukkan ke container
+            container.appendChild(div);
+
+            // Hapus element setelah animasi selesai (1.8 detik) agar DOM tidak penuh
+            setTimeout(() => {
+                div.remove();
+            }, 1800);
+        }
+
+        // Jalankan setiap 2000ms (2 Detik)
+        setInterval(showDummyPopup, 2000);
+
+    </script>
+</body>
+</html>
