@@ -9,26 +9,41 @@
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: #050505; color: white; }
         .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); }
-        .input-field { background: rgba(0,0,0,0.5); border: 1px solid #333; color: white; }
+        .input-field { background: rgba(0,0,0,0.5); border: 1px solid #333; color: white; transition: 0.3s; }
+        .input-field:focus { border-color: #fbbf24; outline: none; }
+        
+        /* Star Rating */
         .rating input { display: none; }
-        .rating label { cursor: pointer; color: #444; font-size: 24px; transition: 0.3s; }
+        .rating label { cursor: pointer; color: #444; font-size: 28px; transition: 0.3s; }
         .rating input:checked ~ label, .rating label:hover, .rating label:hover ~ label { color: #fbbf24; }
-        .rating { display: flex; flex-direction: row-reverse; justify-content: center; gap: 5px; }
-        @keyframes slideIn { from { transform: translateY(100px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        .popup-dummy { animation: slideIn 0.5s; }
+        .rating { display: flex; flex-direction: row-reverse; justify-content: center; gap: 8px; }
+        
+        /* History Item */
+        .history-item { border-left: 2px solid #333; padding-left: 15px; position: relative; margin-bottom: 20px; }
+        .history-item::before { content: ''; position: absolute; left: -6px; top: 0; w-3 h-3; width: 10px; height: 10px; border-radius: 50%; background: #fbbf24; }
     </style>
 </head>
-<body class="min-h-screen flex items-center justify-center p-4 bg-black">
+<body class="min-h-screen flex flex-col items-center justify-center p-4 relative overflow-hidden">
 
-    <div class="w-full max-w-md glass p-8 rounded-3xl text-center">
-        <h1 class="text-xl font-bold mb-2">Check-Point <span class="text-amber-500">Mingguan</span></h1>
-        <p class="text-xs text-neutral-400 mb-6">Bagaimana progres kesehatanmu minggu ini?</p>
+    <div class="fixed inset-0 -z-10">
+        <div class="absolute top-[-10%] left-[-10%] w-96 h-96 bg-amber-900/20 blur-[100px] rounded-full"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-96 h-96 bg-yellow-900/10 blur-[100px] rounded-full"></div>
+    </div>
+
+    <div class="w-full max-w-md glass p-8 rounded-3xl relative">
+        <div class="text-center mb-6">
+            <h1 class="text-2xl font-bold">Check-Point <span class="text-amber-500">Mingguan</span></h1>
+            <p class="text-xs text-neutral-400" id="welcome-text">Bagaimana progres kesehatanmu minggu ini?</p>
+        </div>
 
         <form id="form-eval" class="space-y-5 text-left">
-            <input type="tel" id="whatsapp" required class="input-field w-full px-4 py-3 rounded-xl text-sm" placeholder="Nomor WhatsApp">
+            <div>
+                <input type="tel" id="whatsapp" required class="input-field w-full px-4 py-3 rounded-xl text-sm" placeholder="Nomor WhatsApp (Contoh: 0812xxx)">
+                <p class="text-[10px] text-amber-500 mt-1 hidden" id="wa-loading">Mencari data...</p>
+            </div>
 
-            <div class="text-center">
-                <p class="text-xs text-neutral-500 mb-2">Rating Kondisi Perut</p>
+            <div class="glass p-4 rounded-2xl bg-black/20 text-center border border-white/5">
+                <p class="text-xs text-neutral-400 mb-2 uppercase tracking-widest">Kondisi Perut Minggu Ini</p>
                 <div class="rating">
                     <input type="radio" name="rating" id="s5" value="5"><label for="s5">★</label>
                     <input type="radio" name="rating" id="s4" value="4"><label for="s4">★</label>
@@ -38,47 +53,111 @@
                 </div>
             </div>
 
-            <textarea id="saran" rows="3" class="input-field w-full px-4 py-3 rounded-xl text-sm" placeholder="Ceritakan perubahan yang dirasakan..."></textarea>
+            <textarea id="saran" rows="3" class="input-field w-full px-4 py-3 rounded-xl text-sm" placeholder="Ceritakan perubahan yang dirasakan... (Contoh: Perut lebih enteng, BAB lancar)"></textarea>
 
-            <button type="submit" id="btn-submit" class="w-full bg-neutral-800 border border-neutral-700 text-white font-bold py-3.5 rounded-xl hover:bg-neutral-700 transition">
+            <button type="submit" id="btn-submit" class="w-full bg-gradient-to-r from-neutral-800 to-neutral-900 border border-neutral-700 text-white font-bold py-4 rounded-xl hover:scale-[1.02] transition-transform">
                 KIRIM LAPORAN
             </button>
         </form>
-    </div>
 
-    <div id="dummy-popup" class="fixed bottom-4 left-4 right-4 glass p-3 rounded-xl flex items-center gap-3 hidden popup-dummy max-w-sm mx-auto">
-        <div class="w-8 h-8 rounded-full bg-blue-900 flex items-center justify-center text-[10px]">📝</div>
-        <div><p class="text-[10px] text-neutral-400">Baru lapor progress</p><p class="text-xs font-bold text-white">User #112: "Perut makin enak!"</p></div>
+        <div id="history-section" class="mt-10 pt-8 border-t border-white/10 hidden">
+            <h3 class="text-sm font-bold text-white mb-4 flex items-center gap-2">
+                ⏳ Riwayat Evaluasi
+            </h3>
+            <div id="history-list" class="space-y-2">
+                </div>
+        </div>
     </div>
 
     <script>
+        // ⚠️ PASTE URL SCRIPT DI SINI
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz60TyDP9sE1JGXJJ9RZtvinrcQlOH-_UDRi2-baMbNHve1OjMfKRA0w-VI4xoLRQuY/exec';
 
+        const waInput = document.getElementById('whatsapp');
+        const historySection = document.getElementById('history-section');
+        const historyList = document.getElementById('history-list');
+        
+        // 1. Cek URL Parameter
+        const urlParams = new URLSearchParams(window.location.search);
+        const waParam = urlParams.get('wa');
+
+        if (waParam) {
+            waInput.value = waParam;
+            loadData(waParam); // Auto load
+        }
+
+        // 2. Event Listener Input Manual (Debounce)
+        let timeout = null;
+        waInput.addEventListener('keyup', function (e) {
+            clearTimeout(timeout);
+            timeout = setTimeout(function () {
+                if(waInput.value.length > 9) loadData(waInput.value);
+            }, 1000);
+        });
+
+        // 3. Fungsi Load Data & History
+        function loadData(wa) {
+            document.getElementById('wa-loading').classList.remove('hidden');
+            
+            fetch(`${SCRIPT_URL}?action=getData&wa=${encodeURIComponent(wa)}`)
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById('wa-loading').classList.add('hidden');
+                
+                if (data.status === 'success') {
+                    document.getElementById('welcome-text').innerText = `Halo ${data.nama}, yuk update progress minggu ini!`;
+                    
+                    // Render History
+                    if (data.history && data.history.length > 0) {
+                        historySection.classList.remove('hidden');
+                        historyList.innerHTML = ''; // Reset
+
+                        data.history.forEach(item => {
+                            const stars = '★'.repeat(item.rating) + '☆'.repeat(5 - item.rating);
+                            const html = `
+                                <div class="history-item">
+                                    <div class="flex justify-between items-start mb-1">
+                                        <span class="text-[10px] text-neutral-500 bg-neutral-900 px-2 py-0.5 rounded">${item.date}</span>
+                                        <span class="text-amber-500 text-xs tracking-widest">${stars}</span>
+                                    </div>
+                                    <p class="text-xs text-neutral-300 italic">"${item.comment}"</p>
+                                </div>
+                            `;
+                            historyList.insertAdjacentHTML('beforeend', html);
+                        });
+                    }
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                document.getElementById('wa-loading').classList.add('hidden');
+            });
+        }
+
+        // 4. Submit Evaluasi Baru
         document.getElementById('form-eval').addEventListener('submit', function(e) {
             e.preventDefault();
             const btn = document.getElementById('btn-submit');
-            const wa = document.getElementById('whatsapp').value;
+            const wa = waInput.value;
             const saran = document.getElementById('saran').value;
-            const rating = document.querySelector('input[name="rating"]:checked')?.value || "0";
+            const rating = document.querySelector('input[name="rating"]:checked')?.value;
 
-            btn.textContent = 'MENGIRIM...';
+            if (!rating) { alert("Mohon pilih rating bintang dulu ya!"); return; }
+
+            btn.innerHTML = '<span class="animate-pulse">MENGIRIM...</span>';
             btn.disabled = true;
 
             fetch(`${SCRIPT_URL}?action=evaluasi&whatsapp=${encodeURIComponent(wa)}&rating=${rating}&saran=${encodeURIComponent(saran)}`, { method: 'POST', mode: 'no-cors' })
             .then(() => {
-                alert('Laporan diterima! Tetap semangat.');
-                btn.textContent = 'TERKIRIM ✅';
+                alert('Laporan diterima! Terima kasih atas feedback-nya.');
+                window.location.reload(); // Refresh untuk lihat update history
+            })
+            .catch(err => {
+                alert('Gagal mengirim. Cek internet.');
+                btn.innerHTML = 'KIRIM LAPORAN';
+                btn.disabled = false;
             });
         });
-
-        // Dummy Popup (50s)
-        const comments = ["Perut enteng", "Sudah lancar BAB", "Masih adaptasi", "Badan segar"];
-        setInterval(() => {
-            const txt = comments[Math.floor(Math.random()*comments.length)];
-            document.querySelector('#dummy-popup p:nth-child(2)').textContent = `User #${Math.floor(Math.random()*900)}: "${txt}"`;
-            document.getElementById('dummy-popup').classList.remove('hidden');
-            setTimeout(() => document.getElementById('dummy-popup').classList.add('hidden'), 4000);
-        }, 50000);
     </script>
 </body>
 </html>
