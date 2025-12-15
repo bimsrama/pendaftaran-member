@@ -1,178 +1,102 @@
+<!DOCTYPE html>
+<html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Gut Journey - Dashboard</title>
-    <title>Daily Check-in | My Gut Journey</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
-<style>
-body { font-family: 'Plus Jakarta Sans', sans-serif; background: #020202; color: white; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard & Check-in | My Gut Journey</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #020202; color: white; }
         
-        .glass-card { background: rgba(20, 20, 20, 0.6); backdrop-filter: blur(24px); border: 1px solid rgba(255, 255, 255, 0.08); box-shadow: 0 20px 50px -12px rgba(0, 0, 0, 0.8); }
+        .glass-card { background: rgba(20, 20, 20, 0.7); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.08); box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5); }
         .text-gold { background: linear-gradient(135deg, #FDE68A 0%, #D97706 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .circle-chart__circle { animation: circle-chart-fill 2s reverse; transform: rotate(-90deg); transform-origin: center; }
         @keyframes circle-chart-fill { to { stroke-dasharray: 0 100; } }
-        .glass-card { background: rgba(20, 20, 20, 0.8); backdrop-filter: blur(24px); border: 1px solid rgba(255, 255, 255, 0.08); }
-.btn-glow { background: linear-gradient(to right, #b45309, #fbbf24); box-shadow: 0 0 15px rgba(245, 158, 11, 0.3); transition: all 0.3s; }
-        .btn-glow:active { transform: scale(0.98); box-shadow: 0 0 5px rgba(245, 158, 11, 0.5); }
-        .timeline-line { position: absolute; left: 15px; top: 10px; bottom: -20px; width: 2px; background: #333; z-index: 0; }
+        .btn-glow { background: linear-gradient(to right, #b45309, #fbbf24); box-shadow: 0 0 15px rgba(245, 158, 11, 0.3); transition: all 0.3s; }
+        .btn-glow:active { transform: scale(0.98); }
+        .timeline-line { position: absolute; left: 14px; top: 10px; bottom: -20px; width: 2px; background: #333; z-index: 0; }
         .timeline-item.active .timeline-line { background: #d97706; }
         .timeline-item:last-child .timeline-line { display: none; }
-        .btn-glow:active { transform: scale(0.98); }
-        .hidden { display: none; }
-
-        /* Modal Scroll */
-        .modal-scroll::-webkit-scrollbar { width: 4px; }
-        .modal-scroll::-webkit-scrollbar-track { background: #1a1a1a; }
-        .modal-scroll::-webkit-scrollbar-thumb { background: #555; border-radius: 4px; }
-        /* Custom Scrollbar */
         .scroller::-webkit-scrollbar { width: 4px; }
-        .scroller::-webkit-scrollbar-track { background: #1a1a1a; }
-        .scroller::-webkit-scrollbar-thumb { background: #555; border-radius: 4px; }
-</style>
+        .scroller::-webkit-scrollbar-track { background: #111; }
+        .scroller::-webkit-scrollbar-thumb { background: #444; border-radius: 4px; }
+        .hidden { display: none; }
+    </style>
 </head>
 <body class="min-h-screen flex flex-col items-center justify-center p-4 relative overflow-hidden">
 
     <div class="fixed inset-0 -z-10">
-        <div class="absolute top-[-20%] left-[-10%] w-[500px] h-[500px] bg-amber-600/10 rounded-full blur-[120px]"></div>
-        <div class="absolute bottom-[-10%] right-[-10%] w-[400px] h-[400px] bg-yellow-600/5 rounded-full blur-[100px]"></div>
+        <div class="absolute top-[-10%] left-[-10%] w-[400px] h-[400px] bg-amber-600/10 rounded-full blur-[100px]"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[300px] h-[300px] bg-blue-600/5 rounded-full blur-[100px]"></div>
     </div>
-<body class="min-h-screen flex flex-col items-center justify-center p-4 relative">
 
-    <div id="loading" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/90 backdrop-blur-xl">
     <div id="loading" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/95">
-<div class="w-12 h-12 border-4 border-neutral-800 border-t-amber-500 rounded-full animate-spin mb-4"></div>
-        <p class="text-[10px] text-neutral-500 tracking-[0.2em] animate-pulse">SYNCHRONIZING DATA...</p>
-        <p class="text-[10px] text-neutral-500 tracking-widest animate-pulse">MEMUAT MISI HARIAN...</p>
-</div>
+        <div class="w-12 h-12 border-4 border-neutral-800 border-t-amber-500 rounded-full animate-spin mb-4"></div>
+        <p class="text-[10px] text-neutral-500 tracking-widest animate-pulse">MENGHUBUNGKAN DATA...</p>
+    </div>
 
-    <div id="dashboard" class="w-full max-w-sm hidden pb-20"> <div class="glass-card rounded-3xl p-5 mb-4 flex items-center justify-between relative">
-            <div class="flex items-center gap-3">
-                <div class="w-12 h-12 rounded-full bg-neutral-800 border border-amber-500/30 p-0.5 overflow-hidden flex-shrink-0">
-                    <img id="user-avatar" src="" class="w-full h-full rounded-full object-cover" alt="Profile">
-                </div>
     <div id="main-content" class="w-full max-w-md hidden pb-24">
         
-        <div class="glass-card rounded-3xl p-6 mb-6 text-center relative overflow-hidden">
-            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-amber-500 to-orange-600"></div>
-            <h1 class="text-2xl font-bold text-white mb-1">Daily Check-in</h1>
-            <p class="text-sm text-neutral-400">Day <span id="day-display" class="text-amber-500 font-bold">...</span></p>
+        <div class="glass-card rounded-3xl p-5 mb-4 flex items-center justify-between relative">
+            <div class="flex items-center gap-3">
+                <div class="w-14 h-14 rounded-full border-2 border-amber-500/30 p-0.5">
+                    <img id="user-avatar" src="" class="w-full h-full rounded-full object-cover bg-neutral-800" alt="Profile">
+                </div>
+                <div>
+                    <h2 id="user-name" class="font-bold text-white text-lg leading-tight truncate w-32">...</h2>
+                    <p id="user-kategori" class="text-[10px] text-amber-400 uppercase font-bold tracking-wider mb-1">...</p>
+                    <a href="https://wa.me/6281234567890?text=Halo%20Coach,%20saya%20mau%20tanya%20tentang%20program" target="_blank" class="inline-flex items-center gap-1 bg-green-900/40 hover:bg-green-800/60 border border-green-500/30 px-2 py-1 rounded-lg text-[10px] text-green-400 transition">
+                        <span>💬 Bantuan CS</span>
+                    </a>
+                </div>
+            </div>
+            <div class="text-right bg-black/20 p-2 rounded-xl border border-white/5 backdrop-blur-sm">
+                <p class="text-[8px] text-neutral-500 uppercase tracking-widest">STREAK</p>
+                <div class="text-2xl font-black text-white flex items-center justify-end gap-1 leading-none mt-1">
+                    <span id="user-streak">0</span> <span class="text-lg">🔥</span>
+                </div>
+            </div>
         </div>
 
-        <div id="quiz-section" class="glass-card rounded-3xl p-6 mb-6 hidden">
-            <div class="flex items-center gap-3 mb-4">
-                <span class="text-2xl">🩺</span>
-                <h3 class="text-sm font-bold text-white">Cek Kesehatan Berkala</h3>
-            </div>
-            <p class="text-xs text-neutral-400 mb-4">Karena ini hari ke-<span id="quiz-day-num"></span>, yuk evaluasi sebentar kondisi perutmu.</p>
-            
-            <form id="daily-form-quiz" class="space-y-5">
-<div>
-                    <h2 id="user-name" class="font-bold text-white text-lg leading-tight truncate w-32">...</h2>
-                    <div class="flex items-center gap-2 mt-1">
-                        <p id="user-kategori" class="text-[10px] text-amber-400 uppercase tracking-wider font-semibold">...</p>
-                        <a href="https://wa.me/6281234567890?text=Halo%20Admin,%20saya%20butuh%20bantuan%20soal%20program%20usus" target="_blank" class="bg-green-600 hover:bg-green-500 text-white p-1 px-2 rounded-full flex items-center gap-1 text-[10px] font-bold transition shadow-lg shadow-green-900/50">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
-                            CS
-                        </a>
-                    <label class="block text-xs text-neutral-300 mb-2 font-bold" id="q1-text">Pertanyaan 1...</label>
-                    <div class="grid grid-cols-2 gap-2">
-                        <label class="bg-white/5 p-3 rounded-xl text-center cursor-pointer hover:bg-white/10 border border-transparent hover:border-amber-500/50 transition">
-                            <input type="radio" name="q1" value="Ya" class="hidden peer">
-                            <span class="text-sm peer-checked:text-amber-500">Ya</span>
-                        </label>
-                        <label class="bg-white/5 p-3 rounded-xl text-center cursor-pointer hover:bg-white/10 border border-transparent hover:border-amber-500/50 transition">
-                            <input type="radio" name="q1" value="Tidak" class="hidden peer">
-                            <span class="text-sm peer-checked:text-amber-500">Tidak</span>
-                        </label>
-</div>
-</div>
-            </div>
-            <div class="text-right">
-                <div class="text-[8px] text-neutral-500 uppercase tracking-widest">Streak</div>
-                <div class="text-xl font-black text-white flex items-center justify-end gap-1">
-                    <span id="user-streak">0</span> <span class="text-base">🔥</span>
-
-                <div>
-                    <label class="block text-xs text-neutral-300 mb-2 font-bold" id="q2-text">Pertanyaan 2...</label>
-                    <div class="grid grid-cols-2 gap-2">
-                        <label class="bg-white/5 p-3 rounded-xl text-center cursor-pointer hover:bg-white/10 border border-transparent hover:border-amber-500/50 transition">
-                            <input type="radio" name="q2" value="Ya" class="hidden peer">
-                            <span class="text-sm peer-checked:text-amber-500">Ya</span>
-                        </label>
-                        <label class="bg-white/5 p-3 rounded-xl text-center cursor-pointer hover:bg-white/10 border border-transparent hover:border-amber-500/50 transition">
-                            <input type="radio" name="q2" value="Tidak" class="hidden peer">
-                            <span class="text-sm peer-checked:text-amber-500">Tidak</span>
-                        </label>
-                    </div>
-</div>
-            </div>
-
-                <button type="submit" id="btn-submit-quiz" class="w-full btn-glow text-black font-bold text-sm py-4 rounded-xl flex items-center justify-center gap-2 mt-4">
-                    KIRIM JAWABAN & CHECK-IN
-                </button>
-            </form>
-</div>
-
-        <div class="glass-card rounded-3xl p-6 mb-4 relative overflow-hidden">
-            <div class="absolute top-0 right-0 p-4 opacity-10"><svg class="w-32 h-32 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg></div>
-            <div class="flex items-center gap-6">
-                <div class="relative w-24 h-24 flex-shrink-0">
+        <div class="grid grid-cols-3 gap-3 mb-4">
+            <div class="col-span-1 glass-card rounded-2xl p-3 flex flex-col items-center justify-center text-center">
+                <div class="relative w-16 h-16 mb-2">
                     <svg class="w-full h-full" viewBox="0 0 36 36">
                         <path class="text-neutral-800" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-width="3" />
                         <path id="progress-ring" class="text-amber-500 circle-chart__circle" stroke-dasharray="0, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" />
                     </svg>
-                    <div class="absolute inset-0 flex flex-col items-center justify-center">
-                        <span id="progress-percent" class="text-xl font-bold text-white">0%</span>
-        <div id="normal-checkin-section" class="glass-card rounded-3xl p-6 mb-6 hidden">
-             <div class="flex items-center gap-3 mb-4">
-                <span class="text-2xl">📝</span>
-                <h3 class="text-sm font-bold text-white">Refleksi Harian</h3>
+                    <div class="absolute inset-0 flex items-center justify-center">
+                        <span id="progress-percent" class="text-xs font-bold text-white">0%</span>
+                    </div>
+                </div>
+                <p class="text-[9px] text-neutral-400 leading-tight">Total<br>Progress</p>
             </div>
             
-            <form id="daily-form-normal" class="space-y-5">
-                <div>
-                    <label class="block text-xs text-neutral-400 mb-2">Bagaimana kondisi perutmu hari ini?</label>
-                    <div class="grid grid-cols-2 gap-2">
-                        <label class="bg-white/5 p-3 rounded-xl text-center cursor-pointer hover:bg-white/10 border border-transparent hover:border-amber-500/50 transition">
-                            <input type="radio" name="normal_q1" value="Nyaman" class="hidden peer">
-                            <span class="text-sm peer-checked:text-amber-500">😊 Nyaman</span>
-                        </label>
-                        <label class="bg-white/5 p-3 rounded-xl text-center cursor-pointer hover:bg-white/10 border border-transparent hover:border-amber-500/50 transition">
-                            <input type="radio" name="normal_q1" value="Kurang Nyaman" class="hidden peer">
-                            <span class="text-sm peer-checked:text-amber-500">🤢 Kurang Enak</span>
-                        </label>
-</div>
-</div>
-
-<div>
-                    <p class="text-xs text-neutral-400 mb-1">Perjalanan Kesehatan</p>
-                    <h3 class="text-2xl font-bold text-white"><span id="day-current" class="text-gold">Day 0</span> <span class="text-base text-neutral-600">/ 30</span></h3>
-                    <p class="text-[10px] text-green-400 mt-1 flex items-center gap-1">
-                        <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span> Status Aktif
-                    </p>
-                    <label class="block text-xs text-neutral-400 mb-2">Tantangan makan terlaksana?</label>
-                    <div class="grid grid-cols-2 gap-2">
-                        <label class="bg-white/5 p-3 rounded-xl text-center cursor-pointer hover:bg-white/10 border border-transparent hover:border-amber-500/50 transition">
-                            <input type="radio" name="normal_q2" value="Ya" class="hidden peer">
-                            <span class="text-sm peer-checked:text-amber-500">✅ Berhasil</span>
-                        </label>
-                        <label class="bg-white/5 p-3 rounded-xl text-center cursor-pointer hover:bg-white/10 border border-transparent hover:border-amber-500/50 transition">
-                            <input type="radio" name="normal_q2" value="Tidak" class="hidden peer">
-                            <span class="text-sm peer-checked:text-amber-500">❌ Belum</span>
-                        </label>
+            <div class="col-span-2 glass-card rounded-2xl p-4 relative">
+                <h3 class="text-[10px] font-bold text-neutral-400 uppercase mb-2 border-b border-white/10 pb-1">Perjalanan Kesehatan</h3>
+                <div class="space-y-0 overflow-y-auto max-h-24 scroller pr-1" id="timeline-container">
+                    <div class="timeline-item relative pl-6 pb-4 group" id="phase-1">
+                        <div class="timeline-line"></div>
+                        <div class="absolute left-0 top-1 w-2 h-2 rounded-full bg-neutral-700 dot transition-colors"></div>
+                        <div><h4 class="text-[10px] font-bold text-neutral-500 title">Detoksifikasi (1-10)</h4></div>
                     </div>
-</div>
+                    <div class="timeline-item relative pl-6 pb-4 group" id="phase-2">
+                        <div class="timeline-line"></div>
+                        <div class="absolute left-0 top-1 w-2 h-2 rounded-full bg-neutral-700 dot transition-colors"></div>
+                        <div><h4 class="text-[10px] font-bold text-neutral-500 title">Regenerasi (11-20)</h4></div>
+                    </div>
+                    <div class="timeline-item relative pl-6 group" id="phase-3">
+                        <div class="absolute left-0 top-1 w-2 h-2 rounded-full bg-neutral-700 dot transition-colors"></div>
+                        <div><h4 class="text-[10px] font-bold text-neutral-500 title">Optimalisasi (21-30)</h4></div>
+                    </div>
+                </div>
             </div>
         </div>
 
         <div id="daily-insight" class="glass-card p-4 rounded-2xl mb-4 hidden">
-            <h4 class="text-xs font-bold text-amber-500 mb-1 flex items-center gap-2">
-                <span>💡</span> TIPS HARI INI
-            </h4>
-            <p id="insight-text" class="text-xs text-neutral-300 leading-relaxed italic">
-                "Minum air hangat di pagi hari membantu melancarkan pencernaanmu."
-            </p>
+            <h4 class="text-xs font-bold text-amber-500 mb-1 flex items-center gap-2"><span>💡</span> TIPS HARI INI</h4>
+            <p id="insight-text" class="text-xs text-neutral-300 leading-relaxed italic">...</p>
         </div>
 
         <div class="grid grid-cols-2 gap-3 mb-6">
@@ -184,140 +108,141 @@ body { font-family: 'Plus Jakarta Sans', sans-serif; background: #020202; color:
                 <div class="bg-blue-500/20 p-2 rounded-lg text-xl mb-1">📜</div>
                 <h4 class="text-xs font-bold text-white">History Quiz</h4>
             </button>
-                <button type="submit" id="btn-submit-normal" class="w-full btn-glow text-black font-bold text-sm py-4 rounded-xl flex items-center justify-center gap-2 mt-4">
-                    KIRIM & CHECK-IN
-                </button>
+        </div>
+
+        <div class="glass-card rounded-3xl p-6 border-t-4 border-amber-500">
+            <div class="text-center mb-4">
+                <p class="text-xs text-neutral-400">Tantangan Hari Ini</p>
+                <h2 class="text-2xl font-bold text-white">DAY <span id="day-current-form">...</span></h2>
+            </div>
+
+            <form id="daily-form-quiz" class="space-y-4 hidden">
+                <div class="bg-white/5 p-3 rounded-xl">
+                    <p class="text-xs text-neutral-300 mb-2 font-bold" id="q1-text">...</p>
+                    <div class="grid grid-cols-2 gap-2">
+                        <label class="bg-black/20 p-2 rounded-lg text-center cursor-pointer hover:bg-white/5 transition border border-transparent peer-checked:border-amber-500">
+                            <input type="radio" name="q1" value="Ya" class="hidden peer">
+                            <span class="text-xs peer-checked:text-amber-400">Ya</span>
+                        </label>
+                        <label class="bg-black/20 p-2 rounded-lg text-center cursor-pointer hover:bg-white/5 transition border border-transparent peer-checked:border-amber-500">
+                            <input type="radio" name="q1" value="Tidak" class="hidden peer">
+                            <span class="text-xs peer-checked:text-amber-400">Tidak</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="bg-white/5 p-3 rounded-xl">
+                    <p class="text-xs text-neutral-300 mb-2 font-bold" id="q2-text">...</p>
+                    <div class="grid grid-cols-2 gap-2">
+                        <label class="bg-black/20 p-2 rounded-lg text-center cursor-pointer hover:bg-white/5 transition border border-transparent peer-checked:border-amber-500">
+                            <input type="radio" name="q2" value="Ya" class="hidden peer">
+                            <span class="text-xs peer-checked:text-amber-400">Ya</span>
+                        </label>
+                        <label class="bg-black/20 p-2 rounded-lg text-center cursor-pointer hover:bg-white/5 transition border border-transparent peer-checked:border-amber-500">
+                            <input type="radio" name="q2" value="Tidak" class="hidden peer">
+                            <span class="text-xs peer-checked:text-amber-400">Tidak</span>
+                        </label>
+                    </div>
+                </div>
+                <button type="submit" id="btn-submit-quiz" class="w-full btn-glow text-black font-bold text-sm py-4 rounded-xl flex items-center justify-center gap-2 mt-2">KIRIM & CHECK-IN</button>
             </form>
-</div>
 
-        
-<div class="glass-card rounded-3xl p-6 mb-6">
-<h3 class="text-sm font-bold text-white mb-4 border-b border-white/10 pb-2">Milestones Pencernaan</h3>
-            <div class="space-y-0" id="timeline-container">
-            <div class="space-y-0 overflow-y-auto max-h-40 scroller pr-2" id="timeline-container">
-<div class="timeline-item relative pl-8 pb-6 group" id="phase-1">
-<div class="timeline-line"></div>
-<div class="absolute left-0 top-1 w-8 h-8 flex items-center justify-center"><div class="w-3 h-3 rounded-full bg-neutral-700 border-2 border-neutral-900 z-10 transition-colors dot"></div></div>
-@@ -123,263 +137,159 @@ <h3 class="text-sm font-bold text-white mb-4 border-b border-white/10 pb-2">Mile
-</div>
-</div>
-
-        <button id="btn-checkin" class="w-full btn-glow text-black font-bold text-sm py-4 rounded-2xl flex items-center justify-center gap-2 transform active:scale-95 transition-transform fixed bottom-6 left-0 right-0 max-w-sm mx-auto shadow-2xl z-40">
-            <span>KONFIRMASI TANTANGAN HARI INI</span>
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
-        </button>
+            <form id="daily-form-normal" class="space-y-4">
+                <div class="bg-white/5 p-3 rounded-xl">
+                    <p class="text-xs text-neutral-300 mb-2 font-bold">Bagaimana perutmu hari ini?</p>
+                    <div class="grid grid-cols-2 gap-2">
+                        <label class="bg-black/20 p-2 rounded-lg text-center cursor-pointer hover:bg-white/5 transition border border-transparent peer-checked:border-amber-500">
+                            <input type="radio" name="normal_q1" value="Nyaman" class="hidden peer">
+                            <span class="text-xs peer-checked:text-amber-400">😊 Nyaman</span>
+                        </label>
+                        <label class="bg-black/20 p-2 rounded-lg text-center cursor-pointer hover:bg-white/5 transition border border-transparent peer-checked:border-amber-500">
+                            <input type="radio" name="normal_q1" value="Kurang Nyaman" class="hidden peer">
+                            <span class="text-xs peer-checked:text-amber-400">🤢 Kurang Enak</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="bg-white/5 p-3 rounded-xl">
+                    <p class="text-xs text-neutral-300 mb-2 font-bold">Tantangan makan terlaksana?</p>
+                    <div class="grid grid-cols-2 gap-2">
+                        <label class="bg-black/20 p-2 rounded-lg text-center cursor-pointer hover:bg-white/5 transition border border-transparent peer-checked:border-amber-500">
+                            <input type="radio" name="normal_q2" value="Ya" class="hidden peer">
+                            <span class="text-xs peer-checked:text-amber-400">✅ Berhasil</span>
+                        </label>
+                        <label class="bg-black/20 p-2 rounded-lg text-center cursor-pointer hover:bg-white/5 transition border border-transparent peer-checked:border-amber-500">
+                            <input type="radio" name="normal_q2" value="Tidak" class="hidden peer">
+                            <span class="text-xs peer-checked:text-amber-400">❌ Belum</span>
+                        </label>
+                    </div>
+                </div>
+                <button type="submit" id="btn-submit-normal" class="w-full btn-glow text-black font-bold text-sm py-4 rounded-xl flex items-center justify-center gap-2 mt-2">KIRIM & CHECK-IN</button>
+            </form>
+        </div>
 
     </div>
 
-    <div id="history-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/95 hidden transition-opacity p-4">
+    <div id="history-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/95 hidden p-4 transition-opacity">
         <div class="glass-card p-6 rounded-3xl w-full max-w-sm h-3/4 flex flex-col relative">
             <button onclick="document.getElementById('history-modal').classList.add('hidden')" class="absolute top-4 right-4 text-neutral-400 hover:text-white">✕</button>
             <h2 class="text-lg font-bold text-white mb-4 flex items-center gap-2"><span>📜</span> Riwayat Perjalanan</h2>
-            
             <div class="flex-1 overflow-y-auto modal-scroll space-y-3" id="history-content">
-                <p class="text-xs text-neutral-500 text-center mt-10">Belum ada data quiz tersimpan.</p>
+                <p class="text-xs text-neutral-500 text-center mt-10">Belum ada riwayat check-in.</p>
             </div>
-        <div class="text-center">
-            <a href="#" id="link-laporan" class="text-xs text-neutral-500 underline hover:text-amber-500 transition">Lihat Laporan Lengkap Saya</a>
-</div>
+        </div>
     </div>
 
-    <div id="question-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/95 hidden transition-opacity">
-        <div class="glass-card p-6 rounded-3xl text-center max-w-xs mx-4 border border-amber-500/20 w-full">
-            <div class="text-4xl mb-4">🩺</div>
-            <h2 class="text-lg font-bold text-white mb-2">Cek Kesehatan Harian</h2>
-            <p class="text-neutral-400 text-xs mb-6">Jawab jujur ya, agar kami bisa pantau kondisi ususmu.</p>
-            <form id="health-form" class="space-y-4 text-left">
-                <div>
-                    <label class="block text-xs text-amber-500 font-bold mb-2" id="q1-text">Pertanyaan 1...</label>
-                    <div class="flex gap-2">
-                        <label class="flex-1 bg-white/10 p-2 rounded-lg text-xs text-center cursor-pointer hover:bg-amber-500/20 transition"><input type="radio" name="q1" value="Ya" class="hidden"> Ya</label>
-                        <label class="flex-1 bg-white/10 p-2 rounded-lg text-xs text-center cursor-pointer hover:bg-amber-500/20 transition"><input type="radio" name="q1" value="Tidak" class="hidden"> Tidak</label>
-                    </div>
-                </div>
-                <div>
-                    <label class="block text-xs text-amber-500 font-bold mb-2" id="q2-text">Pertanyaan 2...</label>
-                    <div class="flex gap-2">
-                        <label class="flex-1 bg-white/10 p-2 rounded-lg text-xs text-center cursor-pointer hover:bg-amber-500/20 transition"><input type="radio" name="q2" value="Ya" class="hidden"> Ya</label>
-                        <label class="flex-1 bg-white/10 p-2 rounded-lg text-xs text-center cursor-pointer hover:bg-amber-500/20 transition"><input type="radio" name="q2" value="Tidak" class="hidden"> Tidak</label>
-                    </div>
-                </div>
-                <button type="submit" class="w-full bg-gradient-to-r from-amber-600 to-amber-700 text-white font-bold py-3 rounded-xl mt-4 text-xs">KIRIM & CHECK-IN</button>
-            </form>
-        </div>
-</div>
-
     <div id="success-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/95 hidden transition-opacity">
-        <div class="glass-card p-8 rounded-3xl text-center max-w-xs mx-4 border border-amber-500/20">
-            <div class="text-6xl mb-4 animate-bounce">🎯</div>
-            <h2 class="text-2xl font-bold text-white mb-2">Luar Biasa!</h2>
-            <p class="text-neutral-300 text-xs mb-6 leading-relaxed">Kamu selangkah lebih dekat dengan tubuh yang lebih sehat.</p>
-            
-            <div id="success-insight" class="bg-white/10 p-4 rounded-xl text-left mb-6 hidden">
-                <h4 class="text-xs font-bold text-amber-400 mb-1">💡 Tips Untukmu:</h4>
-                <p class="text-[10px] text-neutral-300 italic" id="success-tip-text">...</p>
-            </div>
-
-            <button onclick="window.location.href='https://wa.me/'" class="bg-neutral-800 hover:bg-neutral-700 text-white py-3 w-full rounded-xl font-bold text-sm border border-white/10">Buka WhatsApp</button>
-    <div id="success-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/95 hidden">
         <div class="glass-card p-8 rounded-3xl text-center max-w-xs border border-green-500/30">
             <div class="text-5xl mb-4 animate-bounce">🎉</div>
             <h2 class="text-xl font-bold text-white mb-2">Check-in Berhasil!</h2>
-            <p class="text-xs text-neutral-400 mb-6">Data kesehatan hari ini telah tersimpan di laporanmu.</p>
+            <p class="text-xs text-neutral-400 mb-6">Data kesehatan hari ini telah tersimpan.</p>
+            
+            <div id="success-insight" class="bg-white/10 p-4 rounded-xl text-left mb-6 hidden">
+                <h4 class="text-xs font-bold text-amber-400 mb-1">💡 Solusi Untukmu:</h4>
+                <p class="text-[10px] text-neutral-300 italic leading-relaxed" id="success-tip-text">...</p>
+            </div>
+
             <button onclick="window.location.href='https://wa.me/'" class="bg-neutral-800 w-full py-3 rounded-xl text-xs font-bold text-white border border-white/10">Kembali ke WhatsApp</button>
-</div>
-</div>
+        </div>
+    </div>
 
-<script>
-        // ⚠️ PASTE URL SCRIPT ANDA DISINI
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz60TyDP9sE1JGXJJ9RZtvinrcQlOH-_UDRi2-baMbNHve1OjMfKRA0w-VI4xoLRQuY/exec';
-        const REPORT_PAGE_URL = "laporan.html"; 
-        const urlParams = new URLSearchParams(window.location.search);
-        const waNumber = urlParams.get('wa');
-
-        let userCurrentDay = 0;
-        let userKategoriRaw = "";
-
-        // --- DATA DUMMY HISTORY (Nanti bisa diganti API real) ---
-        let userHistoryData = []; 
+    <script>
+        // ⚠️ PASTE URL SCRIPT ANDA DISINI (PASTIKAN DEPLOY SEBAGAI 'ANYONE')
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz60TyDP9sE1JGXJJ9RZtvinrcQlOH-_UDRi2-baMbNHve1OjMfKRA0w-VI4xoLRQuY/exec';
+        
         const REPORT_PAGE = "laporan.html";
         const urlParams = new URLSearchParams(window.location.search);
         const wa = urlParams.get('wa');
 
-        // DATABASE PERTANYAAN (Dinamis per 6 Hari)
-const questionsDB = {
-            'A': { // Sembelit
-                6:  ['Apakah BAB hari ini sudah lancar tanpa mengejan?', 'Apakah perut terasa lebih ringan?'],
+        let userCurrentDay = 0;
+        let userKategoriRaw = "";
+        let userHistoryData = [];
+
+        // DATABASE PERTANYAAN
+        const questionsDB = {
             'A': { 
                 6: ['Apakah buang air besar masih keras?', 'Apakah masih terasa mengejan saat BAB?'],
-12: ['Apakah konsistensi BAB sudah lunak?', 'Apakah sudah minum 2 liter air hari ini?'],
-18: ['Apakah sudah bisa BAB rutin setiap pagi?', 'Apakah rasa begah sudah hilang total?'],
-24: ['Apakah merasa energi lebih stabil?', 'Apakah pencernaan terasa normal kembali?']
-},
-            'B': { // Kembung
-                6:  ['Apakah frekuensi sendawa berkurang?', 'Apakah perut masih terasa keras?'],
+                12: ['Apakah konsistensi BAB sudah lunak?', 'Apakah sudah minum 2 liter air hari ini?'],
+                18: ['Apakah sudah bisa BAB rutin setiap pagi?', 'Apakah rasa begah sudah hilang total?'],
+                24: ['Apakah merasa energi lebih stabil?', 'Apakah pencernaan terasa normal kembali?']
+            },
             'B': { 
                 6: ['Apakah perut terasa kembung/begah?', 'Apakah sering bersendawa hari ini?'],
-12: ['Apakah rasa penuh setelah makan berkurang?', 'Apakah sudah menghindari makanan pemicu gas?'],
-18: ['Apakah perut terasa nyaman saat bangun tidur?', 'Apakah lingkar perut terasa mengecil?'],
-24: ['Apakah kembung sudah jarang muncul?', 'Apakah pencernaan terasa lebih tenang?']
-},
-            'C': { // Sensitif
-                6:  ['Apakah rasa mual/perih berkurang?', 'Apakah tidur lebih nyenyak semalam?'],
+                12: ['Apakah rasa penuh setelah makan berkurang?', 'Apakah sudah menghindari makanan pemicu gas?'],
+                18: ['Apakah perut terasa nyaman saat bangun tidur?', 'Apakah lingkar perut terasa mengecil?'],
+                24: ['Apakah kembung sudah jarang muncul?', 'Apakah pencernaan terasa lebih tenang?']
+            },
             'C': { 
                 6: ['Apakah ada rasa perih/mual di perut?', 'Apakah perut terasa sensitif setelah makan?'],
-12: ['Apakah sudah tidak ada sensasi panas di dada?', 'Apakah makan pedas masih memicu sakit?'],
-18: ['Apakah nafsu makan sudah kembali normal?', 'Apakah rasa pahit di mulut hilang?'],
-24: ['Apakah pencernaan terasa kuat kembali?', 'Apakah mood menjadi lebih baik?']
-},
-'Seimbang': { 
-                6:  ['Apakah tubuh terasa lebih bugar?', 'Apakah pola makan terjaga?'],
+                12: ['Apakah sudah tidak ada sensasi panas di dada?', 'Apakah makan pedas masih memicu sakit?'],
+                18: ['Apakah nafsu makan sudah kembali normal?', 'Apakah rasa pahit di mulut hilang?'],
+                24: ['Apakah pencernaan terasa kuat kembali?', 'Apakah mood menjadi lebih baik?']
+            },
+            'Seimbang': { 
                 6: ['Apakah pencernaan terasa nyaman?', 'Apakah pola makan terjaga hari ini?'],
-12: ['Apakah tidur lebih berkualitas?', 'Apakah olahraga rutin dilakukan?'],
-18: ['Apakah kulit terasa lebih bersih?', 'Apakah konsentrasi meningkat?'],
-24: ['Apakah merasa lebih sehat secara keseluruhan?', 'Apakah siap melanjutkan pola hidup ini?']
-}
-};
+                12: ['Apakah tidur lebih berkualitas?', 'Apakah olahraga rutin dilakukan?'],
+                18: ['Apakah kulit terasa lebih bersih?', 'Apakah konsentrasi meningkat?'],
+                24: ['Apakah merasa lebih sehat secara keseluruhan?', 'Apakah siap melanjutkan pola hidup ini?']
+            }
+        };
 
         const tipsDB = {
             'A': ["Perbanyak serat dari pepaya dan naga.", "Minum air hangat saat bangun tidur.", "Hindari menahan keinginan BAB.", "Jalan kaki 15 menit membantu usus bergerak."],
@@ -326,136 +251,169 @@ const questionsDB = {
             'Seimbang': ["Pertahankan pola makan sehatmu!", "Coba variasi buah-buahan baru.", "Tidur cukup 7-8 jam.", "Rutin olahraga ringan."]
         };
 
-window.onload = function() {
-            if (!waNumber) { alert("Link Error. Silakan buka dari WhatsApp."); return; }
-            document.getElementById('btn-to-report').href = `${REPORT_PAGE_URL}?wa=${encodeURIComponent(waNumber)}`;
-            if(!wa) { alert("Akses ditolak. Buka dari link WhatsApp."); return; }
-            
-            document.getElementById('link-laporan').href = `${REPORT_PAGE}?wa=${wa}`;
+        // --- 1. LOAD DATA ---
+        window.onload = function() {
+            if(!wa) { 
+                document.getElementById('loading').innerHTML = '<p class="text-red-500 font-bold">Link Salah. Buka dari WhatsApp.</p>';
+                return; 
+            }
+            document.getElementById('btn-to-report').href = `${REPORT_PAGE}?wa=${wa}`;
 
-            fetch(`${SCRIPT_URL}?action=getData&wa=${encodeURIComponent(waNumber)}`)
             fetch(`${SCRIPT_URL}?action=getData&wa=${wa}`)
-.then(res => res.json())
-.then(data => {
-                if (data.status === 'success') {
+            .then(res => res.json())
+            .then(data => {
+                if(data.status === 'success'){
+                    // A. Populate UI
                     userCurrentDay = parseInt(data.hari);
-                    userKategoriRaw = data.kategori; 
-                    
-                    // Simpan history log checkin untuk modal history
+                    userKategoriRaw = data.kategori;
+                    const checkinDay = userCurrentDay + 1;
                     if(data.checkin_log) userHistoryData = data.checkin_log;
 
                     document.getElementById('user-name').innerText = data.nama;
-                    document.getElementById('user-kategori').innerText = "KATEGORI: " + data.kategori.toUpperCase();
-                    document.getElementById('user-streak').innerText = data.hari; 
-                    document.getElementById('day-current').innerText = "Day " + data.hari;
+                    document.getElementById('user-kategori').innerText = data.kategori.toUpperCase();
+                    document.getElementById('user-streak').innerText = data.hari;
+                    document.getElementById('day-current').innerText = data.hari;
+                    document.getElementById('day-current-form').innerText = checkinDay;
                     document.getElementById('user-avatar').src = `https://api.dicebear.com/7.x/notionists/svg?seed=${data.nama}`;
-                if(data.status === 'success'){
-                    const currentDay = parseInt(data.hari); 
-                    const checkinDay = currentDay + 1; 
-
-                    const percent = data.progress;
-                    document.getElementById('progress-percent').innerText = percent + "%";
-                    setTimeout(() => { document.getElementById('progress-ring').style.strokeDasharray = `${percent}, 100`; }, 500);
-
-                    updateTimeline(data.hari);
-                    showDailyInsight(); // Tampilkan tips harian
-                    document.getElementById('day-display').innerText = checkinDay;
                     
-                    // --- LOGIKA TAMPILAN (QUIZ vs NORMAL) ---
+                    document.getElementById('progress-percent').innerText = data.progress + "%";
+                    setTimeout(() => { document.getElementById('progress-ring').style.strokeDasharray = `${data.progress}, 100`; }, 500);
+
+                    // B. Setup Features
+                    updateTimeline(data.hari);
+                    showDailyInsight();
+                    
+                    // C. Logic Form
                     if (checkinDay > 0 && checkinDay % 6 === 0 && checkinDay < 30) {
-                        setupQuiz(data.kategori, checkinDay);
+                        setupQuestionForm(checkinDay);
                         document.getElementById('quiz-section').classList.remove('hidden');
+                        document.getElementById('daily-form-quiz').classList.remove('hidden');
                     } else {
                         document.getElementById('normal-checkin-section').classList.remove('hidden');
+                        document.getElementById('daily-form-normal').classList.remove('hidden');
                     }
-                    
-                    // Update Timeline Visual
-                    updateTimeline(checkinDay);
 
-document.getElementById('loading').classList.add('hidden');
-                    document.getElementById('dashboard').classList.remove('hidden');
-                } else { alert("Data user tidak ditemukan."); }
-            })
-            .catch(err => { document.getElementById('loading').innerHTML = '<p class="text-red-500 text-xs">Gagal memuat data.</p>'; });
+                    document.getElementById('loading').classList.add('hidden');
                     document.getElementById('main-content').classList.remove('hidden');
-                } else { alert("User tidak ditemukan"); }
+                } else { alert("Data User Tidak Ditemukan."); }
+            })
+            .catch(err => { 
+                console.error(err);
+                document.getElementById('loading').innerHTML = '<p class="text-red-500 text-xs font-bold text-center px-4">Gagal koneksi ke server.<br>Pastikan Script Deploy ke "Anyone".</p>'; 
             });
-};
+        };
 
-        
-function updateTimeline(day) {
-const phases = [
-                { id: 'phase-1', min: 1, color: 'text-green-400' },
-                { id: 'phase-2', min: 11, color: 'text-blue-400' },
-                { id: 'phase-3', min: 21, color: 'text-amber-400' }
-                { id: 'phase-1', min: 1 },
-                { id: 'phase-2', min: 11 },
-                { id: 'phase-3', min: 21 }
-];
-phases.forEach(phase => {
-const el = document.getElementById(phase.id);
-const dot = el.querySelector('.dot');
-const title = el.querySelector('.title');
-                
-if (day >= phase.min) {
+        function updateTimeline(day) {
+            const phases = [
+                { id: 'phase-1', min: 1 }, { id: 'phase-2', min: 11 }, { id: 'phase-3', min: 21 }
+            ];
+            phases.forEach(phase => {
+                const el = document.getElementById(phase.id);
+                const dot = el.querySelector('.dot');
+                const title = el.querySelector('.title');
+                if (day >= phase.min) {
                     el.classList.add('active');
-                    dot.classList.remove('bg-neutral-700', 'border-neutral-900');
-                    dot.classList.add('bg-amber-500', 'border-amber-900', 'shadow-[0_0_10px_#f59e0b]');
-                    title.classList.remove('text-neutral-500');
-                    title.classList.add('text-white');
-                    el.classList.add('active'); 
                     dot.classList.replace('bg-neutral-700', 'bg-amber-500');
                     title.classList.replace('text-neutral-500', 'text-white');
-}
-});
-}
+                }
+            });
+        }
 
-        // Tampilkan Tips Harian di Dashboard
         function showDailyInsight() {
-        function setupQuiz(kategoriRaw, day) {
-let code = 'Seimbang';
+            let code = 'Seimbang';
             if (userKategoriRaw.includes('Sembelit')) code = 'A';
             else if (userKategoriRaw.includes('Kembung')) code = 'B';
             else if (userKategoriRaw.includes('Sensitif')) code = 'C';
-            if (kategoriRaw.includes('Sembelit')) code = 'A';
-            else if (kategoriRaw.includes('Kembung')) code = 'B';
-            else if (kategoriRaw.includes('Sensitif')) code = 'C';
-
-            // Ambil tips acak atau berdasarkan hari
             const tipsList = tipsDB[code];
             const tip = tipsList[userCurrentDay % tipsList.length];
-            const qSet = questionsDB[code][day] || questionsDB['Seimbang'][day] || questionsDB['Seimbang'][6];
-
             document.getElementById('insight-text').innerText = `"${tip}"`;
             document.getElementById('daily-insight').classList.remove('hidden');
+        }
+
+        function setupQuestionForm(day) {
+            let code = 'Seimbang';
+            if (userKategoriRaw.includes('Sembelit')) code = 'A';
+            else if (userKategoriRaw.includes('Kembung')) code = 'B';
+            else if (userKategoriRaw.includes('Sensitif')) code = 'C';
+            
+            const qSet = questionsDB[code][day] || questionsDB['Seimbang'][day] || questionsDB['Seimbang'][6];
             document.getElementById('quiz-day-num').innerText = day;
             document.getElementById('q1-text').innerText = "1. " + qSet[0];
             document.getElementById('q2-text').innerText = "2. " + qSet[1];
-}
+        }
 
-        // Buka Modal History (View All)
-        window.openHistoryModal = function() {
-            const container = document.getElementById('history-content');
-            container.innerHTML = ''; // Clear old
-        // --- HANDLER CHECK-IN QUIZ ---
+        // --- SUBMIT QUIZ ---
         document.getElementById('daily-form-quiz').addEventListener('submit', function(e){
             e.preventDefault();
             const q1 = document.querySelector('input[name="q1"]:checked')?.value;
             const q2 = document.querySelector('input[name="q2"]:checked')?.value;
+            if(!q1 || !q2) { alert("Mohon jawab kedua pertanyaan."); return; }
+            const detail = `Quiz: ${q1}, ${q2}`;
+            doCheckin(document.getElementById('btn-submit-quiz'), detail, true);
+        });
 
+        // --- SUBMIT NORMAL ---
+        document.getElementById('daily-form-normal').addEventListener('submit', function(e){
+            e.preventDefault();
+            const q1 = document.querySelector('input[name="normal_q1"]:checked')?.value;
+            const q2 = document.querySelector('input[name="normal_q2"]:checked')?.value;
+            if(!q1 || !q2) { alert("Mohon isi refleksi harian."); return; }
+            
+            const detail = `Perut: ${q1} | Tantangan: ${q2}`;
+            const hasIssue = (q1 === 'Kurang Nyaman' || q2 === 'Tidak');
+            doCheckin(document.getElementById('btn-submit-normal'), detail, hasIssue);
+        });
+
+        function doCheckin(btnElement, detailJawaban, hasIssue) {
+            btnElement.innerHTML = "MENYIMPAN...";
+            btnElement.disabled = true;
+
+            fetch(`${SCRIPT_URL}?action=checkin&whatsapp=${encodeURIComponent(wa)}&detail=${encodeURIComponent(detailJawaban)}`, { method: 'POST', mode: 'no-cors' })
+            .then(() => {
+                setTimeout(() => {
+                    const modal = document.getElementById('success-modal');
+                    modal.classList.remove('hidden');
+
+                    if(hasIssue) {
+                        let code = 'Seimbang';
+                        if (userKategoriRaw.includes('Sembelit')) code = 'A';
+                        else if (userKategoriRaw.includes('Kembung')) code = 'B';
+                        else if (userKategoriRaw.includes('Sensitif')) code = 'C';
+
+                        let aiSolution = "Istirahat yang cukup dan perbanyak air putih ya.";
+                        if (code === 'A') aiSolution = "Coba tambah porsi serat malam ini dan minum air hangat.";
+                        else if (code === 'B') aiSolution = "Hindari makan terlalu cepat dan kurangi makanan bergas.";
+                        else if (code === 'C') aiSolution = "Makan bubur atau makanan lunak dulu untuk menenangkan perut.";
+
+                        document.getElementById('success-tip-text').innerText = aiSolution;
+                        document.getElementById('success-insight').classList.remove('hidden');
+                    } else {
+                        document.getElementById('success-insight').classList.add('hidden');
+                    }
+                }, 1000); 
+            })
+            .catch(() => {
+                alert("Gagal koneksi. Coba lagi.");
+                btnElement.disabled = false;
+                btnElement.innerHTML = "COBA LAGI";
+            });
+        }
+
+        // --- HISTORY ---
+        window.openHistoryModal = function() {
+            const container = document.getElementById('history-content');
+            container.innerHTML = ''; 
             if(userHistoryData.length === 0) {
                 container.innerHTML = '<p class="text-xs text-neutral-500 text-center mt-10">Belum ada riwayat check-in.</p>';
             } else {
-                // Render List
                 userHistoryData.forEach(item => {
-                    // item.hari = "Day X", item.tanggal = "DD MMM"
                     const html = `
-                        <div class="bg-white/5 p-3 rounded-xl border border-white/5 flex justify-between items-center">
+                        <div class="bg-white/5 p-3 rounded-xl border border-white/5 flex justify-between items-center mb-2">
                             <div>
                                 <p class="text-xs font-bold text-white">${item.hari}</p>
                                 <p class="text-[10px] text-neutral-500">${item.tanggal}</p>
                             </div>
-                            <span class="text-green-500 text-xs font-bold">✅ Selesai</span>
+                            <span class="text-neutral-400 text-[10px] italic max-w-[120px] text-right truncate">${item.detail || 'Selesai'}</span>
                         </div>
                     `;
                     container.insertAdjacentHTML('beforeend', html);
@@ -463,88 +421,6 @@ let code = 'Seimbang';
             }
             document.getElementById('history-modal').classList.remove('hidden');
         }
-            if(!q1 || !q2) { alert("Mohon jawab kedua pertanyaan."); return; }
-
-        document.getElementById('btn-checkin').addEventListener('click', function() {
-            const btn = this;
-            const nextDay = userCurrentDay + 1;
-            if (nextDay > 0 && nextDay % 6 === 0 && nextDay < 30) {
-                showQuizModal(nextDay);
-            } else {
-                processCheckin(btn);
-            }
-            // Kirim Jawaban Quiz
-            const detail = `Quiz: ${q1}, ${q2}`;
-            doCheckin(document.getElementById('btn-submit-quiz'), detail);
-});
-
-        function showQuizModal(dayTarget) {
-            let code = 'Seimbang';
-            if (userKategoriRaw.includes('Sembelit')) code = 'A';
-            else if (userKategoriRaw.includes('Kembung')) code = 'B';
-            else if (userKategoriRaw.includes('Sensitif')) code = 'C';
-
-            const qSet = questionsDB[code][dayTarget] || questionsDB['Seimbang'][dayTarget] || questionsDB['Seimbang'][6];
-            document.getElementById('q1-text').innerText = qSet[0];
-            document.getElementById('q2-text').innerText = qSet[1];
-            document.getElementById('question-modal').classList.remove('hidden');
-        }
-
-        document.getElementById('health-form').addEventListener('submit', function(e) {
-        // --- HANDLER CHECK-IN NORMAL ---
-        document.getElementById('daily-form-normal').addEventListener('submit', function(e){
-e.preventDefault();
-            const q1Val = document.querySelector('input[name="q1"]:checked');
-            const q2Val = document.querySelector('input[name="q2"]:checked');
-            if (!q1Val || !q2Val) { alert("Harap jawab kedua pertanyaan ya!"); return; }
-            const q1 = document.querySelector('input[name="normal_q1"]:checked')?.value;
-            const q2 = document.querySelector('input[name="normal_q2"]:checked')?.value;
-
-            document.getElementById('question-modal').classList.add('hidden');
-            processCheckin(document.getElementById('btn-checkin'), true); // true = from quiz
-            if(!q1 || !q2) { alert("Mohon isi refleksi harian."); return; }
-
-            // Kirim Jawaban Normal
-            const detail = `Perut: ${q1} | Tantangan: ${q2}`;
-            doCheckin(document.getElementById('btn-submit-normal'), detail);
-});
-
-        function processCheckin(btnElement, fromQuiz = false) {
-            btnElement.innerHTML = '<span class="animate-pulse">Loading...</span>';
-        function doCheckin(btnElement, detailJawaban) {
-            btnElement.innerHTML = "MENYIMPAN...";
-btnElement.disabled = true;
-
-            fetch(SCRIPT_URL + '?action=checkin&whatsapp=' + encodeURIComponent(waNumber), { method: 'POST', mode: 'no-cors' })
-            .then(() => { 
-                setTimeout(() => { 
-                    const modal = document.getElementById('success-modal');
-                    modal.classList.remove('hidden');
-                    
-                    // Tampilkan Tips Spesifik di Modal Sukses
-                    if(fromQuiz) {
-                        let code = 'Seimbang';
-                        if (userKategoriRaw.includes('Sembelit')) code = 'A';
-                        else if (userKategoriRaw.includes('Kembung')) code = 'B';
-                        else if (userKategoriRaw.includes('Sensitif')) code = 'C';
-                        
-                        const tipsList = tipsDB[code];
-                        const tip = tipsList[Math.floor(Math.random() * tipsList.length)];
-                        
-                        document.getElementById('success-tip-text').innerText = tip;
-                        document.getElementById('success-insight').classList.remove('hidden');
-                    }
-                }, 800); 
-            fetch(`${SCRIPT_URL}?action=checkin&whatsapp=${encodeURIComponent(wa)}&detail=${encodeURIComponent(detailJawaban)}`, { method: 'POST', mode: 'no-cors' })
-            .then(() => {
-                document.getElementById('success-modal').classList.remove('hidden');
-})
-            .catch(() => { btnElement.innerHTML = "Gagal. Coba Lagi"; btnElement.disabled = false; });
-            .catch(() => {
-                alert("Gagal koneksi.");
-                btnElement.disabled = false;
-                btnElement.innerHTML = "COBA LAGI";
-            });
-}
-</script>
+    </script>
 </body>
+</html>
