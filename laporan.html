@@ -79,6 +79,10 @@
         .fade-in { animation: fadeIn 0.5s ease-in; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
+        /* Loading Screen Transition */
+        #loading { transition: opacity 0.5s ease-out; }
+        .loading-hidden { opacity: 0; pointer-events: none; }
+
         /* 🔥 TYPING CURSOR EFFECT */
         .typing-cursor::after {
             content: '|';
@@ -355,7 +359,8 @@
             ]
         };
 
-        window.onload = function() {
+        // 1. INITIALIZATION
+        document.addEventListener('DOMContentLoaded', () => {
             if(!waNumber) { 
                 document.getElementById('loading').innerHTML = '<div class="text-center text-white"><p class="text-red-500 font-bold mb-2">LINK TIDAK VALID</p><p class="text-[10px] text-gray-400">Buka link ini dari pesan WhatsApp.</p></div>';
                 return; 
@@ -364,22 +369,40 @@
             document.getElementById('link-dashboard').href = `${LINK_DASHBOARD}?wa=${waNumber}`;
             document.getElementById('link-quiz').href = `${LINK_QUIZ}?wa=${waNumber}`;
 
+            fetchData();
+        });
+
+        // 2. FETCH DATA FUNCTION
+        function fetchData() {
             fetch(`${SCRIPT_URL}?action=getData&wa=${encodeURIComponent(waNumber)}`)
             .then(res => res.json())
             .then(data => {
-                if(data.status === 'success'){
-                    renderReport(data);
-                } else {
-                    document.getElementById('loading').innerHTML = '<div class="text-center text-white"><p class="text-red-500 font-bold">USER TIDAK DITEMUKAN</p><p class="text-xs">Nomor WA tidak terdaftar.</p></div>';
-                }
+                // Smooth Loading Transition
+                const loader = document.getElementById('loading');
+                loader.classList.add('loading-hidden');
+                
+                setTimeout(() => {
+                    loader.style.display = 'none';
+                    if(data.status === 'success'){
+                        renderReport(data);
+                    } else {
+                        document.getElementById('report-content').innerHTML = `
+                            <div class="text-center text-white pt-20">
+                                <p class="text-red-500 font-bold">USER TIDAK DITEMUKAN</p>
+                                <p class="text-xs text-neutral-400 mt-2">Nomor WA tidak terdaftar di database.</p>
+                            </div>
+                        `;
+                        document.getElementById('report-content').classList.remove('hidden');
+                    }
+                }, 500); // Wait for transition
             })
             .catch(err => {
                 console.error(err);
-                document.getElementById('loading').innerHTML = '<div class="text-center text-white"><p class="text-red-500 font-bold mb-2">GAGAL KONEKSI SERVER</p><p class="text-[10px] text-gray-400">Pastikan Script di-Deploy sebagai "Anyone".</p></div>';
-                document.getElementById('error-msg').innerText = err.message;
+                document.getElementById('loading').classList.add('hidden');
+                document.getElementById('error-msg').innerText = "Gagal terhubung ke server.";
                 document.getElementById('error-msg').classList.remove('hidden');
             });
-        };
+        }
 
         // 🔥 FUNGSI TYPEWRITER (HTML AWARE)
         function typeWriter(text, elementId, speed = 15) {
@@ -395,17 +418,15 @@
             
             function type() {
                 if (i < text.length) {
-                    // Check if current char is start of HTML tag
                     if (text.charAt(i) === '<') {
                         let tag = '';
-                        // Loop until end of tag
                         while (text.charAt(i) !== '>' && i < text.length) {
                             tag += text.charAt(i);
                             i++;
                         }
-                        tag += '>'; // Add closing bracket
+                        tag += '>';
                         i++; 
-                        element.innerHTML += tag; // Add entire tag at once (no typing effect for tags)
+                        element.innerHTML += tag; 
                     } else {
                         element.innerHTML += text.charAt(i);
                         i++;
@@ -424,18 +445,21 @@
             icon.classList.add('fa-spin');
             
             const textEl = document.getElementById('ai-insight-text');
-            textEl.style.opacity = '0'; // Fade out
+            textEl.style.opacity = '0'; // Fade out effect
 
             setTimeout(() => {
                 icon.classList.remove('fa-spin');
                 
-                // Select list based on category
                 const analysisList = aiAnalysisDB[currentCategoryCode] || aiAnalysisDB['Seimbang'];
                 
-                // Get Random Text
-                let newText = analysisList[Math.floor(Math.random() * analysisList.length)];
+                // Get Random Text (Different from current if possible)
+                let newText;
+                let attempts = 0;
+                do {
+                    newText = analysisList[Math.floor(Math.random() * analysisList.length)];
+                    attempts++;
+                } while (newText === textEl.innerHTML && attempts < 5); // Simple check to avoid immediate repeat
                 
-                // Ensure text is visible and start typing
                 textEl.style.opacity = '1';
                 typeWriter(newText, 'ai-insight-text');
                 
@@ -443,7 +467,6 @@
         }
 
         function renderReport(data) {
-            document.getElementById('loading').classList.add('hidden');
             document.getElementById('report-content').classList.remove('hidden');
 
             // 1. Render Profile
