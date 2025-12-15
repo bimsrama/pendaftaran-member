@@ -85,11 +85,18 @@
                 </div>
             </div>
 
-            <div class="text-right">
-                <div class="text-[10px] text-neutral-500 uppercase tracking-widest">Streak</div>
-                <div class="text-xl font-black text-white flex items-center justify-end gap-1">
-                    <span id="user-streak">0</span> <span class="text-base">🔥</span>
+            <div class="flex flex-col items-end gap-2">
+                <div>
+                    <div class="text-[8px] text-neutral-500 uppercase tracking-widest text-right">Streak</div>
+                    <div class="text-xl font-black text-white flex items-center justify-end gap-1 leading-none">
+                        <span id="user-streak">0</span> <span class="text-base">🔥</span>
+                    </div>
                 </div>
+
+                <a id="btn-to-report" href="#" class="flex items-center gap-1 bg-white/10 hover:bg-white/20 border border-white/5 px-3 py-1.5 rounded-lg text-[10px] text-neutral-300 transition group">
+                    <span>📊</span>
+                    <span class="group-hover:text-amber-400 transition-colors">Rapor</span>
+                </a>
             </div>
         </div>
 
@@ -189,6 +196,9 @@
     <script>
         // ⚠️ PASTE URL SCRIPT ANDA DISINI
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz60TyDP9sE1JGXJJ9RZtvinrcQlOH-_UDRi2-baMbNHve1OjMfKRA0w-VI4xoLRQuY/exec';
+        
+        // ⚠️ NAMA FILE LAPORAN (Pastikan nama file HTML Anda sesuai)
+        const REPORT_PAGE_URL = "laporan.html"; 
 
         const urlParams = new URLSearchParams(window.location.search);
         const waNumber = urlParams.get('wa');
@@ -200,6 +210,9 @@
                 return;
             }
 
+            // Set Link Laporan dengan Parameter WA
+            document.getElementById('btn-to-report').href = `${REPORT_PAGE_URL}?wa=${encodeURIComponent(waNumber)}`;
+
             fetch(`${SCRIPT_URL}?action=getData&wa=${encodeURIComponent(waNumber)}`)
             .then(res => res.json())
             .then(data => {
@@ -207,7 +220,7 @@
                     // Isi Data
                     document.getElementById('user-name').innerText = data.nama;
                     document.getElementById('user-kategori').innerText = "KATEGORI: " + data.kategori.toUpperCase();
-                    document.getElementById('user-streak').innerText = data.hari; // Anggap streak = hari ke
+                    document.getElementById('user-streak').innerText = data.hari; 
                     document.getElementById('day-current').innerText = "Day " + data.hari;
                     document.getElementById('user-avatar').src = `https://api.dicebear.com/7.x/notionists/svg?seed=${data.nama}`;
 
