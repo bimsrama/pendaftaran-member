@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard & Check-in | My Gut Journey</title>
+    <title>Daily Check-in | My Gut Journey</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: #020202; color: white; }
-        .glass-card { background: rgba(20, 20, 20, 0.7); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.08); box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5); }
+        .glass-card { background: rgba(20, 20, 20, 0.8); backdrop-filter: blur(24px); border: 1px solid rgba(255, 255, 255, 0.08); box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5); }
         .text-gold { background: linear-gradient(135deg, #FDE68A 0%, #D97706 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .circle-chart__circle { animation: circle-chart-fill 2s reverse; transform: rotate(-90deg); transform-origin: center; }
         @keyframes circle-chart-fill { to { stroke-dasharray: 0 100; } }
@@ -17,8 +17,6 @@
         .timeline-line { position: absolute; left: 14px; top: 10px; bottom: -20px; width: 2px; background: #333; z-index: 0; }
         .timeline-item.active .timeline-line { background: #d97706; }
         .timeline-item:last-child .timeline-line { display: none; }
-        
-        /* Scrollbar */
         .scroller::-webkit-scrollbar { width: 4px; }
         .scroller::-webkit-scrollbar-track { background: #1a1a1a; }
         .scroller::-webkit-scrollbar-thumb { background: #444; border-radius: 4px; }
@@ -35,14 +33,15 @@
     <div id="loading" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/95">
         <div class="w-12 h-12 border-4 border-neutral-800 border-t-amber-500 rounded-full animate-spin mb-4"></div>
         <p class="text-[10px] text-neutral-500 tracking-widest animate-pulse">MENGHUBUNGKAN DATA...</p>
+        <p id="error-msg" class="text-[9px] text-red-500 mt-4 hidden text-center px-4"></p>
     </div>
 
     <div id="main-content" class="w-full max-w-md hidden pb-24">
         
         <div class="glass-card rounded-3xl p-5 mb-4 flex items-center justify-between relative">
             <div class="flex items-center gap-3">
-                <div class="w-14 h-14 rounded-full border-2 border-amber-500/30 p-0.5">
-                    <img id="user-avatar" src="" class="w-full h-full rounded-full object-cover bg-neutral-800">
+                <div class="w-14 h-14 rounded-full border-2 border-amber-500/30 p-0.5 overflow-hidden flex-shrink-0">
+                    <img id="user-avatar" src="" class="w-full h-full rounded-full object-cover bg-neutral-800" alt="Profile">
                 </div>
                 <div>
                     <h2 id="user-name" class="font-bold text-white text-lg leading-tight truncate w-32">...</h2>
@@ -214,8 +213,8 @@
     </div>
 
     <script>
-        // ✅ URL SCRIPT YANG ANDA BERIKAN
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx67JX5mM-n-W1h6ehURHgONXBPiyUvESRLMCveTV04wXighQQhLErXQwC07Yf5Zkkw/exec';
+        // ⚠️ PASTE URL SCRIPT ANDA DI SINI
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz60TyDP9sE1JGXJJ9RZtvinrcQlOH-_UDRi2-baMbNHve1OjMfKRA0w-VI4xoLRQuY/exec';
         
         const REPORT_PAGE = "laporan.html";
         const urlParams = new URLSearchParams(window.location.search);
@@ -262,7 +261,7 @@
 
         window.onload = function() {
             if(!wa) { 
-                document.getElementById('loading').innerHTML = '<div class="text-center"><p class="text-red-500 font-bold mb-2">LINK TIDAK VALID</p><p class="text-[10px] text-gray-400">Buka link ini dari pesan WhatsApp.</p></div>';
+                document.getElementById('loading').innerHTML = '<div class="text-center text-white"><p class="text-red-500 font-bold mb-2">LINK TIDAK VALID</p><p class="text-[10px] text-gray-400">Buka link ini dari pesan WhatsApp.</p></div>';
                 return; 
             }
             document.getElementById('btn-to-report').href = `${REPORT_PAGE}?wa=${wa}`;
@@ -271,10 +270,9 @@
             .then(res => res.json())
             .then(data => {
                 if(data.status === 'success'){
-                    // A. Populate UI
                     userCurrentDay = parseInt(data.hari);
-                    userKategoriRaw = data.kategori;
                     const checkinDay = userCurrentDay + 1;
+                    userKategoriRaw = data.kategori;
                     if(data.checkin_log) userHistoryData = data.checkin_log;
 
                     document.getElementById('user-name').innerText = data.nama;
@@ -287,11 +285,9 @@
                     document.getElementById('progress-percent').innerText = data.progress + "%";
                     setTimeout(() => { document.getElementById('progress-ring').style.strokeDasharray = `${data.progress}, 100`; }, 500);
 
-                    // B. Setup Features
                     updateTimeline(data.hari);
                     showDailyInsight();
                     
-                    // C. Logic Form: Quiz (Kelipatan 6) vs Normal (Biasa)
                     if (checkinDay > 0 && checkinDay % 6 === 0 && checkinDay < 30) {
                         setupQuestionForm(checkinDay);
                         document.getElementById('quiz-section').classList.remove('hidden');
@@ -304,12 +300,14 @@
                     document.getElementById('loading').classList.add('hidden');
                     document.getElementById('main-content').classList.remove('hidden');
                 } else { 
-                    alert("Data User Tidak Ditemukan. Pastikan nomor WA benar."); 
+                    document.getElementById('loading').innerHTML = '<div class="text-center text-white"><p class="text-red-500 font-bold">USER TIDAK DITEMUKAN</p><p class="text-xs">Nomor WA tidak terdaftar di sistem.</p></div>';
                 }
             })
             .catch(err => { 
                 console.error(err);
-                document.getElementById('loading').innerHTML = '<div class="text-center"><p class="text-red-500 font-bold mb-2">GAGAL KONEKSI SERVER</p><p class="text-[10px] text-gray-400">Pastikan Script di-Deploy sebagai "Anyone".</p></div>'; 
+                document.getElementById('loading').innerHTML = '<div class="text-center text-white"><p class="text-red-500 font-bold mb-2">GAGAL KONEKSI SERVER</p><p class="text-[10px] text-gray-400">1. Pastikan Script di-Deploy sebagai "Anyone".<br>2. Cek koneksi internet.<br>3. Refresh halaman.</p></div>'; 
+                document.getElementById('error-msg').innerText = err.message;
+                document.getElementById('error-msg').classList.remove('hidden');
             });
         };
 
@@ -350,24 +348,20 @@
             document.getElementById('q2-text').innerText = "2. " + qSet[1];
         }
 
-        // --- SUBMIT QUIZ ---
         document.getElementById('daily-form-quiz').addEventListener('submit', function(e){
             e.preventDefault();
             const q1 = document.querySelector('input[name="q1"]:checked')?.value;
             const q2 = document.querySelector('input[name="q2"]:checked')?.value;
             if(!q1 || !q2) { alert("Mohon jawab kedua pertanyaan."); return; }
-            
             const detail = `Quiz: ${q1}, ${q2}`;
-            doCheckin(document.getElementById('btn-submit-quiz'), detail, true); // Always show solution for quiz
+            doCheckin(document.getElementById('btn-submit-quiz'), detail, true);
         });
 
-        // --- SUBMIT NORMAL ---
         document.getElementById('daily-form-normal').addEventListener('submit', function(e){
             e.preventDefault();
             const q1 = document.querySelector('input[name="normal_q1"]:checked')?.value;
             const q2 = document.querySelector('input[name="normal_q2"]:checked')?.value;
             if(!q1 || !q2) { alert("Mohon isi refleksi harian."); return; }
-            
             const detail = `Perut: ${q1} | Tantangan: ${q2}`;
             const hasIssue = (q1 === 'Kurang Nyaman' || q2 === 'Tidak');
             doCheckin(document.getElementById('btn-submit-normal'), detail, hasIssue);
@@ -408,7 +402,6 @@
             });
         }
 
-        // --- HISTORY ---
         window.openHistoryModal = function() {
             const container = document.getElementById('history-content');
             container.innerHTML = ''; 
@@ -431,7 +424,6 @@
             document.getElementById('history-modal').classList.remove('hidden');
         }
         
-        // Dummy Popup
         const dummyNames = ["Rina", "Dimas", "Alya", "Budi", "Sinta", "Fajar", "Tio", "Dina", "Reza", "Vivi"];
         setInterval(() => {
             const popup = document.getElementById('dummy-popup');
@@ -443,7 +435,6 @@
             setTimeout(() => { popup.classList.remove('translate-y-10', 'opacity-0'); }, 100);
             setTimeout(() => { popup.classList.add('translate-y-10', 'opacity-0'); setTimeout(() => popup.classList.add('hidden'), 500); }, 4000); 
         }, 5000);
-
     </script>
 </body>
 </html>
