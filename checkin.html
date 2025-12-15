@@ -8,7 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: #020202; color: white; }
-        .glass-card { background: rgba(20, 20, 20, 0.8); backdrop-filter: blur(24px); border: 1px solid rgba(255, 255, 255, 0.08); box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5); }
+        .glass-card { background: rgba(20, 20, 20, 0.7); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.08); box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5); }
         .text-gold { background: linear-gradient(135deg, #FDE68A 0%, #D97706 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .circle-chart__circle { animation: circle-chart-fill 2s reverse; transform: rotate(-90deg); transform-origin: center; }
         @keyframes circle-chart-fill { to { stroke-dasharray: 0 100; } }
@@ -25,11 +25,6 @@
 </head>
 <body class="min-h-screen flex flex-col items-center justify-center p-4 relative overflow-hidden">
 
-    <div class="fixed inset-0 -z-10">
-        <div class="absolute top-[-10%] left-[-10%] w-[400px] h-[400px] bg-amber-600/10 rounded-full blur-[100px]"></div>
-        <div class="absolute bottom-[-10%] right-[-10%] w-[300px] h-[300px] bg-blue-600/5 rounded-full blur-[100px]"></div>
-    </div>
-
     <div id="loading" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/95">
         <div class="w-12 h-12 border-4 border-neutral-800 border-t-amber-500 rounded-full animate-spin mb-4"></div>
         <p class="text-[10px] text-neutral-500 tracking-widest animate-pulse">MENGHUBUNGKAN DATA...</p>
@@ -38,23 +33,25 @@
 
     <div id="main-content" class="w-full max-w-md hidden pb-24">
         
-        <div class="glass-card rounded-3xl p-5 mb-4 flex items-center justify-between relative">
-            <div class="flex items-center gap-3">
-                <div class="w-14 h-14 rounded-full border-2 border-amber-500/30 p-0.5 overflow-hidden flex-shrink-0">
-                    <img id="user-avatar" src="" class="w-full h-full rounded-full object-cover bg-neutral-800" alt="Profile">
+        <div class="glass-card rounded-3xl p-5 mb-4 relative overflow-hidden">
+            <div class="flex justify-between items-start">
+                <div class="flex gap-3 items-center">
+                    <div class="w-14 h-14 rounded-full border-2 border-amber-500/30 p-0.5">
+                        <img id="user-avatar" src="" class="w-full h-full rounded-full object-cover bg-neutral-800" alt="Profile">
+                    </div>
+                    <div>
+                        <h2 id="user-name" class="font-bold text-white text-lg leading-tight truncate w-32">...</h2>
+                        <p id="user-kategori" class="text-[10px] text-amber-400 uppercase font-bold tracking-wider mb-1">...</p>
+                        <a href="https://wa.me/6281234567890" target="_blank" class="inline-flex items-center gap-1 bg-green-900/40 hover:bg-green-800/60 border border-green-500/30 px-2 py-1 rounded-lg text-[10px] text-green-400 transition">
+                            <span>💬 Hubungi CS</span>
+                        </a>
+                    </div>
                 </div>
-                <div>
-                    <h2 id="user-name" class="font-bold text-white text-lg leading-tight truncate w-32">...</h2>
-                    <p id="user-kategori" class="text-[10px] text-amber-400 uppercase font-bold tracking-wider mb-1">...</p>
-                    <a href="https://wa.me/6281234567890?text=Halo%20Coach,%20saya%20mau%20tanya%20tentang%20program" target="_blank" class="inline-flex items-center gap-1 bg-green-900/40 hover:bg-green-800/60 border border-green-500/30 px-2 py-1 rounded-lg text-[10px] text-green-400 transition">
-                        <span>💬 Bantuan CS</span>
-                    </a>
-                </div>
-            </div>
-            <div class="text-right bg-black/20 p-2 rounded-xl border border-white/5 backdrop-blur-sm">
-                <p class="text-[8px] text-neutral-500 uppercase tracking-widest">STREAK</p>
-                <div class="text-2xl font-black text-white flex items-center justify-end gap-1 leading-none mt-1">
-                    <span id="user-streak">0</span> <span class="text-lg">🔥</span>
+                <div class="text-right bg-black/20 p-2 rounded-xl border border-white/5 backdrop-blur-sm">
+                    <p class="text-[8px] text-neutral-500 uppercase tracking-widest">STREAK</p>
+                    <div class="text-2xl font-black text-white flex items-center justify-end gap-1 leading-none mt-1">
+                        <span id="user-streak">0</span> <span class="text-lg">🔥</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -120,27 +117,15 @@
                 <div class="bg-white/5 p-3 rounded-xl">
                     <p class="text-xs text-neutral-300 mb-2 font-bold" id="q1-text">...</p>
                     <div class="grid grid-cols-2 gap-2">
-                        <label class="bg-black/20 p-2 rounded-lg text-center cursor-pointer hover:bg-white/5 transition border border-transparent peer-checked:border-amber-500">
-                            <input type="radio" name="q1" value="Ya" class="hidden peer">
-                            <span class="text-xs peer-checked:text-amber-400">Ya</span>
-                        </label>
-                        <label class="bg-black/20 p-2 rounded-lg text-center cursor-pointer hover:bg-white/5 transition border border-transparent peer-checked:border-amber-500">
-                            <input type="radio" name="q1" value="Tidak" class="hidden peer">
-                            <span class="text-xs peer-checked:text-amber-400">Tidak</span>
-                        </label>
+                        <label class="bg-black/20 p-2 rounded-lg text-center cursor-pointer hover:bg-white/5 transition border border-transparent peer-checked:border-amber-500"><input type="radio" name="q1" value="Ya" class="hidden peer"><span class="text-xs peer-checked:text-amber-400">Ya</span></label>
+                        <label class="bg-black/20 p-2 rounded-lg text-center cursor-pointer hover:bg-white/5 transition border border-transparent peer-checked:border-amber-500"><input type="radio" name="q1" value="Tidak" class="hidden peer"><span class="text-xs peer-checked:text-amber-400">Tidak</span></label>
                     </div>
                 </div>
                 <div class="bg-white/5 p-3 rounded-xl">
                     <p class="text-xs text-neutral-300 mb-2 font-bold" id="q2-text">...</p>
                     <div class="grid grid-cols-2 gap-2">
-                        <label class="bg-black/20 p-2 rounded-lg text-center cursor-pointer hover:bg-white/5 transition border border-transparent peer-checked:border-amber-500">
-                            <input type="radio" name="q2" value="Ya" class="hidden peer">
-                            <span class="text-xs peer-checked:text-amber-400">Ya</span>
-                        </label>
-                        <label class="bg-black/20 p-2 rounded-lg text-center cursor-pointer hover:bg-white/5 transition border border-transparent peer-checked:border-amber-500">
-                            <input type="radio" name="q2" value="Tidak" class="hidden peer">
-                            <span class="text-xs peer-checked:text-amber-400">Tidak</span>
-                        </label>
+                        <label class="bg-black/20 p-2 rounded-lg text-center cursor-pointer hover:bg-white/5 transition border border-transparent peer-checked:border-amber-500"><input type="radio" name="q2" value="Ya" class="hidden peer"><span class="text-xs peer-checked:text-amber-400">Ya</span></label>
+                        <label class="bg-black/20 p-2 rounded-lg text-center cursor-pointer hover:bg-white/5 transition border border-transparent peer-checked:border-amber-500"><input type="radio" name="q2" value="Tidak" class="hidden peer"><span class="text-xs peer-checked:text-amber-400">Tidak</span></label>
                     </div>
                 </div>
                 <button type="submit" id="btn-submit-quiz" class="w-full btn-glow text-black font-bold text-sm py-4 rounded-xl flex items-center justify-center gap-2 mt-2">KIRIM & CHECK-IN</button>
@@ -150,27 +135,15 @@
                 <div class="bg-white/5 p-3 rounded-xl">
                     <p class="text-xs text-neutral-300 mb-2 font-bold">Bagaimana perutmu hari ini?</p>
                     <div class="grid grid-cols-2 gap-2">
-                        <label class="bg-black/20 p-2 rounded-lg text-center cursor-pointer hover:bg-white/5 transition border border-transparent peer-checked:border-amber-500">
-                            <input type="radio" name="normal_q1" value="Nyaman" class="hidden peer">
-                            <span class="text-xs peer-checked:text-amber-400">😊 Nyaman</span>
-                        </label>
-                        <label class="bg-black/20 p-2 rounded-lg text-center cursor-pointer hover:bg-white/5 transition border border-transparent peer-checked:border-amber-500">
-                            <input type="radio" name="normal_q1" value="Kurang Nyaman" class="hidden peer">
-                            <span class="text-xs peer-checked:text-amber-400">🤢 Kurang Enak</span>
-                        </label>
+                        <label class="bg-black/20 p-2 rounded-lg text-center cursor-pointer hover:bg-white/5 transition border border-transparent peer-checked:border-amber-500"><input type="radio" name="normal_q1" value="Nyaman" class="hidden peer"><span class="text-xs peer-checked:text-amber-400">😊 Nyaman</span></label>
+                        <label class="bg-black/20 p-2 rounded-lg text-center cursor-pointer hover:bg-white/5 transition border border-transparent peer-checked:border-amber-500"><input type="radio" name="normal_q1" value="Kurang Nyaman" class="hidden peer"><span class="text-xs peer-checked:text-amber-400">🤢 Kurang Enak</span></label>
                     </div>
                 </div>
                 <div class="bg-white/5 p-3 rounded-xl">
                     <p class="text-xs text-neutral-300 mb-2 font-bold">Tantangan makan terlaksana?</p>
                     <div class="grid grid-cols-2 gap-2">
-                        <label class="bg-black/20 p-2 rounded-lg text-center cursor-pointer hover:bg-white/5 transition border border-transparent peer-checked:border-amber-500">
-                            <input type="radio" name="normal_q2" value="Ya" class="hidden peer">
-                            <span class="text-xs peer-checked:text-amber-400">✅ Berhasil</span>
-                        </label>
-                        <label class="bg-black/20 p-2 rounded-lg text-center cursor-pointer hover:bg-white/5 transition border border-transparent peer-checked:border-amber-500">
-                            <input type="radio" name="normal_q2" value="Tidak" class="hidden peer">
-                            <span class="text-xs peer-checked:text-amber-400">❌ Belum</span>
-                        </label>
+                        <label class="bg-black/20 p-2 rounded-lg text-center cursor-pointer hover:bg-white/5 transition border border-transparent peer-checked:border-amber-500"><input type="radio" name="normal_q2" value="Ya" class="hidden peer"><span class="text-xs peer-checked:text-amber-400">✅ Berhasil</span></label>
+                        <label class="bg-black/20 p-2 rounded-lg text-center cursor-pointer hover:bg-white/5 transition border border-transparent peer-checked:border-amber-500"><input type="radio" name="normal_q2" value="Tidak" class="hidden peer"><span class="text-xs peer-checked:text-amber-400">❌ Belum</span></label>
                     </div>
                 </div>
                 <button type="submit" id="btn-submit-normal" class="w-full btn-glow text-black font-bold text-sm py-4 rounded-xl flex items-center justify-center gap-2 mt-2">KIRIM & CHECK-IN</button>
@@ -194,12 +167,10 @@
             <div class="text-5xl mb-4 animate-bounce">🎉</div>
             <h2 class="text-xl font-bold text-white mb-2">Check-in Berhasil!</h2>
             <p class="text-xs text-neutral-400 mb-6">Data kesehatan hari ini telah tersimpan.</p>
-            
             <div id="success-insight" class="bg-white/10 p-4 rounded-xl text-left mb-6 hidden">
                 <h4 class="text-xs font-bold text-amber-400 mb-1">💡 Solusi Untukmu:</h4>
                 <p class="text-[10px] text-neutral-300 italic leading-relaxed" id="success-tip-text">...</p>
             </div>
-
             <button onclick="window.location.href='https://wa.me/'" class="bg-neutral-800 w-full py-3 rounded-xl text-xs font-bold text-white border border-white/10">Kembali ke WhatsApp</button>
         </div>
     </div>
@@ -208,13 +179,13 @@
         <div class="w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center text-xs">🚀</div>
         <div>
             <p class="text-[10px] text-neutral-400 uppercase font-bold">Baru Check-in</p>
-            <p class="text-xs font-bold text-white" id="dummy-name">Rina - Day 5</p>
+            <p class="text-xs font-bold text-white" id="dummy-name">...</p>
         </div>
     </div>
 
     <script>
-        // ⚠️ PASTE URL SCRIPT ANDA DI SINI
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz60TyDP9sE1JGXJJ9RZtvinrcQlOH-_UDRi2-baMbNHve1OjMfKRA0w-VI4xoLRQuY/exec';
+        // ✅ URL SCRIPT ANDA
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx67JX5mM-n-W1h6ehURHgONXBPiyUvESRLMCveTV04wXighQQhLErXQwC07Yf5Zkkw/exec';
         
         const REPORT_PAGE = "laporan.html";
         const urlParams = new URLSearchParams(window.location.search);
@@ -270,11 +241,13 @@
             .then(res => res.json())
             .then(data => {
                 if(data.status === 'success'){
+                    // Data setup
                     userCurrentDay = parseInt(data.hari);
-                    const checkinDay = userCurrentDay + 1;
                     userKategoriRaw = data.kategori;
+                    const checkinDay = userCurrentDay + 1;
                     if(data.checkin_log) userHistoryData = data.checkin_log;
 
+                    // UI Updates
                     document.getElementById('user-name').innerText = data.nama;
                     document.getElementById('user-kategori').innerText = data.kategori.toUpperCase();
                     document.getElementById('user-streak').innerText = data.hari;
@@ -288,6 +261,7 @@
                     updateTimeline(data.hari);
                     showDailyInsight();
                     
+                    // Logic Form
                     if (checkinDay > 0 && checkinDay % 6 === 0 && checkinDay < 30) {
                         setupQuestionForm(checkinDay);
                         document.getElementById('quiz-section').classList.remove('hidden');
@@ -348,6 +322,7 @@
             document.getElementById('q2-text').innerText = "2. " + qSet[1];
         }
 
+        // Submit Quiz
         document.getElementById('daily-form-quiz').addEventListener('submit', function(e){
             e.preventDefault();
             const q1 = document.querySelector('input[name="q1"]:checked')?.value;
@@ -357,6 +332,7 @@
             doCheckin(document.getElementById('btn-submit-quiz'), detail, true);
         });
 
+        // Submit Normal
         document.getElementById('daily-form-normal').addEventListener('submit', function(e){
             e.preventDefault();
             const q1 = document.querySelector('input[name="normal_q1"]:checked')?.value;
@@ -424,6 +400,7 @@
             document.getElementById('history-modal').classList.remove('hidden');
         }
         
+        // Dummy Popup Animation
         const dummyNames = ["Rina", "Dimas", "Alya", "Budi", "Sinta", "Fajar", "Tio", "Dina", "Reza", "Vivi"];
         setInterval(() => {
             const popup = document.getElementById('dummy-popup');
@@ -435,6 +412,7 @@
             setTimeout(() => { popup.classList.remove('translate-y-10', 'opacity-0'); }, 100);
             setTimeout(() => { popup.classList.add('translate-y-10', 'opacity-0'); setTimeout(() => popup.classList.add('hidden'), 500); }, 4000); 
         }, 5000);
+
     </script>
 </body>
 </html>
