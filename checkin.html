@@ -3,115 +3,292 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tantangan Harian | Usus Sehat</title>
+    <title>My Gut Journey</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;500;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #050505; color: white; }
-        .glass { 
-            background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(20px); 
-            border: 1px solid rgba(255, 255, 255, 0.1); 
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #020202; color: white; }
+        
+        /* Glass Effect Premium */
+        .glass-card {
+            background: rgba(20, 20, 20, 0.6);
+            backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 20px 50px -12px rgba(0, 0, 0, 0.8);
         }
-        .btn-shine {
-            position: relative; overflow: hidden;
-            background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%); /* Warna Emas */
-            box-shadow: 0 0 20px rgba(217, 119, 6, 0.4);
+
+        /* Gradient Text */
+        .text-gold {
+            background: linear-gradient(135deg, #FDE68A 0%, #D97706 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+
+        /* Circular Progress Animation */
+        .circle-chart__circle {
+            animation: circle-chart-fill 2s reverse; 
+            transform: rotate(-90deg); 
+            transform-origin: center;
+        }
+        @keyframes circle-chart-fill {
+            to { stroke-dasharray: 0 100; }
+        }
+
+        /* Button Glow */
+        .btn-glow {
+            background: linear-gradient(to right, #b45309, #fbbf24);
+            box-shadow: 0 0 15px rgba(245, 158, 11, 0.3);
             transition: all 0.3s;
         }
-        .btn-shine:active { transform: scale(0.95); }
-        .btn-shine::after {
-            content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent); transition: 0.5s;
+        .btn-glow:active { transform: scale(0.98); box-shadow: 0 0 5px rgba(245, 158, 11, 0.5); }
+
+        /* Timeline Connector */
+        .timeline-line {
+            position: absolute; left: 15px; top: 10px; bottom: -20px; width: 2px; background: #333; z-index: 0;
         }
-        .btn-shine:hover::after { left: 100%; }
-        
-        /* Animasi */
-        @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-10px); } 100% { transform: translateY(0px); } }
-        .floating-icon { animation: float 3s ease-in-out infinite; }
+        .timeline-item.active .timeline-line { background: #d97706; }
+        .timeline-item:last-child .timeline-line { display: none; }
     </style>
 </head>
-<body class="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
+<body class="min-h-screen flex flex-col items-center justify-center p-4 relative overflow-hidden">
 
-    <div class="absolute top-0 left-0 w-full h-full -z-10">
-        <div class="absolute top-[10%] right-[10%] w-80 h-80 bg-amber-600/10 blur-[100px] rounded-full"></div>
-        <div class="absolute bottom-[10%] left-[10%] w-80 h-80 bg-yellow-500/10 blur-[100px] rounded-full"></div>
+    <div class="fixed inset-0 -z-10">
+        <div class="absolute top-[-20%] left-[-10%] w-[500px] h-[500px] bg-amber-600/10 rounded-full blur-[120px]"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[400px] h-[400px] bg-yellow-600/5 rounded-full blur-[100px]"></div>
     </div>
 
-    <div class="w-full max-w-md glass p-10 rounded-3xl text-center relative border-t border-white/10 shadow-2xl">
+    <div id="loading" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/90 backdrop-blur-xl">
+        <div class="w-12 h-12 border-4 border-neutral-800 border-t-amber-500 rounded-full animate-spin mb-4"></div>
+        <p class="text-[10px] text-neutral-500 tracking-[0.2em] animate-pulse">SYNCHRONIZING DATA...</p>
+    </div>
+
+    <div id="dashboard" class="w-full max-w-sm hidden">
         
-        <div class="floating-icon inline-flex items-center justify-center w-20 h-20 rounded-full bg-amber-500/10 mb-6 border border-amber-500/30 shadow-[0_0_30px_rgba(245,158,11,0.2)]">
-            <svg class="w-10 h-10 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        <div class="glass-card rounded-3xl p-5 mb-4 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-12 h-12 rounded-full bg-neutral-800 border border-amber-500/30 p-0.5 overflow-hidden">
+                    <img id="user-avatar" src="" class="w-full h-full rounded-full object-cover" alt="Profile">
+                </div>
+                <div>
+                    <h2 id="user-name" class="font-bold text-white text-lg leading-tight">...</h2>
+                    <p id="user-kategori" class="text-[10px] text-amber-400 uppercase tracking-wider font-semibold">...</p>
+                </div>
+            </div>
+            <div class="text-right">
+                <div class="text-xs text-neutral-500">Streak</div>
+                <div class="text-xl font-black text-white flex items-center justify-end gap-1">
+                    <span id="user-streak">0</span> <span class="text-base">🔥</span>
+                </div>
+            </div>
         </div>
 
-        <h1 class="text-3xl font-extrabold mb-2 text-white">Tantangan Harian</h1>
-        <p class="text-neutral-400 text-sm mb-10 leading-relaxed">
-            Klik tombol di bawah ini jika kamu sudah menyelesaikan misi hari ini.
-        </p>
+        <div class="glass-card rounded-3xl p-6 mb-4 relative overflow-hidden">
+            <div class="absolute top-0 right-0 p-4 opacity-10">
+                <svg class="w-32 h-32 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+            </div>
 
-        <div id="error-msg" class="hidden bg-red-500/20 border border-red-500/50 text-red-200 text-xs p-3 rounded-xl mb-4">
-            ⚠️ Link tidak valid. Silakan buka ulang dari link WhatsApp.
+            <div class="flex items-center gap-6">
+                <div class="relative w-24 h-24 flex-shrink-0">
+                    <svg class="w-full h-full" viewBox="0 0 36 36">
+                        <path class="text-neutral-800" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-width="3" />
+                        <path id="progress-ring" class="text-amber-500 circle-chart__circle" stroke-dasharray="0, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" />
+                    </svg>
+                    <div class="absolute inset-0 flex flex-col items-center justify-center">
+                        <span id="progress-percent" class="text-xl font-bold text-white">0%</span>
+                    </div>
+                </div>
+
+                <div>
+                    <p class="text-xs text-neutral-400 mb-1">Perjalanan Kesehatan</p>
+                    <h3 class="text-2xl font-bold text-white"><span id="day-current" class="text-gold">Day 0</span> <span class="text-base text-neutral-600">/ 30</span></h3>
+                    <p class="text-[10px] text-green-400 mt-1 flex items-center gap-1">
+                        <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span> Status Aktif
+                    </p>
+                </div>
+            </div>
         </div>
 
-        <button id="btn-submit" class="btn-shine w-full text-black font-bold py-5 rounded-xl flex items-center justify-center gap-2 text-lg tracking-wide">
-            <span>SUDAH SELESAI ✅</span>
+        <div class="glass-card rounded-3xl p-6 mb-6">
+            <h3 class="text-sm font-bold text-white mb-4 border-b border-white/10 pb-2">Milestones Pencernaan</h3>
+            <div class="space-y-0" id="timeline-container">
+                
+                <div class="timeline-item relative pl-8 pb-6 group" id="phase-1">
+                    <div class="timeline-line"></div>
+                    <div class="absolute left-0 top-1 w-8 h-8 flex items-center justify-center">
+                        <div class="w-3 h-3 rounded-full bg-neutral-700 border-2 border-neutral-900 z-10 transition-colors dot"></div>
+                    </div>
+                    <div>
+                        <h4 class="text-xs font-bold text-neutral-500 transition-colors title">Fase 1: Detoksifikasi</h4>
+                        <p class="text-[10px] text-neutral-600 desc">Hari 1 - 10 (Adaptasi)</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item relative pl-8 pb-6 group" id="phase-2">
+                    <div class="timeline-line"></div>
+                    <div class="absolute left-0 top-1 w-8 h-8 flex items-center justify-center">
+                        <div class="w-3 h-3 rounded-full bg-neutral-700 border-2 border-neutral-900 z-10 transition-colors dot"></div>
+                    </div>
+                    <div>
+                        <h4 class="text-xs font-bold text-neutral-500 transition-colors title">Fase 2: Regenerasi Sel</h4>
+                        <p class="text-[10px] text-neutral-600 desc">Hari 11 - 20 (Perbaikan)</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item relative pl-8 group" id="phase-3">
+                    <div class="absolute left-0 top-1 w-8 h-8 flex items-center justify-center">
+                        <div class="w-3 h-3 rounded-full bg-neutral-700 border-2 border-neutral-900 z-10 transition-colors dot"></div>
+                    </div>
+                    <div>
+                        <h4 class="text-xs font-bold text-neutral-500 transition-colors title">Fase 3: Optimalisasi</h4>
+                        <p class="text-[10px] text-neutral-600 desc">Hari 21 - 30 (Hasil Maksimal)</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <button id="btn-checkin" class="w-full btn-glow text-black font-bold text-sm py-4 rounded-2xl flex items-center justify-center gap-2 transform active:scale-95 transition-transform">
+            <span>KONFIRMASI TANTANGAN HARI INI</span>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
         </button>
-        
-        <p class="mt-6 text-[10px] text-neutral-600">Konsistensi adalah kunci kesehatan.</p>
+
     </div>
 
-    <div id="success-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/95 hidden backdrop-blur-sm transition-opacity duration-500">
-        <div class="glass p-8 rounded-3xl text-center max-w-sm mx-4 border border-green-500/30">
-            <div class="text-5xl mb-4 animate-bounce">🔥</div>
-            <h2 class="text-2xl font-bold text-white mb-2">Mantap Jiwa!</h2>
-            <p class="text-neutral-300 text-sm mb-6">Laporan diterima. Pesan motivasi spesial sedang dikirim ke WhatsApp kamu.</p>
-            <button onclick="window.location.href='https://wa.me/'" class="bg-neutral-800 hover:bg-neutral-700 text-white py-3 px-8 rounded-xl font-bold text-sm w-full border border-white/10 transition-colors">
+    <div id="dummy-popup" class="fixed bottom-6 left-6 z-40 hidden flex items-center gap-3 bg-black/80 backdrop-blur-md border-l-4 border-green-500 px-4 py-3 rounded-r-xl transition-all duration-500 transform translate-y-10 opacity-0">
+        <div class="w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center text-xs">🚀</div>
+        <div>
+            <p class="text-[10px] text-neutral-400 uppercase font-bold">Baru Check-in</p>
+            <p class="text-xs font-bold text-white" id="dummy-name">Rina - Day 5</p>
+        </div>
+    </div>
+
+    <div id="success-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/95 hidden transition-opacity">
+        <div class="glass-card p-8 rounded-3xl text-center max-w-xs mx-4 border border-amber-500/20">
+            <div class="text-6xl mb-4 animate-bounce">🎯</div>
+            <h2 class="text-2xl font-bold text-white mb-2">Luar Biasa!</h2>
+            <p class="text-neutral-300 text-xs mb-6 leading-relaxed">
+                Kamu selangkah lebih dekat dengan tubuh yang lebih sehat. Pesan motivasi dikirim ke WhatsApp!
+            </p>
+            <button onclick="window.location.href='https://wa.me/'" class="bg-neutral-800 hover:bg-neutral-700 text-white py-3 w-full rounded-xl font-bold text-sm border border-white/10">
                 Buka WhatsApp
             </button>
         </div>
     </div>
 
     <script>
-        // ==========================================
-        // ⚠️ PASTE URL SCRIPT DI SINI
-        // ==========================================
+        // ⚠️ PASTE URL SCRIPT ANDA DISINI
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz60TyDP9sE1JGXJJ9RZtvinrcQlOH-_UDRi2-baMbNHve1OjMfKRA0w-VI4xoLRQuY/exec';
 
-        // 1. AMBIL NOMOR WA DARI LINK (URL PARAMETER)
         const urlParams = new URLSearchParams(window.location.search);
-        const waNumber = urlParams.get('wa'); // Mengambil nilai ?wa=...
+        const waNumber = urlParams.get('wa');
 
-        // Cek validasi
-        const btn = document.getElementById('btn-submit');
-        
-        if (!waNumber) {
-            document.getElementById('error-msg').classList.remove('hidden');
-            btn.disabled = true;
-            btn.classList.add('opacity-50', 'cursor-not-allowed');
-            btn.innerHTML = "Link Error ❌";
+        // --- 1. LOAD DATA ---
+        window.onload = function() {
+            if (!waNumber) {
+                alert("Link Error. Silakan buka dari WhatsApp.");
+                return;
+            }
+
+            fetch(`${SCRIPT_URL}?action=getData&wa=${encodeURIComponent(waNumber)}`)
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    // Isi Data
+                    document.getElementById('user-name').innerText = data.nama;
+                    document.getElementById('user-kategori').innerText = "KATEGORI: " + data.kategori.toUpperCase();
+                    document.getElementById('user-streak').innerText = data.hari; // Anggap streak = hari ke
+                    document.getElementById('day-current').innerText = "Day " + data.hari;
+                    document.getElementById('user-avatar').src = `https://api.dicebear.com/7.x/notionists/svg?seed=${data.nama}`;
+
+                    // Animasi Lingkaran Progress
+                    const percent = data.progress;
+                    document.getElementById('progress-percent').innerText = percent + "%";
+                    setTimeout(() => {
+                        document.getElementById('progress-ring').style.strokeDasharray = `${percent}, 100`;
+                    }, 500);
+
+                    // Update Timeline Visual
+                    updateTimeline(data.hari);
+
+                    // Tampilkan
+                    document.getElementById('loading').classList.add('hidden');
+                    document.getElementById('dashboard').classList.remove('hidden');
+                } else {
+                    alert("Data user tidak ditemukan.");
+                }
+            })
+            .catch(err => {
+                document.getElementById('loading').innerHTML = '<p class="text-red-500 text-xs">Gagal memuat data.</p>';
+            });
+        };
+
+        // --- 2. UPDATE TIMELINE VISUAL ---
+        function updateTimeline(day) {
+            const phases = [
+                { id: 'phase-1', min: 1, color: 'text-green-400' },
+                { id: 'phase-2', min: 11, color: 'text-blue-400' },
+                { id: 'phase-3', min: 21, color: 'text-amber-400' }
+            ];
+
+            phases.forEach(phase => {
+                const el = document.getElementById(phase.id);
+                const dot = el.querySelector('.dot');
+                const title = el.querySelector('.title');
+                
+                if (day >= phase.min) {
+                    el.classList.add('active'); // Untuk garis connector
+                    dot.classList.remove('bg-neutral-700', 'border-neutral-900');
+                    dot.classList.add('bg-amber-500', 'border-amber-900', 'shadow-[0_0_10px_#f59e0b]');
+                    title.classList.remove('text-neutral-500');
+                    title.classList.add('text-white');
+                }
+            });
         }
 
-        // 2. LOGIKA KLIK TOMBOL
-        btn.addEventListener('click', function() {
-            if (!waNumber) return;
-
-            const originalContent = btn.innerHTML;
-            btn.innerHTML = '<div class="w-6 h-6 border-2 border-black/30 border-l-black rounded-full animate-spin"></div>';
+        // --- 3. CHECKIN ACTION ---
+        document.getElementById('btn-checkin').addEventListener('click', function() {
+            const btn = this;
+            btn.innerHTML = '<span class="animate-pulse">Loading...</span>';
             btn.disabled = true;
-            btn.classList.add('opacity-90');
 
-            // Kirim ke Google Script
             fetch(SCRIPT_URL + '?action=checkin&whatsapp=' + encodeURIComponent(waNumber), { method: 'POST', mode: 'no-cors' })
             .then(() => {
                 setTimeout(() => {
                     document.getElementById('success-modal').classList.remove('hidden');
                 }, 800);
             })
-            .catch(err => {
-                alert("Gagal koneksi. Cek internet Anda.");
-                btn.innerHTML = originalContent;
+            .catch(() => {
+                btn.innerHTML = "Gagal. Coba Lagi";
                 btn.disabled = false;
             });
         });
+
+        // --- 4. DUMMY POPUP LOGIC ---
+        const dummyNames = ["Rina", "Dimas", "Alya", "Budi", "Sinta", "Fajar", "Tio", "Dina", "Reza", "Vivi"];
+        
+        setInterval(() => {
+            const popup = document.getElementById('dummy-popup');
+            const nameEl = document.getElementById('dummy-name');
+            
+            // Random Data
+            const rName = dummyNames[Math.floor(Math.random() * dummyNames.length)];
+            const rDay = Math.floor(Math.random() * 29) + 1;
+            
+            nameEl.innerText = `${rName} - Day ${rDay}`;
+            
+            // Show Animation
+            popup.classList.remove('hidden');
+            setTimeout(() => {
+                popup.classList.remove('translate-y-10', 'opacity-0');
+            }, 100);
+
+            // Hide Animation
+            setTimeout(() => {
+                popup.classList.add('translate-y-10', 'opacity-0');
+                setTimeout(() => popup.classList.add('hidden'), 500);
+            }, 4000); 
+            
+        }, 5000); // 5 Detik
+
     </script>
 </body>
 </html>
