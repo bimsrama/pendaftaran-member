@@ -8,7 +8,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: #020202; color: white; }
-        
         .glass-card { background: rgba(20, 20, 20, 0.7); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.08); box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5); }
         .text-gold { background: linear-gradient(135deg, #FDE68A 0%, #D97706 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .circle-chart__circle { animation: circle-chart-fill 2s reverse; transform: rotate(-90deg); transform-origin: center; }
@@ -18,8 +17,10 @@
         .timeline-line { position: absolute; left: 14px; top: 10px; bottom: -20px; width: 2px; background: #333; z-index: 0; }
         .timeline-item.active .timeline-line { background: #d97706; }
         .timeline-item:last-child .timeline-line { display: none; }
+        
+        /* Scrollbar */
         .scroller::-webkit-scrollbar { width: 4px; }
-        .scroller::-webkit-scrollbar-track { background: #111; }
+        .scroller::-webkit-scrollbar-track { background: #1a1a1a; }
         .scroller::-webkit-scrollbar-thumb { background: #444; border-radius: 4px; }
         .hidden { display: none; }
     </style>
@@ -41,7 +42,7 @@
         <div class="glass-card rounded-3xl p-5 mb-4 flex items-center justify-between relative">
             <div class="flex items-center gap-3">
                 <div class="w-14 h-14 rounded-full border-2 border-amber-500/30 p-0.5">
-                    <img id="user-avatar" src="" class="w-full h-full rounded-full object-cover bg-neutral-800" alt="Profile">
+                    <img id="user-avatar" src="" class="w-full h-full rounded-full object-cover bg-neutral-800">
                 </div>
                 <div>
                     <h2 id="user-name" class="font-bold text-white text-lg leading-tight truncate w-32">...</h2>
@@ -204,9 +205,17 @@
         </div>
     </div>
 
+    <div id="dummy-popup" class="fixed bottom-6 left-6 z-40 hidden flex items-center gap-3 bg-black/80 backdrop-blur-md border-l-4 border-green-500 px-4 py-3 rounded-r-xl transition-all duration-500 transform translate-y-10 opacity-0">
+        <div class="w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center text-xs">🚀</div>
+        <div>
+            <p class="text-[10px] text-neutral-400 uppercase font-bold">Baru Check-in</p>
+            <p class="text-xs font-bold text-white" id="dummy-name">Rina - Day 5</p>
+        </div>
+    </div>
+
     <script>
-        // ⚠️ PASTE URL SCRIPT ANDA DISINI (PASTIKAN DEPLOY SEBAGAI 'ANYONE')
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz60TyDP9sE1JGXJJ9RZtvinrcQlOH-_UDRi2-baMbNHve1OjMfKRA0w-VI4xoLRQuY/exec';
+        // ✅ URL SCRIPT YANG ANDA BERIKAN
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx67JX5mM-n-W1h6ehURHgONXBPiyUvESRLMCveTV04wXighQQhLErXQwC07Yf5Zkkw/exec';
         
         const REPORT_PAGE = "laporan.html";
         const urlParams = new URLSearchParams(window.location.search);
@@ -251,10 +260,9 @@
             'Seimbang': ["Pertahankan pola makan sehatmu!", "Coba variasi buah-buahan baru.", "Tidur cukup 7-8 jam.", "Rutin olahraga ringan."]
         };
 
-        // --- 1. LOAD DATA ---
         window.onload = function() {
             if(!wa) { 
-                document.getElementById('loading').innerHTML = '<p class="text-red-500 font-bold">Link Salah. Buka dari WhatsApp.</p>';
+                document.getElementById('loading').innerHTML = '<div class="text-center"><p class="text-red-500 font-bold mb-2">LINK TIDAK VALID</p><p class="text-[10px] text-gray-400">Buka link ini dari pesan WhatsApp.</p></div>';
                 return; 
             }
             document.getElementById('btn-to-report').href = `${REPORT_PAGE}?wa=${wa}`;
@@ -283,7 +291,7 @@
                     updateTimeline(data.hari);
                     showDailyInsight();
                     
-                    // C. Logic Form
+                    // C. Logic Form: Quiz (Kelipatan 6) vs Normal (Biasa)
                     if (checkinDay > 0 && checkinDay % 6 === 0 && checkinDay < 30) {
                         setupQuestionForm(checkinDay);
                         document.getElementById('quiz-section').classList.remove('hidden');
@@ -295,18 +303,18 @@
 
                     document.getElementById('loading').classList.add('hidden');
                     document.getElementById('main-content').classList.remove('hidden');
-                } else { alert("Data User Tidak Ditemukan."); }
+                } else { 
+                    alert("Data User Tidak Ditemukan. Pastikan nomor WA benar."); 
+                }
             })
             .catch(err => { 
                 console.error(err);
-                document.getElementById('loading').innerHTML = '<p class="text-red-500 text-xs font-bold text-center px-4">Gagal koneksi ke server.<br>Pastikan Script Deploy ke "Anyone".</p>'; 
+                document.getElementById('loading').innerHTML = '<div class="text-center"><p class="text-red-500 font-bold mb-2">GAGAL KONEKSI SERVER</p><p class="text-[10px] text-gray-400">Pastikan Script di-Deploy sebagai "Anyone".</p></div>'; 
             });
         };
 
         function updateTimeline(day) {
-            const phases = [
-                { id: 'phase-1', min: 1 }, { id: 'phase-2', min: 11 }, { id: 'phase-3', min: 21 }
-            ];
+            const phases = [ { id: 'phase-1', min: 1 }, { id: 'phase-2', min: 11 }, { id: 'phase-3', min: 21 } ];
             phases.forEach(phase => {
                 const el = document.getElementById(phase.id);
                 const dot = el.querySelector('.dot');
@@ -348,8 +356,9 @@
             const q1 = document.querySelector('input[name="q1"]:checked')?.value;
             const q2 = document.querySelector('input[name="q2"]:checked')?.value;
             if(!q1 || !q2) { alert("Mohon jawab kedua pertanyaan."); return; }
+            
             const detail = `Quiz: ${q1}, ${q2}`;
-            doCheckin(document.getElementById('btn-submit-quiz'), detail, true);
+            doCheckin(document.getElementById('btn-submit-quiz'), detail, true); // Always show solution for quiz
         });
 
         // --- SUBMIT NORMAL ---
@@ -382,7 +391,7 @@
 
                         let aiSolution = "Istirahat yang cukup dan perbanyak air putih ya.";
                         if (code === 'A') aiSolution = "Coba tambah porsi serat malam ini dan minum air hangat.";
-                        else if (code === 'B') aiSolution = "Hindari makan terlalu cepat dan kurangi makanan bergas.";
+                        else if (code === 'B') aiSolution = "Hindari makan terlalu cepat dan kurangi makanan pemicu gas.";
                         else if (code === 'C') aiSolution = "Makan bubur atau makanan lunak dulu untuk menenangkan perut.";
 
                         document.getElementById('success-tip-text').innerText = aiSolution;
@@ -411,7 +420,7 @@
                         <div class="bg-white/5 p-3 rounded-xl border border-white/5 flex justify-between items-center mb-2">
                             <div>
                                 <p class="text-xs font-bold text-white">${item.hari}</p>
-                                <p class="text-[10px] text-neutral-500">${item.tanggal}</p>
+                                <p class="text-[10px] text-neutral-500">${item.tanggal} • ${item.jam}</p>
                             </div>
                             <span class="text-neutral-400 text-[10px] italic max-w-[120px] text-right truncate">${item.detail || 'Selesai'}</span>
                         </div>
@@ -421,6 +430,20 @@
             }
             document.getElementById('history-modal').classList.remove('hidden');
         }
+        
+        // Dummy Popup
+        const dummyNames = ["Rina", "Dimas", "Alya", "Budi", "Sinta", "Fajar", "Tio", "Dina", "Reza", "Vivi"];
+        setInterval(() => {
+            const popup = document.getElementById('dummy-popup');
+            const nameEl = document.getElementById('dummy-name');
+            const rName = dummyNames[Math.floor(Math.random() * dummyNames.length)];
+            const rDay = Math.floor(Math.random() * 29) + 1;
+            nameEl.innerText = `${rName} - Day ${rDay}`;
+            popup.classList.remove('hidden');
+            setTimeout(() => { popup.classList.remove('translate-y-10', 'opacity-0'); }, 100);
+            setTimeout(() => { popup.classList.add('translate-y-10', 'opacity-0'); setTimeout(() => popup.classList.add('hidden'), 500); }, 4000); 
+        }, 5000);
+
     </script>
 </body>
 </html>
