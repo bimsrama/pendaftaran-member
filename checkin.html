@@ -8,46 +8,18 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: #020202; color: white; }
-        
-        /* Glassmorphism */
-        .glass-card { 
-            background: rgba(20, 20, 20, 0.7); 
-            backdrop-filter: blur(20px); 
-            border: 1px solid rgba(255, 255, 255, 0.08); 
-            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
-        }
-
-        /* Gold Gradient Text */
-        .text-gold { 
-            background: linear-gradient(135deg, #FDE68A 0%, #D97706 100%); 
-            -webkit-background-clip: text; 
-            -webkit-text-fill-color: transparent; 
-        }
-
-        /* Progress Circle Animation */
-        .circle-chart__circle { 
-            animation: circle-chart-fill 2s reverse; 
-            transform: rotate(-90deg); 
-            transform-origin: center; 
-        }
+        .glass-card { background: rgba(20, 20, 20, 0.8); backdrop-filter: blur(24px); border: 1px solid rgba(255, 255, 255, 0.08); box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5); }
+        .text-gold { background: linear-gradient(135deg, #FDE68A 0%, #D97706 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .circle-chart__circle { animation: circle-chart-fill 2s reverse; transform: rotate(-90deg); transform-origin: center; }
         @keyframes circle-chart-fill { to { stroke-dasharray: 0 100; } }
-
-        /* Buttons Glow Effect */
-        .btn-glow { 
-            background: linear-gradient(to right, #b45309, #fbbf24); 
-            box-shadow: 0 0 15px rgba(245, 158, 11, 0.3); 
-            transition: all 0.3s; 
-        }
+        .btn-glow { background: linear-gradient(to right, #b45309, #fbbf24); box-shadow: 0 0 15px rgba(245, 158, 11, 0.3); transition: all 0.3s; }
         .btn-glow:active { transform: scale(0.98); }
-
-        /* Timeline & Scrollbar */
         .timeline-line { position: absolute; left: 14px; top: 10px; bottom: -20px; width: 2px; background: #333; z-index: 0; }
         .timeline-item.active .timeline-line { background: #d97706; }
         .timeline-item:last-child .timeline-line { display: none; }
         .scroller::-webkit-scrollbar { width: 4px; }
-        .scroller::-webkit-scrollbar-track { background: #111; }
+        .scroller::-webkit-scrollbar-track { background: #1a1a1a; }
         .scroller::-webkit-scrollbar-thumb { background: #444; border-radius: 4px; }
-        
         .hidden { display: none; }
     </style>
 </head>
@@ -60,7 +32,7 @@
 
     <div id="loading" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/95">
         <div class="w-12 h-12 border-4 border-neutral-800 border-t-amber-500 rounded-full animate-spin mb-4"></div>
-        <p class="text-[10px] text-neutral-500 tracking-widest animate-pulse">MEMUAT DASHBOARD...</p>
+        <p class="text-[10px] text-neutral-500 tracking-widest animate-pulse">MENGHUBUNGKAN...</p>
     </div>
 
     <div id="main-content" class="w-full max-w-md hidden pb-24">
@@ -77,9 +49,7 @@
                     <div>
                         <h2 id="user-name" class="font-bold text-white text-lg leading-tight truncate w-32">...</h2>
                         <p id="user-kategori" class="text-[10px] text-amber-400 uppercase font-bold tracking-wider mb-1">...</p>
-                        <a href="https://wa.me/6281234567890?text=Halo%20Coach,%20saya%20mau%20tanya%20tentang%20program%20usus" 
-                           target="_blank"
-                           class="inline-flex items-center gap-1 bg-green-900/40 hover:bg-green-800/60 border border-green-500/30 px-2 py-1 rounded-lg text-[10px] text-green-400 transition">
+                        <a href="https://wa.me/6281234567890?text=Halo%20Coach,%20saya%20mau%20tanya%20tentang%20program%20usus" target="_blank" class="inline-flex items-center gap-1 bg-green-900/40 hover:bg-green-800/60 border border-green-500/30 px-2 py-1 rounded-lg text-[10px] text-green-400 transition">
                             <span>💬 Bantuan CS</span>
                         </a>
                     </div>
@@ -132,9 +102,7 @@
             <h4 class="text-xs font-bold text-amber-500 mb-1 flex items-center gap-2">
                 <span>💡</span> TIPS HARI INI
             </h4>
-            <p id="insight-text" class="text-xs text-neutral-300 leading-relaxed italic">
-                "Minum air hangat di pagi hari membantu melancarkan pencernaanmu."
-            </p>
+            <p id="insight-text" class="text-xs text-neutral-300 leading-relaxed italic">...</p>
         </div>
 
         <div class="grid grid-cols-2 gap-3 mb-6">
@@ -154,44 +122,70 @@
                 <h2 class="text-2xl font-bold text-white">DAY <span id="day-current-form">...</span></h2>
             </div>
 
-            <form id="daily-form" class="space-y-4">
+            <form id="daily-form-quiz" class="space-y-4 hidden">
                 <div class="bg-white/5 p-3 rounded-xl">
-                    <p class="text-xs text-neutral-300 mb-2 font-bold" id="q1-text">Bagaimana rasanya perutmu hari ini?</p>
+                    <p class="text-xs text-neutral-300 mb-2 font-bold" id="q1-text">...</p>
                     <div class="grid grid-cols-2 gap-2">
                         <label class="bg-black/20 p-2 rounded-lg text-center cursor-pointer hover:bg-white/5 transition border border-transparent peer-checked:border-amber-500">
-                            <input type="radio" name="q1" value="Nyaman" class="hidden peer">
-                            <span class="text-xs peer-checked:text-amber-400">😊 Nyaman</span>
+                            <input type="radio" name="q1" value="Ya" class="hidden peer">
+                            <span class="text-xs peer-checked:text-amber-400">Ya</span>
                         </label>
                         <label class="bg-black/20 p-2 rounded-lg text-center cursor-pointer hover:bg-white/5 transition border border-transparent peer-checked:border-amber-500">
-                            <input type="radio" name="q1" value="Ada Keluhan" class="hidden peer">
-                            <span class="text-xs peer-checked:text-amber-400">🤢 Ada Keluhan</span>
+                            <input type="radio" name="q1" value="Tidak" class="hidden peer">
+                            <span class="text-xs peer-checked:text-amber-400">Tidak</span>
                         </label>
                     </div>
                 </div>
-
                 <div class="bg-white/5 p-3 rounded-xl">
-                    <p class="text-xs text-neutral-300 mb-2 font-bold" id="q2-text">Sudah lakukan tantangan makan?</p>
+                    <p class="text-xs text-neutral-300 mb-2 font-bold" id="q2-text">...</p>
                     <div class="grid grid-cols-2 gap-2">
                         <label class="bg-black/20 p-2 rounded-lg text-center cursor-pointer hover:bg-white/5 transition border border-transparent peer-checked:border-amber-500">
                             <input type="radio" name="q2" value="Ya" class="hidden peer">
-                            <span class="text-xs peer-checked:text-amber-400">✅ Sudah Dong</span>
+                            <span class="text-xs peer-checked:text-amber-400">Ya</span>
                         </label>
                         <label class="bg-black/20 p-2 rounded-lg text-center cursor-pointer hover:bg-white/5 transition border border-transparent peer-checked:border-amber-500">
                             <input type="radio" name="q2" value="Tidak" class="hidden peer">
-                            <span class="text-xs peer-checked:text-amber-400">❌ Belum Sempat</span>
+                            <span class="text-xs peer-checked:text-amber-400">Tidak</span>
                         </label>
                     </div>
                 </div>
+                <button type="submit" id="btn-submit-quiz" class="w-full btn-glow text-black font-bold text-sm py-4 rounded-xl flex items-center justify-center gap-2 mt-2">KIRIM & CHECK-IN</button>
+            </form>
 
-                <button type="submit" id="btn-submit" class="w-full btn-glow text-black font-bold text-sm py-4 rounded-xl flex items-center justify-center gap-2 mt-2">
-                    KIRIM & CHECK-IN
-                </button>
+            <form id="daily-form-normal" class="space-y-4">
+                <div class="bg-white/5 p-3 rounded-xl">
+                    <p class="text-xs text-neutral-300 mb-2 font-bold">Bagaimana perutmu hari ini?</p>
+                    <div class="grid grid-cols-2 gap-2">
+                        <label class="bg-black/20 p-2 rounded-lg text-center cursor-pointer hover:bg-white/5 transition border border-transparent peer-checked:border-amber-500">
+                            <input type="radio" name="normal_q1" value="Nyaman" class="hidden peer">
+                            <span class="text-xs peer-checked:text-amber-400">😊 Nyaman</span>
+                        </label>
+                        <label class="bg-black/20 p-2 rounded-lg text-center cursor-pointer hover:bg-white/5 transition border border-transparent peer-checked:border-amber-500">
+                            <input type="radio" name="normal_q1" value="Kurang Nyaman" class="hidden peer">
+                            <span class="text-xs peer-checked:text-amber-400">🤢 Kurang Enak</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="bg-white/5 p-3 rounded-xl">
+                    <p class="text-xs text-neutral-300 mb-2 font-bold">Tantangan makan terlaksana?</p>
+                    <div class="grid grid-cols-2 gap-2">
+                        <label class="bg-black/20 p-2 rounded-lg text-center cursor-pointer hover:bg-white/5 transition border border-transparent peer-checked:border-amber-500">
+                            <input type="radio" name="normal_q2" value="Ya" class="hidden peer">
+                            <span class="text-xs peer-checked:text-amber-400">✅ Berhasil</span>
+                        </label>
+                        <label class="bg-black/20 p-2 rounded-lg text-center cursor-pointer hover:bg-white/5 transition border border-transparent peer-checked:border-amber-500">
+                            <input type="radio" name="normal_q2" value="Tidak" class="hidden peer">
+                            <span class="text-xs peer-checked:text-amber-400">❌ Belum</span>
+                        </label>
+                    </div>
+                </div>
+                <button type="submit" id="btn-submit-normal" class="w-full btn-glow text-black font-bold text-sm py-4 rounded-xl flex items-center justify-center gap-2 mt-2">KIRIM & CHECK-IN</button>
             </form>
         </div>
 
     </div>
 
-    <div id="history-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/95 hidden p-4">
+    <div id="history-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/95 hidden p-4 transition-opacity">
         <div class="glass-card p-6 rounded-3xl w-full max-w-sm h-3/4 flex flex-col relative">
             <button onclick="document.getElementById('history-modal').classList.add('hidden')" class="absolute top-4 right-4 text-neutral-400 hover:text-white">✕</button>
             <h2 class="text-lg font-bold text-white mb-4 flex items-center gap-2"><span>📜</span> Riwayat Perjalanan</h2>
@@ -201,10 +195,10 @@
         </div>
     </div>
 
-    <div id="success-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/95 hidden">
+    <div id="success-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/95 hidden transition-opacity">
         <div class="glass-card p-8 rounded-3xl text-center max-w-xs border border-green-500/30">
             <div class="text-5xl mb-4 animate-bounce">🎉</div>
-            <h2 class="text-xl font-bold text-white mb-2">Luar Biasa!</h2>
+            <h2 class="text-xl font-bold text-white mb-2">Check-in Berhasil!</h2>
             <p class="text-xs text-neutral-400 mb-6">Data kesehatan hari ini telah tersimpan.</p>
             
             <div id="success-insight" class="bg-white/10 p-4 rounded-xl text-left mb-6 hidden">
@@ -216,16 +210,8 @@
         </div>
     </div>
 
-    <div id="dummy-popup" class="fixed bottom-6 left-6 z-40 hidden flex items-center gap-3 bg-black/80 backdrop-blur-md border-l-4 border-green-500 px-4 py-3 rounded-r-xl transition-all duration-500 transform translate-y-10 opacity-0">
-        <div class="w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center text-xs">🚀</div>
-        <div>
-            <p class="text-[10px] text-neutral-400 uppercase font-bold">Baru Check-in</p>
-            <p class="text-xs font-bold text-white" id="dummy-name">Rina - Day 5</p>
-        </div>
-    </div>
-
     <script>
-        // ⚠️ PASTE URL SCRIPT ANDA DISINI
+        // ⚠️ PASTE URL SCRIPT GOOGLE APPS SCRIPT ANDA DI SINI
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz60TyDP9sE1JGXJJ9RZtvinrcQlOH-_UDRi2-baMbNHve1OjMfKRA0w-VI4xoLRQuY/exec';
         
         const REPORT_PAGE = "laporan.html";
@@ -236,7 +222,7 @@
         let userKategoriRaw = "";
         let userHistoryData = [];
 
-        // Database Pertanyaan Harian (Khusus Kelipatan 6)
+        // DATABASE PERTANYAAN (Khusus Kelipatan 6)
         const questionsDB = {
             'A': { 
                 6: ['Apakah buang air besar masih keras?', 'Apakah masih terasa mengejan saat BAB?'],
@@ -272,39 +258,53 @@
         };
 
         window.onload = function() {
-            if(!wa) { alert("Akses ditolak. Buka dari link WhatsApp."); return; }
+            if(!wa) { alert("Link Error: Buka dari WhatsApp dengan parameter ?wa="); return; }
             document.getElementById('btn-to-report').href = `${REPORT_PAGE}?wa=${wa}`;
 
             fetch(`${SCRIPT_URL}?action=getData&wa=${wa}`)
             .then(res => res.json())
             .then(data => {
                 if(data.status === 'success'){
+                    // --- SETUP DATA ---
                     userCurrentDay = parseInt(data.hari);
-                    const checkinDay = userCurrentDay + 1;
+                    const checkinDay = userCurrentDay + 1; // Hari yang harus dicheckin
                     userKategoriRaw = data.kategori;
                     if(data.checkin_log) userHistoryData = data.checkin_log;
 
-                    // UI Updates
+                    // --- ISI PROFILE UI ---
                     document.getElementById('user-name').innerText = data.nama;
                     document.getElementById('user-kategori').innerText = data.kategori.toUpperCase();
                     document.getElementById('user-streak').innerText = data.hari;
+                    document.getElementById('day-current').innerText = data.hari;
                     document.getElementById('day-current-form').innerText = checkinDay;
-                    document.getElementById('day-display').innerText = checkinDay;
                     document.getElementById('user-avatar').src = `https://api.dicebear.com/7.x/notionists/svg?seed=${data.nama}`;
+                    
                     document.getElementById('progress-percent').innerText = data.progress + "%";
                     setTimeout(() => { document.getElementById('progress-ring').style.strokeDasharray = `${data.progress}, 100`; }, 500);
 
+                    // --- RENDER COMPONENT ---
                     updateTimeline(data.hari);
                     showDailyInsight();
-                    setupQuestionForm(checkinDay); // Setup pertanyaan hari ini
+
+                    // --- LOGIC FORM: QUIZ vs NORMAL ---
+                    if (checkinDay > 0 && checkinDay % 6 === 0 && checkinDay < 30) {
+                        setupQuiz(data.kategori, checkinDay);
+                        document.getElementById('daily-form-quiz').classList.remove('hidden'); // Show Quiz Form
+                        document.getElementById('daily-form-normal').classList.add('hidden');  // Hide Normal Form
+                        document.getElementById('quiz-section').classList.remove('hidden');    // Show Header Quiz
+                    } else {
+                        document.getElementById('daily-form-quiz').classList.add('hidden');
+                        document.getElementById('daily-form-normal').classList.remove('hidden');
+                        document.getElementById('normal-checkin-section').classList.remove('hidden');
+                    }
 
                     document.getElementById('loading').classList.add('hidden');
                     document.getElementById('main-content').classList.remove('hidden');
-                } else { alert("User tidak ditemukan"); }
+                } else { alert("Data User Tidak Ditemukan. Cek kembali nomor WA."); }
             })
             .catch(err => { 
                 console.error(err);
-                document.getElementById('loading').innerHTML = '<p class="text-red-500 text-xs">Gagal koneksi server.</p>'; 
+                document.getElementById('loading').innerHTML = '<p class="text-red-500 text-xs font-bold text-center">Gagal koneksi ke server.<br>Cek internet & URL Script.</p>'; 
             });
         };
 
@@ -335,76 +335,78 @@
             document.getElementById('daily-insight').classList.remove('hidden');
         }
 
-        // Logic Pertanyaan: Kelipatan 6 -> Quiz, Hari Biasa -> Refleksi
-        function setupQuestionForm(day) {
+        function setupQuiz(kategoriRaw, day) {
             let code = 'Seimbang';
-            if (userKategoriRaw.includes('Sembelit')) code = 'A';
-            else if (userKategoriRaw.includes('Kembung')) code = 'B';
-            else if (userKategoriRaw.includes('Sensitif')) code = 'C';
-
-            // Jika hari ini kelipatan 6 (6, 12, 18, 24), ganti pertanyaan
-            if (day > 0 && day % 6 === 0 && day < 30) {
-                const qSet = questionsDB[code][day] || questionsDB['Seimbang'][day] || questionsDB['Seimbang'][6];
-                document.getElementById('q1-text').innerText = qSet[0];
-                document.getElementById('q2-text').innerText = qSet[1];
-            } else {
-                // Hari biasa: Pertanyaan default
-                document.getElementById('q1-text').innerText = "Bagaimana kondisi perutmu hari ini?";
-                document.getElementById('q2-text').innerText = "Sudah lakukan tantangan makan?";
-            }
+            if (kategoriRaw.includes('Sembelit')) code = 'A';
+            else if (kategoriRaw.includes('Kembung')) code = 'B';
+            else if (kategoriRaw.includes('Sensitif')) code = 'C';
+            const qSet = questionsDB[code][day] || questionsDB['Seimbang'][day] || questionsDB['Seimbang'][6];
+            document.getElementById('quiz-day-num').innerText = day;
+            document.getElementById('q1-text').innerText = "1. " + qSet[0];
+            document.getElementById('q2-text').innerText = "2. " + qSet[1];
         }
 
-        // Handle Submit Checkin
-        document.getElementById('daily-form').addEventListener('submit', function(e){
+        // --- SUBMIT: FORM QUIZ ---
+        document.getElementById('daily-form-quiz').addEventListener('submit', function(e){
             e.preventDefault();
             const q1 = document.querySelector('input[name="q1"]:checked')?.value;
             const q2 = document.querySelector('input[name="q2"]:checked')?.value;
+            if(!q1 || !q2) { alert("Mohon jawab kedua pertanyaan."); return; }
+            const detail = `Quiz: ${q1}, ${q2}`;
+            // Logic masalah sederhana untuk Quiz: Jika ada "Ya" di pertanyaan gejala (A/B/C biasanya gejala)
+            // Namun karena pertanyaan dinamis, kita anggap checkin quiz selalu butuh perhatian
+            doCheckin(document.getElementById('btn-submit-quiz'), detail, true);
+        });
 
-            if(!q1 || !q2) { alert("Mohon isi kedua pertanyaan check-in."); return; }
+        // --- SUBMIT: FORM NORMAL ---
+        document.getElementById('daily-form-normal').addEventListener('submit', function(e){
+            e.preventDefault();
+            const q1 = document.querySelector('input[name="normal_q1"]:checked')?.value;
+            const q2 = document.querySelector('input[name="normal_q2"]:checked')?.value;
+            if(!q1 || !q2) { alert("Mohon isi refleksi harian."); return; }
+            const detail = `Perut: ${q1} | Tantangan: ${q2}`;
+            
+            // Cek ada keluhan?
+            const hasIssue = (q1 === 'Kurang Nyaman' || q2 === 'Tidak');
+            doCheckin(document.getElementById('btn-submit-normal'), detail, hasIssue);
+        });
 
-            const btn = document.getElementById('btn-submit');
-            btn.innerHTML = "MENYIMPAN...";
-            btn.disabled = true;
-
-            // Cek apakah ada keluhan (untuk AI solution)
-            const hasIssue = (q1 === 'Ada Keluhan' || q2 === 'Tidak' || q1 === 'Ya' || q2 === 'Tidak'); 
-            // Note: Logic "Ya" di q1 kelipatan 6 bisa berarti positif/negatif tergantung pertanyaan, 
-            // disini kita simplifikasi: Jika jawabannya mengindikasikan masalah.
-            // Untuk simple-nya: Jika pilih opsi kedua (value 'Ada Keluhan' atau 'Tidak') dianggap masalah.
-
-            const detailJawaban = `Q1: ${q1}, Q2: ${q2}`;
+        function doCheckin(btnElement, detailJawaban, hasIssue) {
+            btnElement.innerHTML = "MENYIMPAN...";
+            btnElement.disabled = true;
 
             fetch(`${SCRIPT_URL}?action=checkin&whatsapp=${encodeURIComponent(wa)}&detail=${encodeURIComponent(detailJawaban)}`, { method: 'POST', mode: 'no-cors' })
             .then(() => {
-                const modal = document.getElementById('success-modal');
-                modal.classList.remove('hidden');
+                setTimeout(() => {
+                    const modal = document.getElementById('success-modal');
+                    modal.classList.remove('hidden');
 
-                // Tampilkan Solusi jika ada masalah / keluhan
-                if(hasIssue) {
-                    let code = 'Seimbang';
-                    if (userKategoriRaw.includes('Sembelit')) code = 'A';
-                    else if (userKategoriRaw.includes('Kembung')) code = 'B';
-                    else if (userKategoriRaw.includes('Sensitif')) code = 'C';
+                    if(hasIssue) {
+                        let code = 'Seimbang';
+                        if (userKategoriRaw.includes('Sembelit')) code = 'A';
+                        else if (userKategoriRaw.includes('Kembung')) code = 'B';
+                        else if (userKategoriRaw.includes('Sensitif')) code = 'C';
 
-                    let aiSolution = "Istirahat yang cukup dan perbanyak air putih ya.";
-                    if (code === 'A') aiSolution = "Coba tambah porsi serat malam ini dan minum air hangat.";
-                    else if (code === 'B') aiSolution = "Hindari makan terlalu cepat dan kurangi makanan bergas.";
-                    else if (code === 'C') aiSolution = "Makan bubur atau makanan lunak dulu untuk menenangkan perut.";
+                        let aiSolution = "Istirahat yang cukup dan perbanyak air putih ya.";
+                        if (code === 'A') aiSolution = "Coba tambah porsi serat malam ini dan minum air hangat sebelum tidur.";
+                        else if (code === 'B') aiSolution = "Hindari makan terlalu cepat dan kurangi makanan pemicu gas.";
+                        else if (code === 'C') aiSolution = "Makan bubur atau makanan lunak dulu untuk menenangkan perut.";
 
-                    document.getElementById('success-tip-text').innerText = aiSolution;
-                    document.getElementById('success-insight').classList.remove('hidden');
-                } else {
-                    document.getElementById('success-insight').classList.add('hidden');
-                }
+                        document.getElementById('success-tip-text').innerText = aiSolution;
+                        document.getElementById('success-insight').classList.remove('hidden');
+                    } else {
+                        document.getElementById('success-insight').classList.add('hidden');
+                    }
+                }, 1000); // Delay sedikit biar kerasa loading
             })
             .catch(() => {
-                alert("Gagal koneksi.");
-                btn.disabled = false;
-                btn.innerHTML = "COBA LAGI";
+                alert("Gagal koneksi. Coba lagi.");
+                btnElement.disabled = false;
+                btnElement.innerHTML = "COBA LAGI";
             });
-        });
+        }
 
-        // Open History Modal
+        // --- HISTORY MODAL ---
         window.openHistoryModal = function() {
             const container = document.getElementById('history-content');
             container.innerHTML = ''; 
@@ -412,13 +414,17 @@
                 container.innerHTML = '<p class="text-xs text-neutral-500 text-center mt-10">Belum ada riwayat check-in.</p>';
             } else {
                 userHistoryData.forEach(item => {
+                    // Cek detail jawaban untuk display icon
+                    let statusIcon = "✅";
+                    if(item.detail && item.detail.includes("Kurang")) statusIcon = "⚠️";
+                    
                     const html = `
-                        <div class="bg-white/5 p-3 rounded-xl border border-white/5 flex justify-between items-center">
+                        <div class="bg-white/5 p-3 rounded-xl border border-white/5 flex justify-between items-center mb-2">
                             <div>
                                 <p class="text-xs font-bold text-white">${item.hari}</p>
-                                <p class="text-[10px] text-neutral-500">${item.tanggal}</p>
+                                <p class="text-[10px] text-neutral-500">${item.tanggal} • ${item.jam}</p>
                             </div>
-                            <span class="text-green-500 text-xs font-bold">✅ ${item.ket || 'Selesai'}</span>
+                            <span class="text-neutral-400 text-[10px] italic max-w-[120px] text-right truncate">${item.detail || 'Selesai'}</span>
                         </div>
                     `;
                     container.insertAdjacentHTML('beforeend', html);
@@ -426,20 +432,6 @@
             }
             document.getElementById('history-modal').classList.remove('hidden');
         }
-
-        // Dummy Popup Logic
-        const dummyNames = ["Rina", "Dimas", "Alya", "Budi", "Sinta", "Fajar", "Tio", "Dina", "Reza", "Vivi"];
-        setInterval(() => {
-            const popup = document.getElementById('dummy-popup');
-            const nameEl = document.getElementById('dummy-name');
-            const rName = dummyNames[Math.floor(Math.random() * dummyNames.length)];
-            const rDay = Math.floor(Math.random() * 29) + 1;
-            nameEl.innerText = `${rName} - Day ${rDay}`;
-            popup.classList.remove('hidden');
-            setTimeout(() => { popup.classList.remove('translate-y-10', 'opacity-0'); }, 100);
-            setTimeout(() => { popup.classList.add('translate-y-10', 'opacity-0'); setTimeout(() => popup.classList.add('hidden'), 500); }, 4000); 
-        }, 5000);
-
     </script>
 </body>
 </html>
