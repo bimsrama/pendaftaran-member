@@ -32,7 +32,7 @@
         .custom-scrollbar::-webkit-scrollbar-track { background: #1a1a1a; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #555; border-radius: 4px; }
 
-        /* Animation */
+        /* Animation Fade In */
         .fade-in { animation: fadeIn 0.6s ease-out forwards; opacity: 0; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
@@ -46,6 +46,15 @@
             animation: spin 1s linear infinite;
         }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* 🔥 TYPING CURSOR EFFECT */
+        .typing-cursor::after {
+            content: '|';
+            margin-left: 2px;
+            color: #fbbf24; /* Amber-400 */
+            animation: blink 1s step-start infinite;
+        }
+        @keyframes blink { 50% { opacity: 0; } }
     </style>
 </head>
 <body class="min-h-screen pb-10">
@@ -121,7 +130,7 @@
             <div class="glass rounded-3xl p-5 border border-blue-500/20 relative overflow-hidden fade-in" style="animation-delay: 0.3s;">
                 <i class="fas fa-robot absolute -bottom-3 -right-3 text-blue-500/10 text-6xl pointer-events-none"></i>
                 
-                <div class="flex justify-between items-center mb-2 relative z-10">
+                <div class="flex justify-between items-center mb-3 relative z-10">
                     <h3 class="font-bold text-xs text-blue-400 flex items-center gap-2">
                         <i class="fas fa-lightbulb"></i> AI DAILY TIP
                     </h3>
@@ -131,9 +140,10 @@
                     </button>
                 </div>
 
-                <p id="ai-insight-text" class="text-xs text-neutral-300 italic leading-relaxed relative z-10 transition-opacity duration-300">
-                    "Memuat tips cerdas..."
-                </p>
+                <div class="min-h-[40px] relative z-10">
+                    <p id="ai-insight-text" class="text-xs text-neutral-300 italic leading-relaxed">
+                        </p>
+                </div>
             </div>
 
             <div class="glass rounded-3xl p-6 border-t-2 border-amber-500 fade-in" style="animation-delay: 0.4s;">
@@ -180,8 +190,7 @@
                     <i class="fas fa-history"></i> RIWAYAT PERJALANAN
                 </h3>
                 <div class="overflow-y-auto max-h-56 pr-2 custom-scrollbar">
-                    <ul id="history-list" class="space-y-3">
-                        </ul>
+                    <ul id="history-list" class="space-y-3"></ul>
                     <div id="empty-history" class="hidden text-center py-6">
                         <p class="text-[10px] text-neutral-600 italic">Belum ada data check-in.</p>
                     </div>
@@ -206,6 +215,7 @@
         let userCategory = 'Seimbang';
         let currentDay = 0;
         let waNumber = "";
+        let typingTimeout = null; // Variable untuk menyimpan timeout ketikan
 
         // Tips AI Database
         const aiTips = {
@@ -258,41 +268,52 @@
             }
         });
 
-        // 2. Refresh Tip Function (NEW Feature)
+        // 🔥 2. FUNGSI EFEK MENGETIK (TYPEWRITER)
+        function typeWriter(text, elementId, speed = 30) {
+            const element = document.getElementById(elementId);
+            if (!element) return;
+
+            // Clear previous content & timeout
+            element.innerHTML = "";
+            if (typingTimeout) clearTimeout(typingTimeout);
+            
+            // Tambahkan class kursor berkedip
+            element.classList.add('typing-cursor');
+
+            let i = 0;
+            function type() {
+                if (i < text.length) {
+                    element.innerHTML += text.charAt(i);
+                    i++;
+                    typingTimeout = setTimeout(type, speed);
+                } else {
+                    // Hilangkan kursor setelah selesai
+                    element.classList.remove('typing-cursor');
+                }
+            }
+            type();
+        }
+
+        // 3. Refresh Tip Function
         function refreshTip() {
             // Animasi Icon
             const icon = document.getElementById('refresh-icon');
             icon.classList.add('fa-spin');
-            
-            // Text Element
-            const textEl = document.getElementById('ai-insight-text');
-            
-            // Efek Fade Out
-            textEl.style.opacity = '0';
 
             setTimeout(() => {
                 icon.classList.remove('fa-spin');
                 
                 // Ambil Tips Baru
                 const tipsList = aiTips[userCategory] || aiTips['Seimbang'];
-                let newTip = tipsList[Math.floor(Math.random() * tipsList.length)];
+                const newTip = tipsList[Math.floor(Math.random() * tipsList.length)];
                 
-                // Pastikan tidak mengambil tips yang sama persis (jika list > 1)
-                const currentText = textEl.innerText.replace(/"/g, '');
-                if(tipsList.length > 1) {
-                    while (newTip === currentText) {
-                        newTip = tipsList[Math.floor(Math.random() * tipsList.length)];
-                    }
-                }
-
-                // Update Text & Fade In
-                textEl.innerHTML = `"${newTip}"`;
-                textEl.style.opacity = '1';
+                // Panggil fungsi mengetik
+                typeWriter(`"${newTip}"`, 'ai-insight-text');
                 
-            }, 500); // Waktu animasi (0.5 detik)
+            }, 300); 
         }
 
-        // 3. Fetch Data
+        // 4. Fetch Data
         function fetchUserData(wa) {
             fetch(`${SCRIPT_URL}?action=getData&wa=${wa}`)
                 .then(response => response.json())
@@ -309,7 +330,7 @@
                 });
         }
 
-        // 4. Render Dashboard
+        // 5. Render Dashboard
         function renderDashboard(data) {
             document.getElementById('loading-screen').classList.add('hidden');
             document.getElementById('dashboard-content').classList.remove('hidden');
@@ -333,8 +354,10 @@
             }, 500);
             document.getElementById('progress-text').textContent = `${data.progress}%`;
 
-            // Load Initial Tip
-            refreshTip(); 
+            // 🔥 LOAD INITIAL TIP (WITH TYPING EFFECT)
+            const tipsList = aiTips[userCategory] || aiTips['Seimbang'];
+            const initialTip = tipsList[Math.floor(Math.random() * tipsList.length)];
+            typeWriter(`"${initialTip}"`, 'ai-insight-text');
 
             // Logic Form
             setupCheckinForm(currentDay);
@@ -343,7 +366,7 @@
             renderHistory(data.checkin_log);
         }
 
-        // 5. Form Logic
+        // 6. Form Logic
         function setupCheckinForm(day) {
             const specialContainer = document.getElementById('special-input-container');
             const detailInput = document.getElementById('detail-jawaban');
@@ -361,7 +384,7 @@
             }
         }
 
-        // 6. Render History
+        // 7. Render History
         function renderHistory(logs) {
             const listContainer = document.getElementById('history-list');
             listContainer.innerHTML = '';
@@ -403,7 +426,7 @@
             });
         }
 
-        // 7. Handle Submit
+        // 8. Handle Submit
         document.getElementById('checkin-form').addEventListener('submit', function(e) {
             e.preventDefault();
 
