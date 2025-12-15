@@ -7,6 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
     
     <style>
@@ -77,6 +78,16 @@
         .hidden { display: none; }
         .fade-in { animation: fadeIn 0.5s ease-in; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* 🔥 TYPING CURSOR EFFECT */
+        .typing-cursor::after {
+            content: '|';
+            display: inline-block;
+            margin-left: 2px;
+            color: #3b82f6; /* Blue-500 matches AI theme */
+            animation: blink 1s step-start infinite;
+        }
+        @keyframes blink { 50% { opacity: 0; } }
     </style>
 </head>
 <body class="min-h-screen flex flex-col items-center justify-center p-4">
@@ -106,7 +117,7 @@
         <div class="glass rounded-3xl p-6 mb-4 text-center">
             <div class="flex justify-between items-end mb-2">
                 <div class="text-left">
-                    <p class="text-[10px] text-neutral-400 uppercase tracking-wider">Progress Program</p>
+                    <p class="text-sm text-neutral-400 uppercase tracking-wider font-bold">Progress Program</p>
                     <h2 class="text-2xl font-bold text-white" id="card-title">ON TRACK</h2>
                 </div>
                 <div class="text-4xl animate-bounce" id="card-icon">🚀</div>
@@ -131,19 +142,24 @@
         <div class="glass rounded-3xl p-6 mb-4 border border-blue-500/20 relative overflow-hidden">
             <div class="absolute -right-6 -top-6 w-24 h-24 bg-blue-500/10 blur-[50px] rounded-full"></div>
             
-            <div class="flex items-center gap-2 mb-3">
-                <span class="text-lg">🤖</span>
-                <h3 class="text-sm font-bold text-blue-400">AI Health Insight</h3>
+            <div class="flex justify-between items-center mb-3">
+                <div class="flex items-center gap-2">
+                    <span class="text-lg">🤖</span>
+                    <h3 class="text-sm font-bold text-blue-400">Analisa AI</h3>
+                </div>
+                <button onclick="refreshAnalysis()" class="group flex items-center gap-1 text-[10px] bg-blue-500/10 hover:bg-blue-500/20 text-blue-300 px-3 py-1.5 rounded-full transition-all active:scale-95 border border-blue-500/20">
+                    <i id="refresh-icon" class="fas fa-sync-alt group-hover:text-white"></i>
+                    <span class="font-semibold group-hover:text-white">Analisa Ulang</span>
+                </button>
             </div>
 
-            <div class="bg-blue-500/5 p-4 rounded-xl border border-blue-500/10 mb-3">
+            <div class="bg-blue-500/5 p-4 rounded-xl border border-blue-500/10 mb-3 min-h-[120px]">
                 <p class="text-xs text-neutral-300 leading-relaxed italic" id="ai-insight-text">
-                    "Menganalisis data pencernaan Anda..."
-                </p>
+                    </p>
             </div>
             
             <div class="flex justify-between items-center text-[10px] pt-2 border-t border-white/5">
-                <span class="text-neutral-500 uppercase">Profil Awal:</span>
+                <span class="text-neutral-500 uppercase">Kategori Pencernaan:</span>
                 <span class="text-white font-bold bg-white/10 px-2 py-0.5 rounded" id="quiz-cat">...</span>
             </div>
         </div>
@@ -184,7 +200,6 @@
         </div>
 
         <div class="grid grid-cols-1 gap-4 mb-6">
-            
             <div class="glass rounded-3xl p-5">
                 <div class="flex justify-between items-center mb-3 border-b border-white/10 pb-2">
                     <h3 class="text-xs font-bold text-white flex items-center gap-2">
@@ -205,7 +220,6 @@
                     <p class="text-[10px] text-neutral-500 italic text-center py-4">Belum ada data evaluasi mingguan.</p>
                 </div>
             </div>
-
         </div>
 
         <div id="cert-section" class="hidden mb-8 text-center px-2">
@@ -293,13 +307,52 @@
 
         const urlParams = new URLSearchParams(window.location.search);
         const waNumber = urlParams.get('wa');
+        
+        // Variables
+        let typingTimeout = null;
+        let currentCategoryCode = 'Seimbang';
 
-        // 🔥 AI Insight Logic Database
+        // 🔥 DATABASE ANALISA AI EDUKATIF (Expanded)
         const aiAnalysisDB = {
-            'A': "Analisis Tipe <strong>'Si Sembelit'</strong>: Data menunjukkan Anda sedang berjuang memperbaiki ritme buang air besar. Konsistensi asupan serat dan air putih sangat krusial. Jika grafik kenyamanan meningkat, itu tanda usus mulai beradaptasi dengan baik.",
-            'B': "Analisis Tipe <strong>'Si Kembung'</strong>: Fokus utama adalah mengurangi gas dalam perut. Pola makan perlahan dan menghindari pemicu gas terlihat mulai memberikan dampak. Perhatikan grafik di bawah, stabilitas adalah kunci.",
-            'C': "Analisis Tipe <strong>'Si Sensitif'</strong>: Usus Anda sangat reaktif. Pola makan kecil tapi sering adalah strategi terbaik. Grafik yang stabil menandakan Anda berhasil menghindari makanan pemicu iritasi.",
-            'Seimbang': "Analisis Tipe <strong>'Seimbang'</strong>: Kondisi pencernaan Anda sudah cukup optimal. Tantangannya adalah mempertahankan gaya hidup ini di tengah kesibukan. Grafik yang stabil di angka tinggi adalah target utama."
+            'A': [ // Si Sembelit
+                "📋 <strong>Analisa Medis:</strong> Tipe 'Si Sembelit' sering mengalami transit usus yang lambat. Ini bisa disebabkan oleh kurangnya asupan serat tidak larut (insoluble fiber) atau hidrasi yang minim.<br><br>💡 <strong>Saran:</strong> Coba tambahkan biji chia atau psyllium husk ke dalam menu harian. Jangan lupa minum minimal 300ml air hangat saat bangun tidur.",
+                
+                "🧠 <strong>Fakta Edukatif:</strong> Tahukah Anda? Menunda keinginan BAB dapat membuat feses mengeras karena usus besar terus menyerap air darinya.<br><br>⚡ <strong>Aksi:</strong> Buat jadwal rutin ke toilet setiap pagi, meski belum terasa mules, untuk melatih ritme sirkadian usus.",
+                
+                "🥗 <strong>Nutrisi Fokus:</strong> Perhatikan asupan magnesium alami. Magnesium membantu merelaksasi otot usus.<br><br>🥑 <strong>Sumber:</strong> Alpukat, bayam, dan kacang almond adalah teman terbaik Anda minggu ini.",
+                
+                "🧘 <strong>Mind-Gut Connection:</strong> Stres bisa memicu konstipasi pada beberapa orang (Fight or Flight response mematikan pencernaan).<br><br>✨ <strong>Tips:</strong> Lakukan pernapasan perut (diaphragmatic breathing) selama 5 menit sebelum tidur."
+            ],
+            'B': [ // Si Kembung
+                "📋 <strong>Analisa Medis:</strong> Kembung berlebih seringkali tanda fermentasi makanan yang tidak sempurna di usus halus atau menelan udara berlebih (aerophagia).<br><br>💡 <strong>Saran:</strong> Praktikkan 'Mindful Eating'. Kunyah makanan hingga menjadi bubur sebelum ditelan.",
+                
+                "🚫 <strong>Pantangan Sementara:</strong> Coba kurangi makanan tinggi FODMAP (seperti bawang, kol, susu sapi) selama 3 hari dan lihat apakah grafik kenyamanan Anda meningkat.<br><br>🍵 <strong>Solusi:</strong> Teh jahe atau peppermint hangat sangat efektif memecah gas.",
+                
+                "🦠 <strong>Microbiome Insight:</strong> Kembung bisa jadi tanda ketidakseimbangan bakteri. Probiotik alami seperti tempe atau yogurt (jika tahan laktosa) bisa membantu menyeimbangkan ekosistem usus Anda.",
+                
+                "🏃 <strong>Gerakan Fisik:</strong> Gas yang terperangkap butuh bantuan mekanis untuk keluar.<br><br>✨ <strong>Aksi:</strong> Lakukan pose yoga 'Wind Relieving Pose' (Pawanmuktasana) atau jalan kaki 15 menit setelah makan besar."
+            ],
+            'C': [ // Si Sensitif
+                "📋 <strong>Analisa Medis:</strong> Usus sensitif memiliki ambang nyeri yang lebih rendah (Visceral Hypersensitivity). Makanan biasa bagi orang lain bisa memicu reaksi pada Anda.<br><br>💡 <strong>Saran:</strong> Utamakan makanan yang dimasak (cooked food) daripada makanan mentah (raw food) untuk meringankan kerja pencernaan.",
+                
+                "🧠 <strong>Gut-Brain Axis:</strong> Usus dan otak Anda terhubung sangat kuat. Kecemasan sedikit saja bisa memicu mules.<br><br>🧘 <strong>Tips:</strong> Kelola stres adalah kunci utama kesembuhan Anda, bukan hanya soal makanan.",
+                
+                "🌶️ <strong>Trigger Warning:</strong> Hindari makanan yang iritatif seperti pedas, asam tinggi, atau kafein berlebih saat grafik kesehatan sedang menurun.<br><br>🍚 <strong>Comfort Food:</strong> Bubur ayam, sup kaldu tulang, dan pisang adalah menu aman untuk reset kondisi.",
+                
+                "💊 <strong>Support System:</strong> Pertimbangkan suplemen L-Glutamine (konsultasikan dokter) yang dikenal dapat membantu memperbaiki dinding usus yang 'bocor' atau sensitif."
+            ],
+            'Seimbang': [ // Seimbang
+                "🌟 <strong>Status Prima:</strong> Kondisi pencernaan Anda saat ini optimal! 
+
+[Image of the human digestive system]
+ Tantangannya adalah konsistensi.<br><br>💡 <strong>Fokus:</strong> Pertahankan keberagaman makanan (eat the rainbow) untuk memberi makan berbagai jenis bakteri baik.",
+                
+                "🛡️ <strong>Maintenance Mode:</strong> Meski perut nyaman, jangan terlena. Kurang tidur satu malam saja bisa mengubah komposisi mikrobioma usus.<br><br>💤 <strong>Tips:</strong> Pastikan tidur 7-8 jam berkualitas setiap malam.",
+                
+                "💧 <strong>Hidrasi Cerdas:</strong> Air adalah pelumas alami sistem pencernaan. Pertahankan asupan 2-2.5 liter per hari untuk menjaga kelancaran metabolisme dan penyerapan nutrisi.",
+                
+                "🏋️ <strong>Level Up:</strong> Karena pencernaan sudah aman, Anda bisa mulai meningkatkan intensitas olahraga. Usus yang sehat menyerap protein lebih baik untuk pembentukan otot."
+            ]
         };
 
         window.onload = function() {
@@ -328,6 +381,67 @@
             });
         };
 
+        // 🔥 FUNGSI TYPEWRITER (HTML AWARE)
+        function typeWriter(text, elementId, speed = 15) {
+            const element = document.getElementById(elementId);
+            if (!element) return;
+
+            element.innerHTML = "";
+            if (typingTimeout) clearTimeout(typingTimeout);
+            
+            element.classList.add('typing-cursor');
+
+            let i = 0;
+            
+            function type() {
+                if (i < text.length) {
+                    // Check if current char is start of HTML tag
+                    if (text.charAt(i) === '<') {
+                        let tag = '';
+                        // Loop until end of tag
+                        while (text.charAt(i) !== '>' && i < text.length) {
+                            tag += text.charAt(i);
+                            i++;
+                        }
+                        tag += '>'; // Add closing bracket
+                        i++; 
+                        element.innerHTML += tag; // Add entire tag at once (no typing effect for tags)
+                    } else {
+                        element.innerHTML += text.charAt(i);
+                        i++;
+                    }
+                    typingTimeout = setTimeout(type, speed);
+                } else {
+                    element.classList.remove('typing-cursor');
+                }
+            }
+            type();
+        }
+
+        // 🔥 FUNGSI REFRESH ANALISA
+        function refreshAnalysis() {
+            const icon = document.getElementById('refresh-icon');
+            icon.classList.add('fa-spin');
+            
+            const textEl = document.getElementById('ai-insight-text');
+            textEl.style.opacity = '0'; // Fade out
+
+            setTimeout(() => {
+                icon.classList.remove('fa-spin');
+                
+                // Select list based on category
+                const analysisList = aiAnalysisDB[currentCategoryCode] || aiAnalysisDB['Seimbang'];
+                
+                // Get Random Text
+                let newText = analysisList[Math.floor(Math.random() * analysisList.length)];
+                
+                // Ensure text is visible and start typing
+                textEl.style.opacity = '1';
+                typeWriter(newText, 'ai-insight-text');
+                
+            }, 500);
+        }
+
         function renderReport(data) {
             document.getElementById('loading').classList.add('hidden');
             document.getElementById('report-content').classList.remove('hidden');
@@ -339,37 +453,37 @@
             document.getElementById('stat-percent').innerText = data.progress + "%";
             document.getElementById('progress-bar').style.width = data.progress + "%";
             
-            let kategoriCode = 'Seimbang';
-            if(data.kategori.includes('Sembelit')) kategoriCode = 'A';
-            else if(data.kategori.includes('Kembung')) kategoriCode = 'B';
-            else if(data.kategori.includes('Sensitif')) kategoriCode = 'C';
+            // Logic Category
+            currentCategoryCode = 'Seimbang';
+            if(data.kategori.includes('Sembelit')) currentCategoryCode = 'A';
+            else if(data.kategori.includes('Kembung')) currentCategoryCode = 'B';
+            else if(data.kategori.includes('Sensitif')) currentCategoryCode = 'C';
 
             document.getElementById('u-type-badge').innerText = data.kategori.toUpperCase();
             document.getElementById('quiz-cat').innerText = data.kategori;
 
-            // 2. Render AI Insight
-            document.getElementById('ai-insight-text').innerHTML = aiAnalysisDB[kategoriCode] || aiAnalysisDB['Seimbang'];
+            // 2. Render AI Insight (Initial Load)
+            const analysisList = aiAnalysisDB[currentCategoryCode] || aiAnalysisDB['Seimbang'];
+            const initialText = analysisList[0]; 
+            typeWriter(initialText, 'ai-insight-text');
 
-            // 3. Render Achievements (Badges)
+            // 3. Render Achievements
             if(data.hari >= 7) unlockBadge('badge-1');
             if(data.hari >= 14) unlockBadge('badge-2');
             if(data.hari >= 21) unlockBadge('badge-3');
             if(data.hari >= 30) unlockBadge('badge-4');
 
-            // 4. Logika Status & Sertifikat
+            // 4. Status & Cert
             if (data.hari >= 30) {
                 document.getElementById('card-icon').innerText = "🏆";
                 document.getElementById('card-title').innerText = "LULUS PROGRAM!";
                 document.getElementById('card-title').classList.add("text-amber-400");
-                document.getElementById('card-desc').innerHTML = `Selamat! Anda telah menyelesaikan <strong class="text-white">30 Hari Usus Sehat</strong>.`;
                 document.getElementById('u-status').innerText = "ALUMNI";
                 document.getElementById('u-status').classList.add("text-amber-500", "border-amber-500/50");
                 
-                // Show Certificate Button
                 document.getElementById('cert-section').classList.remove('hidden');
                 document.getElementById('cert-name').innerText = data.nama;
                 
-                // Set Date for Cert
                 const today = new Date();
                 document.getElementById('cert-date').innerText = today.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
 
@@ -378,14 +492,13 @@
                 document.getElementById('u-status').classList.add("text-green-500", "border-green-500/50");
             }
 
-            // 5. Render Grafik
+            // 5. Chart & List
             if (data.history && data.history.length > 0) {
                 document.getElementById('chart-container').classList.remove('hidden');
                 renderChart(data.history);
                 renderEvaluasiList(data.history);
             }
 
-            // 6. Render Check-in Logs
             if (data.checkin_log && data.checkin_log.length > 0) {
                 document.getElementById('total-logs').innerText = data.checkin_log.length + " Data";
                 renderCheckinList(data.checkin_log);
@@ -398,7 +511,6 @@
             el.classList.add('badge-unlocked', 'bg-gradient-to-br', 'from-neutral-800', 'to-neutral-900');
         }
 
-        // --- Helper Render List Evaluasi ---
         function renderEvaluasiList(history) {
             const container = document.getElementById('list-evaluasi');
             container.innerHTML = ''; 
@@ -418,7 +530,6 @@
             });
         }
 
-        // --- Helper Render List Checkin ---
         function renderCheckinList(logs) {
             const container = document.getElementById('list-checkin');
             container.innerHTML = ''; 
@@ -444,7 +555,6 @@
             });
         }
 
-        // --- Helper Render Chart ---
         function renderChart(history) {
             const ctx = document.getElementById('healthChart').getContext('2d');
             const sortedHist = [...history].reverse(); 
@@ -487,26 +597,19 @@
             });
         }
 
-        // --- FUNGSI DOWNLOAD SERTIFIKAT ---
         function downloadCert() {
-            // Tampilkan wrapper sementara (karena hidden)
             const wrapper = document.getElementById('certificate-wrapper');
-            
-            // Ubah style agar bisa dirender (tapi user gak lihat aneh2)
             wrapper.style.opacity = '1';
             wrapper.style.zIndex = '9999';
             
-            // Gunakan html2canvas
             html2canvas(document.querySelector("#certificate-box"), {
-                scale: 2, // Biar HD
+                scale: 2, 
                 useCORS: true,
                 backgroundColor: "#000000"
             }).then(canvas => {
-                // Kembalikan style
                 wrapper.style.opacity = '0';
                 wrapper.style.zIndex = '-50';
                 
-                // Trigger Download
                 const link = document.createElement('a');
                 link.download = 'Sertifikat-Usus-Sehat-Jates9.png';
                 link.href = canvas.toDataURL('image/png');
