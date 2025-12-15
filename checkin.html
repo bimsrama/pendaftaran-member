@@ -119,11 +119,19 @@
             </div>
 
             <div class="glass rounded-3xl p-5 border border-blue-500/20 relative overflow-hidden fade-in" style="animation-delay: 0.3s;">
-                <i class="fas fa-robot absolute -bottom-3 -right-3 text-blue-500/10 text-6xl"></i>
-                <h3 class="font-bold text-xs text-blue-400 mb-2 flex items-center gap-2">
-                    <i class="fas fa-lightbulb"></i> AI DAILY TIP
-                </h3>
-                <p id="ai-insight-text" class="text-xs text-neutral-300 italic leading-relaxed relative z-10">
+                <i class="fas fa-robot absolute -bottom-3 -right-3 text-blue-500/10 text-6xl pointer-events-none"></i>
+                
+                <div class="flex justify-between items-center mb-2 relative z-10">
+                    <h3 class="font-bold text-xs text-blue-400 flex items-center gap-2">
+                        <i class="fas fa-lightbulb"></i> AI DAILY TIP
+                    </h3>
+                    <button onclick="refreshTip()" class="group flex items-center gap-1 text-[10px] bg-blue-500/10 hover:bg-blue-500/20 text-blue-300 px-2 py-1 rounded-full transition-all active:scale-95 border border-blue-500/20">
+                        <i id="refresh-icon" class="fas fa-sync-alt group-hover:text-white"></i>
+                        <span class="font-semibold group-hover:text-white">Refresh</span>
+                    </button>
+                </div>
+
+                <p id="ai-insight-text" class="text-xs text-neutral-300 italic leading-relaxed relative z-10 transition-opacity duration-300">
                     "Memuat tips cerdas..."
                 </p>
             </div>
@@ -192,7 +200,7 @@
         // 🔗 KONFIGURASI
         // ============================================
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx67JX5mM-n-W1h6ehURHgONXBPiyUvESRLMCveTV04wXighQQhLErXQwC07Yf5Zkkw/exec"; 
-        const REPORT_PAGE_URL = "laporan.html"; // Nama file laporan Anda
+        const REPORT_PAGE_URL = "laporan.html"; 
 
         // State Variables
         let userCategory = 'Seimbang';
@@ -201,10 +209,34 @@
 
         // Tips AI Database
         const aiTips = {
-            'A': [ "Minum air hangat pagi ini untuk 'membangunkan' usus.", "Serat pepaya sangat lembut untukmu hari ini.", "Lakukan pernapasan perut 5 menit." ],
-            'B': [ "Hindari sedotan agar tidak menelan udara.", "Kunyah makanan hingga benar-benar halus.", "Jahe hangat meredakan gas." ],
-            'C': [ "Makan makanan hangat dan matang hari ini.", "Kelola stres, ususmu peka terhadap pikiran.", "Makan porsi kecil tapi sering." ],
-            'Seimbang': [ "Pertahankan konsistensi!", "Variasikan warna di piringmu.", "Jangan lupa hidrasi yang cukup." ]
+            'A': [ 
+                "Minum air hangat pagi ini untuk 'membangunkan' usus.", 
+                "Serat pepaya sangat lembut untukmu hari ini.", 
+                "Lakukan pernapasan perut 5 menit untuk relaksasi.",
+                "Hindari menahan BAB, segera ke toilet jika terasa.",
+                "Tambahkan satu sendok minyak zaitun ke saladmu."
+            ],
+            'B': [ 
+                "Hindari sedotan agar tidak menelan udara berlebih.", 
+                "Kunyah makanan hingga benar-benar halus (30x kunyah).", 
+                "Jahe hangat sangat ampuh meredakan gas perut.",
+                "Hindari makan sambil berbicara terlalu banyak.",
+                "Kurangi konsumsi kol, brokoli, dan minuman bersoda hari ini."
+            ],
+            'C': [ 
+                "Makan makanan hangat dan matang (hindari raw food).", 
+                "Kelola stres, ususmu sangat peka terhadap pikiran.", 
+                "Makan porsi kecil tapi sering (5x sehari).",
+                "Teh chamomile dapat menenangkan saraf ususmu.",
+                "Hindari makanan yang terlalu pedas atau asam hari ini."
+            ],
+            'Seimbang': [ 
+                "Pertahankan konsistensi pola makan sehatmu!", 
+                "Variasikan warna di piringmu untuk nutrisi lengkap.", 
+                "Jangan lupa hidrasi yang cukup, minimal 2 liter.",
+                "Dengarkan tubuhmu, berhenti makan sebelum kenyang.",
+                "Tidur yang cukup membantu regenerasi sel usus."
+            ]
         };
 
         // 1. Init
@@ -219,17 +251,48 @@
                 waParam = waParam.replace(/[^0-9]/g, "");
                 waNumber = waParam;
                 document.getElementById('wa-input').value = waNumber;
-                
-                // Update Link Tombol Laporan
                 document.getElementById('btn-to-report').href = `${REPORT_PAGE_URL}?wa=${waNumber}`;
-
                 fetchUserData(waNumber);
             } else {
                 showError("Link tidak valid. Buka dari WhatsApp.");
             }
         });
 
-        // 2. Fetch Data
+        // 2. Refresh Tip Function (NEW Feature)
+        function refreshTip() {
+            // Animasi Icon
+            const icon = document.getElementById('refresh-icon');
+            icon.classList.add('fa-spin');
+            
+            // Text Element
+            const textEl = document.getElementById('ai-insight-text');
+            
+            // Efek Fade Out
+            textEl.style.opacity = '0';
+
+            setTimeout(() => {
+                icon.classList.remove('fa-spin');
+                
+                // Ambil Tips Baru
+                const tipsList = aiTips[userCategory] || aiTips['Seimbang'];
+                let newTip = tipsList[Math.floor(Math.random() * tipsList.length)];
+                
+                // Pastikan tidak mengambil tips yang sama persis (jika list > 1)
+                const currentText = textEl.innerText.replace(/"/g, '');
+                if(tipsList.length > 1) {
+                    while (newTip === currentText) {
+                        newTip = tipsList[Math.floor(Math.random() * tipsList.length)];
+                    }
+                }
+
+                // Update Text & Fade In
+                textEl.innerHTML = `"${newTip}"`;
+                textEl.style.opacity = '1';
+                
+            }, 500); // Waktu animasi (0.5 detik)
+        }
+
+        // 3. Fetch Data
         function fetchUserData(wa) {
             fetch(`${SCRIPT_URL}?action=getData&wa=${wa}`)
                 .then(response => response.json())
@@ -246,12 +309,11 @@
                 });
         }
 
-        // 3. Render Dashboard
+        // 4. Render Dashboard
         function renderDashboard(data) {
             document.getElementById('loading-screen').classList.add('hidden');
             document.getElementById('dashboard-content').classList.remove('hidden');
 
-            // Set Category Code
             const catName = data.kategori;
             if (catName.includes('Sembelit')) userCategory = 'A';
             else if (catName.includes('Kembung')) userCategory = 'B';
@@ -260,30 +322,28 @@
 
             currentDay = parseInt(data.hari);
 
-            // Profile Data
+            // Profile
             document.getElementById('user-name').textContent = data.nama;
             document.getElementById('user-category').textContent = catName.toUpperCase();
             document.getElementById('current-day').textContent = currentDay;
             
-            // Progress Bar
+            // Progress
             setTimeout(() => {
                 document.getElementById('progress-bar').style.width = `${data.progress}%`;
             }, 500);
             document.getElementById('progress-text').textContent = `${data.progress}%`;
 
-            // AI Tip
-            const tipsList = aiTips[userCategory] || aiTips['Seimbang'];
-            const randomTip = tipsList[Math.floor(Math.random() * tipsList.length)];
-            document.getElementById('ai-insight-text').innerHTML = `"${randomTip}"`;
+            // Load Initial Tip
+            refreshTip(); 
 
-            // Setup Form Logic
+            // Logic Form
             setupCheckinForm(currentDay);
 
-            // Render History
+            // Logic History
             renderHistory(data.checkin_log);
         }
 
-        // 4. Form Logic (Kelipatan 6 Hari)
+        // 5. Form Logic
         function setupCheckinForm(day) {
             const specialContainer = document.getElementById('special-input-container');
             const detailInput = document.getElementById('detail-jawaban');
@@ -301,7 +361,7 @@
             }
         }
 
-        // 5. Render History (Dark Theme Style)
+        // 6. Render History
         function renderHistory(logs) {
             const listContainer = document.getElementById('history-list');
             listContainer.innerHTML = '';
@@ -343,7 +403,7 @@
             });
         }
 
-        // 6. Handle Submit
+        // 7. Handle Submit
         document.getElementById('checkin-form').addEventListener('submit', function(e) {
             e.preventDefault();
 
@@ -400,7 +460,6 @@
             document.getElementById('error-screen').classList.remove('hidden');
             document.querySelector('#error-screen p').textContent = msg;
         }
-
     </script>
 </body>
 </html>
