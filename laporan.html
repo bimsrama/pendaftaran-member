@@ -13,6 +13,11 @@
         .text-gold { background: linear-gradient(135deg, #FDE68A 0%, #D97706 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .btn-nav { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); transition: 0.3s; }
         .btn-nav:hover { background: rgba(255,255,255,0.1); transform: translateY(-2px); }
+        
+        /* Scrollbar custom */
+        .scroller::-webkit-scrollbar { width: 4px; }
+        .scroller::-webkit-scrollbar-track { background: #1a1a1a; }
+        .scroller::-webkit-scrollbar-thumb { background: #555; border-radius: 4px; }
     </style>
 </head>
 <body class="min-h-screen flex flex-col items-center justify-center p-4">
@@ -29,36 +34,57 @@
             <div class="w-20 h-20 mx-auto rounded-full border-4 border-amber-500/20 p-1 mb-3">
                 <img id="u-avatar" src="" class="w-full h-full rounded-full object-cover bg-neutral-800">
             </div>
-            <h1 class="text-2xl font-bold text-white mb-1" id="u-name">...</h1>
-            <p class="text-xs text-amber-500 font-semibold tracking-widest uppercase">GRADUATED MEMBER</p>
+            <h1 class="text-xl font-bold text-white mb-1" id="u-name">...</h1>
+            <p class="text-[10px] text-neutral-400 uppercase tracking-widest" id="u-status">MEMBER STATUS</p>
         </div>
 
         <div class="glass rounded-3xl p-6 mb-4 text-center border-amber-500/30 shadow-[0_0_30px_rgba(245,158,11,0.1)]">
-            <div class="text-4xl mb-2">🏆</div>
-            <h2 class="text-xl font-bold text-gold">SELAMAT!</h2>
-            <p class="text-xs text-neutral-400 mt-2 leading-relaxed">
-                Anda telah menyelesaikan program <br><strong class="text-white">30 Hari Usus Sehat</strong>.
+            <div class="text-4xl mb-2" id="card-icon">📊</div>
+            <h2 class="text-xl font-bold text-gold" id="card-title">PROGRESS REPORT</h2>
+            <p class="text-xs text-neutral-400 mt-2 leading-relaxed" id="card-desc">
+                Berikut adalah laporan perkembangan kesehatan usus Anda sejauh ini.
             </p>
             <div class="mt-4 grid grid-cols-2 gap-3">
                 <div class="bg-white/5 p-3 rounded-xl">
-                    <p class="text-xl font-bold text-white">30</p>
-                    <p class="text-[10px] text-neutral-500 uppercase">Hari Selesai</p>
+                    <p class="text-xl font-bold text-white" id="stat-day">0</p>
+                    <p class="text-[10px] text-neutral-500 uppercase">Hari Berjalan</p>
                 </div>
                 <div class="bg-white/5 p-3 rounded-xl">
-                    <p class="text-xl font-bold text-green-400">100%</p>
-                    <p class="text-[10px] text-neutral-500 uppercase">Komitmen</p>
+                    <p class="text-xl font-bold text-green-400" id="stat-percent">0%</p>
+                    <p class="text-[10px] text-neutral-500 uppercase">Kelengkapan</p>
                 </div>
             </div>
         </div>
 
-        <div class="glass rounded-3xl p-6 mb-4">
+        <div class="glass rounded-3xl p-6 mb-4" id="chart-container">
             <h3 class="text-sm font-bold text-white mb-4 flex items-center gap-2">
-                <span class="text-amber-500">📈</span> Grafik Kenyamanan Perut
+                <span class="text-amber-500">📈</span> Grafik Kenyamanan
             </h3>
             <div class="h-48 w-full">
                 <canvas id="healthChart"></canvas>
             </div>
-            <p class="text-[10px] text-center text-neutral-500 mt-2 italic">*Berdasarkan evaluasi mingguan Anda</p>
+        </div>
+
+        <div class="grid grid-cols-1 gap-4 mb-6">
+            
+            <div class="glass rounded-3xl p-5">
+                <h3 class="text-xs font-bold text-white mb-3 flex items-center gap-2 border-b border-white/10 pb-2">
+                    <span>📝</span> RIWAYAT EVALUASI
+                </h3>
+                <div class="space-y-3 max-h-48 overflow-y-auto scroller" id="list-evaluasi">
+                    <p class="text-[10px] text-neutral-500 italic">Belum ada data evaluasi.</p>
+                </div>
+            </div>
+
+            <div class="glass rounded-3xl p-5">
+                <h3 class="text-xs font-bold text-white mb-3 flex items-center gap-2 border-b border-white/10 pb-2">
+                    <span>✅</span> LOG CHECK-IN HARIAN
+                </h3>
+                <div class="space-y-2 max-h-60 overflow-y-auto scroller" id="list-checkin">
+                    <p class="text-[10px] text-neutral-500 italic">Belum ada data check-in.</p>
+                </div>
+            </div>
+
         </div>
 
         <div class="grid grid-cols-2 gap-3">
@@ -68,19 +94,12 @@
             </a>
             <a id="link-quiz" href="#" class="btn-nav p-4 rounded-2xl flex flex-col items-center justify-center gap-2 text-center group">
                 <span class="text-2xl group-hover:scale-110 transition">📝</span>
-                <span class="text-xs font-bold text-neutral-300">Cek Quiz Lagi</span>
-            </a>
-            <a href="https://shopee.co.id/jates9" target="_blank" class="btn-nav col-span-2 p-4 rounded-2xl flex items-center justify-center gap-3 bg-gradient-to-r from-amber-700 to-amber-600 border-none group">
-                <span class="text-xl">🛍️</span>
-                <div class="text-left">
-                    <p class="text-xs font-bold text-white">Order Maintenance Pack</p>
-                    <p class="text-[10px] text-amber-200">Jaga usus tetap sehat</p>
-                </div>
+                <span class="text-xs font-bold text-neutral-300">Cek Quiz</span>
             </a>
         </div>
         
         <div class="text-center mt-8 mb-4">
-            <p class="text-[10px] text-neutral-600">Terima kasih telah berjuang bersama kami.</p>
+            <p class="text-[10px] text-neutral-600">My Gut Journey Program</p>
         </div>
 
     </div>
@@ -90,14 +109,14 @@
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz60TyDP9sE1JGXJJ9RZtvinrcQlOH-_UDRi2-baMbNHve1OjMfKRA0w-VI4xoLRQuY/exec';
 
         // Links
-        const LINK_DASHBOARD = "https://bimsrama.github.io/pendaftaran-member/checkin"; // Dashboard checkin
+        const LINK_DASHBOARD = "https://bimsrama.github.io/pendaftaran-member/checkin"; 
         const LINK_QUIZ = "https://bimsrama.github.io/pendaftaran-member/quiz";
 
         const urlParams = new URLSearchParams(window.location.search);
         const waNumber = urlParams.get('wa');
 
         window.onload = function() {
-            if(!waNumber) { alert("Link Error"); return; }
+            if(!waNumber) { alert("Link Error. Buka dari WhatsApp."); return; }
             
             // Set Link Navigasi
             document.getElementById('link-dashboard').href = LINK_DASHBOARD + "?wa=" + waNumber;
@@ -109,8 +128,12 @@
                 if(data.status === 'success'){
                     renderReport(data);
                 } else {
-                    alert('Data tidak ditemukan');
+                    alert('Data user tidak ditemukan di database.');
                 }
+            })
+            .catch(err => {
+                console.error(err);
+                alert("Gagal memuat data. Periksa koneksi.");
             });
         };
 
@@ -118,29 +141,96 @@
             document.getElementById('loading').classList.add('hidden');
             document.getElementById('report-content').classList.remove('hidden');
 
-            // 1. Profile
+            // 1. Render Profile
             document.getElementById('u-name').innerText = data.nama;
             document.getElementById('u-avatar').src = `https://api.dicebear.com/7.x/notionists/svg?seed=${data.nama}`;
+            document.getElementById('stat-day').innerText = data.hari;
+            document.getElementById('stat-percent').innerText = data.progress + "%";
 
-            // 2. Chart Logic
+            // 2. Logika Status (Finished vs Progress)
+            if (data.hari >= 30) {
+                document.getElementById('card-icon').innerText = "🏆";
+                document.getElementById('card-title').innerText = "SELAMAT! LULUS!";
+                document.getElementById('card-desc').innerHTML = `Anda telah menyelesaikan program <br><strong class="text-white">30 Hari Usus Sehat</strong> dengan sukses.`;
+                document.getElementById('u-status').innerText = "ALUMNI PROGRAM";
+                document.getElementById('u-status').className = "text-[10px] text-amber-500 font-bold tracking-widest uppercase";
+            } else {
+                document.getElementById('u-status').innerText = "ON PROGRESS";
+                document.getElementById('u-status').className = "text-[10px] text-green-500 font-bold tracking-widest uppercase";
+            }
+
+            // 3. Render Grafik (Health Chart)
+            if (data.history && data.history.length > 0) {
+                renderChart(data.history);
+                renderEvaluasiList(data.history);
+            } else {
+                document.getElementById('chart-container').classList.add('hidden');
+            }
+
+            // 4. Render Check-in Logs
+            if (data.checkin_log && data.checkin_log.length > 0) {
+                renderCheckinList(data.checkin_log);
+            }
+        }
+
+        // --- Helper Render List Evaluasi ---
+        function renderEvaluasiList(history) {
+            const container = document.getElementById('list-evaluasi');
+            container.innerHTML = ''; // Reset
+            
+            // Reverse biar yg terbaru diatas
+            [...history].reverse().forEach(item => {
+                const stars = '★'.repeat(item.rating) + '☆'.repeat(5 - item.rating);
+                const html = `
+                    <div class="bg-white/5 p-3 rounded-xl border border-white/5">
+                        <div class="flex justify-between items-start mb-1">
+                            <span class="text-[10px] text-neutral-400 font-mono bg-black/30 px-2 py-0.5 rounded">${item.date}</span>
+                            <span class="text-amber-500 text-xs">${stars}</span>
+                        </div>
+                        <p class="text-xs text-neutral-300 italic">"${item.comment}"</p>
+                    </div>
+                `;
+                container.insertAdjacentHTML('beforeend', html);
+            });
+        }
+
+        // --- Helper Render List Checkin ---
+        function renderCheckinList(logs) {
+            const container = document.getElementById('list-checkin');
+            container.innerHTML = ''; // Reset
+
+            logs.forEach(log => {
+                const html = `
+                    <div class="flex items-center justify-between bg-white/5 p-2 px-3 rounded-lg border border-white/5">
+                        <div class="flex items-center gap-3">
+                            <div class="w-2 h-2 rounded-full bg-green-500"></div>
+                            <div>
+                                <p class="text-xs font-bold text-white">${log.hari}</p>
+                                <p class="text-[10px] text-neutral-500">${log.tanggal}</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-[10px] font-mono text-amber-500 bg-amber-900/20 px-2 py-1 rounded border border-amber-500/20">
+                                ⏰ ${log.jam}
+                            </span>
+                        </div>
+                    </div>
+                `;
+                container.insertAdjacentHTML('beforeend', html);
+            });
+        }
+
+        // --- Helper Render Chart ---
+        function renderChart(history) {
             const ctx = document.getElementById('healthChart').getContext('2d');
             
-            // Siapkan data dari history
-            let labels = [];
-            let ratings = [];
-
-            if (data.history && data.history.length > 0) {
-                // Balik urutan agar timeline kiri ke kanan (awal -> akhir)
-                const sortedHist = data.history.reverse(); 
-                sortedHist.forEach((h, index) => {
-                    labels.push("Minggu " + (index + 1)); // Atau gunakan h.date
-                    ratings.push(h.rating);
-                });
-            } else {
-                // Dummy Data jika kosong (biar chart tetap muncul cantik)
-                labels = ["Start", "Minggu 1", "Minggu 2", "Finish"];
-                ratings = [2, 3, 4, 5]; 
-            }
+            // Urutkan dari lama ke baru untuk grafik
+            const sortedHist = [...history].reverse(); // Asumsi data dari server urutan terbalik
+            // Jika data dari server sudah urut (Evaluasi 1, 2, 3), hapus .reverse() ini. 
+            // Cek: Data server kita push biasa, jadi index 0 = lama.
+            
+            const labels = sortedHist.map((h, i) => "Minggu " + (i + 1));
+            const ratings = sortedHist.map(h => h.rating);
 
             new Chart(ctx, {
                 type: 'line',
@@ -151,7 +241,7 @@
                         data: ratings,
                         borderColor: '#f59e0b',
                         backgroundColor: 'rgba(245, 158, 11, 0.1)',
-                        borderWidth: 3,
+                        borderWidth: 2,
                         pointBackgroundColor: '#fff',
                         pointBorderColor: '#f59e0b',
                         tension: 0.4,
@@ -162,16 +252,8 @@
                     responsive: true,
                     maintainAspectRatio: false,
                     scales: {
-                        y: { 
-                            beginAtZero: true, 
-                            max: 5, 
-                            grid: { color: 'rgba(255,255,255,0.1)' },
-                            ticks: { color: '#888' }
-                        },
-                        x: { 
-                            grid: { display: false },
-                            ticks: { color: '#888', font: {size: 10} }
-                        }
+                        y: { beginAtZero: true, max: 5, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#666', font:{size:10} } },
+                        x: { grid: { display: false }, ticks: { color: '#666', font: {size: 10} } }
                     },
                     plugins: { legend: { display: false } }
                 }
