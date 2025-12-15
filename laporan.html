@@ -1,648 +1,76 @@
-<!DOCTYPE html>
-<html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laporan Kesehatan Final</title>
     <title>Laporan Kesehatan Final | My Gut Journey</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
-    
-    <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #0a0a0a; color: white; }
-        
-        /* Glassmorphism */
-        .glass { 
-            background: rgba(30, 30, 30, 0.6); 
-            backdrop-filter: blur(20px); 
-            border: 1px solid rgba(255, 255, 255, 0.08); 
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-        }
-        
-        /* Gradient Text */
-        .text-gold { 
-            background: linear-gradient(135deg, #FDE68A 0%, #D97706 100%); 
-            -webkit-background-clip: text; 
-            -webkit-text-fill-color: transparent; 
-        }
-        
-        /* Button Hover Effect */
-        .btn-nav { 
-            background: rgba(255,255,255,0.03); 
-            border: 1px solid rgba(255,255,255,0.05); 
-            transition: all 0.3s ease; 
-        }
-        .btn-nav:hover { 
-            background: rgba(255,255,255,0.08); 
-            transform: translateY(-2px); 
-            border-color: rgba(255,255,255,0.1);
-        }
-        
-        /* Achievement Badges */
-        .badge-locked { 
-            filter: grayscale(100%) brightness(0.5); 
-            opacity: 0.5; 
-            transform: scale(0.9);
-        }
-        .badge-unlocked {
-            filter: grayscale(0%);
-            opacity: 1;
-            transform: scale(1);
-            box-shadow: 0 0 15px rgba(245, 158, 11, 0.2);
-            border-color: #f59e0b;
-        }
-        
-        /* Scrollbar Custom */
-        .scroller::-webkit-scrollbar { width: 4px; }
-        .scroller::-webkit-scrollbar-track { background: #1a1a1a; }
-        .scroller::-webkit-scrollbar-thumb { background: #555; border-radius: 4px; }
-
-        /* Certificate Styling */
-        #certificate-box {
-            background: linear-gradient(135deg, #111 0%, #000 100%);
-            border: 2px solid #d97706;
-            position: relative;
-            display: none; /* Hidden by default */
-            box-shadow: 0 0 40px rgba(217, 119, 6, 0.1);
-        }
-        .cert-pattern {
-            background-image: radial-gradient(#d97706 0.5px, transparent 0.5px);
-            background-size: 20px 20px;
-            opacity: 0.15;
-        }
-        .font-serif { font-family: 'Playfair Display', serif; }
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+@@ -72,13 +72,19 @@
+opacity: 0.15;
+}
+.font-serif { font-family: 'Playfair Display', serif; }
         
         /* Utils */
         .hidden { display: none; }
         .fade-in { animation: fadeIn 0.5s ease-in; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-        /* Loading Screen Transition */
-        #loading { transition: opacity 0.5s ease-out; }
-        .loading-hidden { opacity: 0; pointer-events: none; }
-
-        /* 🔥 TYPING CURSOR EFFECT */
-        .typing-cursor::after {
-            content: '|';
-            display: inline-block;
-            margin-left: 2px;
-            color: #3b82f6; /* Blue-500 matches AI theme */
-            animation: blink 1s step-start infinite;
-        }
-        @keyframes blink { 50% { opacity: 0; } }
-    </style>
+</style>
 </head>
 <body class="min-h-screen flex flex-col items-center justify-center p-4">
 
-    <div id="loading" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black">
-        <div class="w-12 h-12 border-4 border-neutral-800 border-t-amber-500 rounded-full animate-spin mb-4"></div>
-        <p class="text-[10px] text-neutral-500 tracking-[0.3em] animate-pulse">GENERATING REPORT...</p>
+<div id="loading" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black">
+<div class="w-12 h-12 border-4 border-neutral-800 border-t-amber-500 rounded-full animate-spin mb-4"></div>
+<p class="text-[10px] text-neutral-500 tracking-[0.3em] animate-pulse">GENERATING REPORT...</p>
         <p id="error-msg" class="text-[9px] text-red-500 mt-4 hidden text-center px-4"></p>
-    </div>
+</div>
 
-    <div id="report-content" class="w-full max-w-md hidden pb-10 fade-in">
-        
-        <div class="glass rounded-3xl p-6 mb-4 text-center relative overflow-hidden group">
-            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-amber-500 to-orange-600"></div>
-            <div class="absolute -right-10 -top-10 w-32 h-32 bg-amber-500/10 rounded-full blur-3xl group-hover:bg-amber-500/20 transition duration-700"></div>
-            
-            <div class="w-20 h-20 mx-auto rounded-full border-2 border-amber-500/30 p-1 mb-3 shadow-lg shadow-amber-900/20">
-                <img id="u-avatar" src="" class="w-full h-full rounded-full object-cover bg-neutral-800">
-            </div>
-            <h1 class="text-xl font-bold text-white mb-1 tracking-tight" id="u-name">...</h1>
-            <div class="flex justify-center gap-2 items-center">
-                <span class="text-[10px] bg-white/5 px-2 py-0.5 rounded text-neutral-400 uppercase tracking-widest border border-white/5" id="u-status">MEMBER STATUS</span>
-                <span class="text-[10px] text-amber-500 font-bold" id="u-type-badge">...</span>
-            </div>
-        </div>
+<div id="report-content" class="w-full max-w-md hidden pb-10 fade-in">
+@@ -279,11 +285,11 @@ <h2 class="text-4xl font-bold text-white my-6 font-serif" id="cert-name">Nama Pe
 
-        <div class="glass rounded-3xl p-6 mb-4 text-center">
-            <div class="flex justify-between items-end mb-2">
-                <div class="text-left">
-                    <p class="text-sm text-neutral-400 uppercase tracking-wider font-bold">Progress Program</p>
-                    <h2 class="text-2xl font-bold text-white" id="card-title">ON TRACK</h2>
-                </div>
-                <div class="text-4xl animate-bounce" id="card-icon">🚀</div>
-            </div>
-            
-            <div class="w-full bg-neutral-800 h-2 rounded-full mt-2 mb-4 overflow-hidden">
-                <div id="progress-bar" class="bg-gradient-to-r from-amber-500 to-orange-600 h-2 rounded-full transition-all duration-1000" style="width: 0%"></div>
-            </div>
-
-            <div class="grid grid-cols-2 gap-3">
-                <div class="bg-white/5 p-3 rounded-xl border border-white/5">
-                    <p class="text-2xl font-bold text-white" id="stat-day">0</p>
-                    <p class="text-[10px] text-neutral-500 uppercase">Hari Berjalan</p>
-                </div>
-                <div class="bg-white/5 p-3 rounded-xl border border-white/5">
-                    <p class="text-2xl font-bold text-green-400" id="stat-percent">0%</p>
-                    <p class="text-[10px] text-neutral-500 uppercase">Kelengkapan</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="glass rounded-3xl p-6 mb-4 border border-blue-500/20 relative overflow-hidden">
-            <div class="absolute -right-6 -top-6 w-24 h-24 bg-blue-500/10 blur-[50px] rounded-full"></div>
-            
-            <div class="flex justify-between items-center mb-3">
-                <div class="flex items-center gap-2">
-                    <span class="text-lg">🤖</span>
-                    <h3 class="text-sm font-bold text-blue-400">Analisa AI</h3>
-                </div>
-                <button onclick="refreshAnalysis()" class="group flex items-center gap-1 text-[10px] bg-blue-500/10 hover:bg-blue-500/20 text-blue-300 px-3 py-1.5 rounded-full transition-all active:scale-95 border border-blue-500/20">
-                    <i id="refresh-icon" class="fas fa-sync-alt group-hover:text-white"></i>
-                    <span class="font-semibold group-hover:text-white">Analisa Ulang</span>
-                </button>
-            </div>
-
-            <div class="bg-blue-500/5 p-4 rounded-xl border border-blue-500/10 mb-3 min-h-[120px]">
-                <p class="text-xs text-neutral-300 leading-relaxed italic" id="ai-insight-text">
-                    </p>
-            </div>
-            
-            <div class="flex justify-between items-center text-[10px] pt-2 border-t border-white/5">
-                <span class="text-neutral-500 uppercase">Kategori Pencernaan:</span>
-                <span class="text-white font-bold bg-white/10 px-2 py-0.5 rounded" id="quiz-cat">...</span>
-            </div>
-        </div>
-
-        <div class="mb-6">
-            <div class="flex justify-between items-center mb-3 px-1">
-                <h3 class="text-xs font-bold text-white uppercase tracking-widest flex items-center gap-2">
-                    <span>🎖️</span> Pencapaian
-                </h3>
-            </div>
-            <div class="grid grid-cols-4 gap-2">
-                <div id="badge-1" class="bg-neutral-900 p-3 rounded-xl text-center border border-white/5 badge-locked transition-all duration-500">
-                    <div class="text-xl mb-1">🌱</div>
-                    <p class="text-[9px] font-bold text-neutral-300">Week 1</p>
-                </div>
-                <div id="badge-2" class="bg-neutral-900 p-3 rounded-xl text-center border border-white/5 badge-locked transition-all duration-500">
-                    <div class="text-xl mb-1">🌿</div>
-                    <p class="text-[9px] font-bold text-neutral-300">Week 2</p>
-                </div>
-                <div id="badge-3" class="bg-neutral-900 p-3 rounded-xl text-center border border-white/5 badge-locked transition-all duration-500">
-                    <div class="text-xl mb-1">🌳</div>
-                    <p class="text-[9px] font-bold text-neutral-300">Week 3</p>
-                </div>
-                <div id="badge-4" class="bg-neutral-900 p-3 rounded-xl text-center border border-white/5 badge-locked transition-all duration-500">
-                    <div class="text-xl mb-1">🏆</div>
-                    <p class="text-[9px] font-bold text-neutral-300">Lulus</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="glass rounded-3xl p-6 mb-4 hidden" id="chart-container">
-            <h3 class="text-sm font-bold text-white mb-4 flex items-center gap-2">
-                <span class="text-amber-500">📈</span> Grafik Kenyamanan
-            </h3>
-            <div class="h-48 w-full">
-                <canvas id="healthChart"></canvas>
-            </div>
-        </div>
-
-        <div class="grid grid-cols-1 gap-4 mb-6">
-            <div class="glass rounded-3xl p-5">
-                <div class="flex justify-between items-center mb-3 border-b border-white/10 pb-2">
-                    <h3 class="text-xs font-bold text-white flex items-center gap-2">
-                        <span>✅</span> CHECK-IN HARIAN
-                    </h3>
-                    <span class="text-[10px] text-neutral-500" id="total-logs">0 Data</span>
-                </div>
-                <div class="space-y-2 max-h-60 overflow-y-auto scroller" id="list-checkin">
-                    <p class="text-[10px] text-neutral-500 italic text-center py-4">Belum ada data check-in.</p>
-                </div>
-            </div>
-
-            <div class="glass rounded-3xl p-5">
-                <h3 class="text-xs font-bold text-white mb-3 flex items-center gap-2 border-b border-white/10 pb-2">
-                    <span>📝</span> RIWAYAT EVALUASI
-                </h3>
-                <div class="space-y-3 max-h-48 overflow-y-auto scroller" id="list-evaluasi">
-                    <p class="text-[10px] text-neutral-500 italic text-center py-4">Belum ada data evaluasi mingguan.</p>
-                </div>
-            </div>
-        </div>
-
-        <div id="cert-section" class="hidden mb-8 text-center px-2">
-            <div class="relative group cursor-pointer" onclick="downloadCert()">
-                <div class="absolute -inset-1 bg-gradient-to-r from-amber-600 to-orange-600 rounded-2xl blur opacity-25 group-hover:opacity-75 transition duration-1000 group-hover:duration-200"></div>
-                <button class="relative w-full bg-neutral-900 ring-1 ring-white/10 text-white font-bold py-4 rounded-xl text-sm flex items-center justify-center gap-2">
-                    <span>🎓 DOWNLOAD SERTIFIKAT</span>
-                </button>
-            </div>
-
-            <div id="certificate-wrapper" class="absolute top-0 left-0 -z-50 opacity-0 pointer-events-none w-[800px]">
-                <div id="certificate-box" class="p-12 text-center relative w-full aspect-[4/3] flex flex-col justify-center items-center bg-[#0a0a0a] border-8 border-double border-amber-600">
-                    <div class="absolute inset-0 cert-pattern"></div>
-                    <div class="absolute top-4 left-4 w-16 h-16 border-t-4 border-l-4 border-amber-500"></div>
-                    <div class="absolute top-4 right-4 w-16 h-16 border-t-4 border-r-4 border-amber-500"></div>
-                    <div class="absolute bottom-4 left-4 w-16 h-16 border-b-4 border-l-4 border-amber-500"></div>
-                    <div class="absolute bottom-4 right-4 w-16 h-16 border-b-4 border-r-4 border-amber-500"></div>
-
-                    <div class="relative z-10 w-full">
-                        <div class="mb-4 text-5xl">🏆</div>
-                        <h1 class="text-5xl font-serif text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-600 mb-2 font-bold tracking-wide">SERTIFIKAT KELULUSAN</h1>
-                        <p class="text-sm text-neutral-400 uppercase tracking-[0.4em] mb-8">PROGRAM USUS SEHAT 30 HARI</p>
-                        
-                        <p class="text-lg text-neutral-300 italic font-serif">Diberikan dengan bangga kepada:</p>
-                        <h2 class="text-4xl font-bold text-white my-6 font-serif" id="cert-name">Nama Peserta</h2>
-                        
-                        <div class="w-2/3 mx-auto h-px bg-gradient-to-r from-transparent via-amber-500 to-transparent my-6"></div>
-                        
-                        <p class="text-sm text-neutral-400 px-10 leading-relaxed">
-                            Atas dedikasi dan komitmen luar biasa dalam menyelesaikan tantangan kesehatan pencernaan selama 30 hari penuh.
-                            Anda telah mengambil langkah besar menuju hidup yang lebih sehat.
-                        </p>
-
-                        <div class="mt-10 flex justify-between items-end w-2/3 mx-auto">
-                            <div class="text-center">
-                                <div class="h-16 w-32 border-b border-neutral-600 mb-2"></div>
-                                <p class="text-xs text-neutral-500 uppercase tracking-wider">Health Coach</p>
-                            </div>
-                            <div class="text-center">
-                                <p class="text-amber-500 font-bold text-xl mb-1">Jates9</p>
-                                <p class="text-[10px] text-neutral-600">Official Program</p>
-                            </div>
-                            <div class="text-center">
-                                <p class="text-white font-mono text-sm mb-2" id="cert-date">Date</p>
-                                <div class="h-px w-32 bg-neutral-600 mb-2"></div>
-                                <p class="text-xs text-neutral-500 uppercase tracking-wider">Tanggal Lulus</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="grid grid-cols-2 gap-3">
-            <a id="link-dashboard" href="#" class="btn-nav p-4 rounded-2xl flex flex-col items-center justify-center gap-2 text-center group">
-                <span class="text-2xl group-hover:scale-110 transition">🏠</span>
-                <span class="text-xs font-bold text-neutral-300">Dashboard</span>
-            </a>
-            <a id="link-quiz" href="#" class="btn-nav p-4 rounded-2xl flex flex-col items-center justify-center gap-2 text-center group">
-                <span class="text-2xl group-hover:scale-110 transition">📝</span>
-                <span class="text-xs font-bold text-neutral-300">Cek Quiz</span>
-            </a>
-            <a href="https://shopee.co.id/jates9" target="_blank" class="btn-nav col-span-2 p-4 rounded-2xl flex items-center justify-center gap-3 bg-gradient-to-r from-amber-900/50 to-amber-800/50 border-amber-500/20 group">
-                <span class="text-xl group-hover:rotate-12 transition">🛍️</span>
-                <div class="text-left">
-                    <p class="text-xs font-bold text-white">Order Maintenance Pack</p>
-                    <p class="text-[10px] text-amber-400">Jaga pencernaan tetap sehat</p>
-                </div>
-            </a>
-        </div>
-        
-        <div class="text-center mt-8 mb-4">
-            <p class="text-[10px] text-neutral-600">My Gut Journey Program</p>
-        </div>
-
-    </div>
-
-    <script>
-        // ⚠️ PASTE URL SCRIPT ANDA DISINI
+<script>
+// ⚠️ PASTE URL SCRIPT ANDA DISINI
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz60TyDP9sE1JGXJJ9RZtvinrcQlOH-_UDRi2-baMbNHve1OjMfKRA0w-VI4xoLRQuY/exec';
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx67JX5mM-n-W1h6ehURHgONXBPiyUvESRLMCveTV04wXighQQhLErXQwC07Yf5Zkkw/exec';
 
-        // Links
+// Links
+        const LINK_DASHBOARD = "https://bimsrama.github.io/pendaftaran-member/checkin"; 
+        const LINK_QUIZ = "https://bimsrama.github.io/pendaftaran-member/quiz";
         const LINK_DASHBOARD = "checkin.html"; 
         const LINK_QUIZ = "quiz.html";
 
-        const urlParams = new URLSearchParams(window.location.search);
-        const waNumber = urlParams.get('wa');
-        
-        // Variables
-        let typingTimeout = null;
-        let currentCategoryCode = 'Seimbang';
+const urlParams = new URLSearchParams(window.location.search);
+const waNumber = urlParams.get('wa');
+@@ -297,23 +303,28 @@ <h2 class="text-4xl font-bold text-white my-6 font-serif" id="cert-name">Nama Pe
+};
 
-        // 🔥 DATABASE ANALISA AI EDUKATIF (Expanded)
-        const aiAnalysisDB = {
-            'A': [ // Si Sembelit
-                "📋 <strong>Analisa Medis:</strong> Tipe 'Si Sembelit' sering mengalami transit usus yang lambat. Ini bisa disebabkan oleh kurangnya asupan serat tidak larut (insoluble fiber) atau hidrasi yang minim.<br><br>💡 <strong>Saran:</strong> Coba tambahkan biji chia atau psyllium husk ke dalam menu harian. Jangan lupa minum minimal 300ml air hangat saat bangun tidur.",
-                
-                "🧠 <strong>Fakta Edukatif:</strong> Tahukah Anda? Menunda keinginan BAB dapat membuat feses mengeras karena usus besar terus menyerap air darinya.<br><br>⚡ <strong>Aksi:</strong> Buat jadwal rutin ke toilet setiap pagi, meski belum terasa mules, untuk melatih ritme sirkadian usus.",
-                
-                "🥗 <strong>Nutrisi Fokus:</strong> Perhatikan asupan magnesium alami. Magnesium membantu merelaksasi otot usus.<br><br>🥑 <strong>Sumber:</strong> Alpukat, bayam, dan kacang almond adalah teman terbaik Anda minggu ini.",
-                
-                "🧘 <strong>Mind-Gut Connection:</strong> Stres bisa memicu konstipasi pada beberapa orang (Fight or Flight response mematikan pencernaan).<br><br>✨ <strong>Tips:</strong> Lakukan pernapasan perut (diaphragmatic breathing) selama 5 menit sebelum tidur."
-            ],
-            'B': [ // Si Kembung
-                "📋 <strong>Analisa Medis:</strong> Kembung berlebih seringkali tanda fermentasi makanan yang tidak sempurna di usus halus atau menelan udara berlebih (aerophagia).<br><br>💡 <strong>Saran:</strong> Praktikkan 'Mindful Eating'. Kunyah makanan hingga menjadi bubur sebelum ditelan.",
-                
-                "🚫 <strong>Pantangan Sementara:</strong> Coba kurangi makanan tinggi FODMAP (seperti bawang, kol, susu sapi) selama 3 hari dan lihat apakah grafik kenyamanan Anda meningkat.<br><br>🍵 <strong>Solusi:</strong> Teh jahe atau peppermint hangat sangat efektif memecah gas.",
-                
-                "🦠 <strong>Microbiome Insight:</strong> Kembung bisa jadi tanda ketidakseimbangan bakteri. Probiotik alami seperti tempe atau yogurt (jika tahan laktosa) bisa membantu menyeimbangkan ekosistem usus Anda.",
-                
-                "🏃 <strong>Gerakan Fisik:</strong> Gas yang terperangkap butuh bantuan mekanis untuk keluar.<br><br>✨ <strong>Aksi:</strong> Lakukan pose yoga 'Wind Relieving Pose' (Pawanmuktasana) atau jalan kaki 15 menit setelah makan besar."
-            ],
-            'C': [ // Si Sensitif
-                "📋 <strong>Analisa Medis:</strong> Usus sensitif memiliki ambang nyeri yang lebih rendah (Visceral Hypersensitivity). Makanan biasa bagi orang lain bisa memicu reaksi pada Anda.<br><br>💡 <strong>Saran:</strong> Utamakan makanan yang dimasak (cooked food) daripada makanan mentah (raw food) untuk meringankan kerja pencernaan.",
-                
-                "🧠 <strong>Gut-Brain Axis:</strong> Usus dan otak Anda terhubung sangat kuat. Kecemasan sedikit saja bisa memicu mules.<br><br>🧘 <strong>Tips:</strong> Kelola stres adalah kunci utama kesembuhan Anda, bukan hanya soal makanan.",
-                
-                "🌶️ <strong>Trigger Warning:</strong> Hindari makanan yang iritatif seperti pedas, asam tinggi, atau kafein berlebih saat grafik kesehatan sedang menurun.<br><br>🍚 <strong>Comfort Food:</strong> Bubur ayam, sup kaldu tulang, dan pisang adalah menu aman untuk reset kondisi.",
-                
-                "💊 <strong>Support System:</strong> Pertimbangkan suplemen L-Glutamine (konsultasikan dokter) yang dikenal dapat membantu memperbaiki dinding usus yang 'bocor' atau sensitif."
-            ],
-            'Seimbang': [ // Seimbang
-                "🌟 <strong>Status Prima:</strong> Kondisi pencernaan Anda saat ini optimal! 
-
-[Image of the human digestive system]
- Tantangannya adalah konsistensi.<br><br>💡 <strong>Fokus:</strong> Pertahankan keberagaman makanan (eat the rainbow) untuk memberi makan berbagai jenis bakteri baik.",
-                
-                "🛡️ <strong>Maintenance Mode:</strong> Meski perut nyaman, jangan terlena. Kurang tidur satu malam saja bisa mengubah komposisi mikrobioma usus.<br><br>💤 <strong>Tips:</strong> Pastikan tidur 7-8 jam berkualitas setiap malam.",
-                
-                "💧 <strong>Hidrasi Cerdas:</strong> Air adalah pelumas alami sistem pencernaan. Pertahankan asupan 2-2.5 liter per hari untuk menjaga kelancaran metabolisme dan penyerapan nutrisi.",
-                
-                "🏋️ <strong>Level Up:</strong> Karena pencernaan sudah aman, Anda bisa mulai meningkatkan intensitas olahraga. Usus yang sehat menyerap protein lebih baik untuk pembentukan otot."
-            ]
-        };
-
-        // 1. INITIALIZATION
-        document.addEventListener('DOMContentLoaded', () => {
+window.onload = function() {
+            if(!waNumber) { alert("Link Error. Buka dari WhatsApp."); return; }
             if(!waNumber) { 
                 document.getElementById('loading').innerHTML = '<div class="text-center text-white"><p class="text-red-500 font-bold mb-2">LINK TIDAK VALID</p><p class="text-[10px] text-gray-400">Buka link ini dari pesan WhatsApp.</p></div>';
                 return; 
             }
-            
+
+            document.getElementById('link-dashboard').href = LINK_DASHBOARD + "?wa=" + waNumber;
+            document.getElementById('link-quiz').href = LINK_QUIZ + "?wa=" + waNumber;
             document.getElementById('link-dashboard').href = `${LINK_DASHBOARD}?wa=${waNumber}`;
             document.getElementById('link-quiz').href = `${LINK_QUIZ}?wa=${waNumber}`;
 
-            fetchData();
-        });
-
-        // 2. FETCH DATA FUNCTION
-        function fetchData() {
-            fetch(`${SCRIPT_URL}?action=getData&wa=${encodeURIComponent(waNumber)}`)
-            .then(res => res.json())
-            .then(data => {
-                // Smooth Loading Transition
-                const loader = document.getElementById('loading');
-                loader.classList.add('loading-hidden');
-                
-                setTimeout(() => {
-                    loader.style.display = 'none';
-                    if(data.status === 'success'){
-                        renderReport(data);
-                    } else {
-                        document.getElementById('report-content').innerHTML = `
-                            <div class="text-center text-white pt-20">
-                                <p class="text-red-500 font-bold">USER TIDAK DITEMUKAN</p>
-                                <p class="text-xs text-neutral-400 mt-2">Nomor WA tidak terdaftar di database.</p>
-                            </div>
-                        `;
-                        document.getElementById('report-content').classList.remove('hidden');
-                    }
-                }, 500); // Wait for transition
-            })
-            .catch(err => {
-                console.error(err);
-                document.getElementById('loading').classList.add('hidden');
-                document.getElementById('error-msg').innerText = "Gagal terhubung ke server.";
+fetch(`${SCRIPT_URL}?action=getData&wa=${encodeURIComponent(waNumber)}`)
+.then(res => res.json())
+.then(data => {
+if(data.status === 'success'){
+renderReport(data);
+} else {
+                    alert('Data user tidak ditemukan di database.');
+                    document.getElementById('loading').innerHTML = '<div class="text-center text-white"><p class="text-red-500 font-bold">USER TIDAK DITEMUKAN</p><p class="text-xs">Nomor WA tidak terdaftar.</p></div>';
+}
+})
+.catch(err => {
+console.error(err);
+                alert("Gagal memuat data. Periksa koneksi.");
+                document.getElementById('loading').innerHTML = '<div class="text-center text-white"><p class="text-red-500 font-bold mb-2">GAGAL KONEKSI SERVER</p><p class="text-[10px] text-gray-400">Pastikan Script di-Deploy sebagai "Anyone".</p></div>';
+                document.getElementById('error-msg').innerText = err.message;
                 document.getElementById('error-msg').classList.remove('hidden');
-            });
-        }
-
-        // 🔥 FUNGSI TYPEWRITER (HTML AWARE)
-        function typeWriter(text, elementId, speed = 15) {
-            const element = document.getElementById(elementId);
-            if (!element) return;
-
-            element.innerHTML = "";
-            if (typingTimeout) clearTimeout(typingTimeout);
-            
-            element.classList.add('typing-cursor');
-
-            let i = 0;
-            
-            function type() {
-                if (i < text.length) {
-                    if (text.charAt(i) === '<') {
-                        let tag = '';
-                        while (text.charAt(i) !== '>' && i < text.length) {
-                            tag += text.charAt(i);
-                            i++;
-                        }
-                        tag += '>';
-                        i++; 
-                        element.innerHTML += tag; 
-                    } else {
-                        element.innerHTML += text.charAt(i);
-                        i++;
-                    }
-                    typingTimeout = setTimeout(type, speed);
-                } else {
-                    element.classList.remove('typing-cursor');
-                }
-            }
-            type();
-        }
-
-        // 🔥 FUNGSI REFRESH ANALISA
-        function refreshAnalysis() {
-            const icon = document.getElementById('refresh-icon');
-            icon.classList.add('fa-spin');
-            
-            const textEl = document.getElementById('ai-insight-text');
-            textEl.style.opacity = '0'; // Fade out effect
-
-            setTimeout(() => {
-                icon.classList.remove('fa-spin');
-                
-                const analysisList = aiAnalysisDB[currentCategoryCode] || aiAnalysisDB['Seimbang'];
-                
-                // Get Random Text (Different from current if possible)
-                let newText;
-                let attempts = 0;
-                do {
-                    newText = analysisList[Math.floor(Math.random() * analysisList.length)];
-                    attempts++;
-                } while (newText === textEl.innerHTML && attempts < 5); // Simple check to avoid immediate repeat
-                
-                textEl.style.opacity = '1';
-                typeWriter(newText, 'ai-insight-text');
-                
-            }, 500);
-        }
-
-        function renderReport(data) {
-            document.getElementById('report-content').classList.remove('hidden');
-
-            // 1. Render Profile
-            document.getElementById('u-name').innerText = data.nama;
-            document.getElementById('u-avatar').src = `https://api.dicebear.com/7.x/notionists/svg?seed=${data.nama}`;
-            document.getElementById('stat-day').innerText = data.hari;
-            document.getElementById('stat-percent').innerText = data.progress + "%";
-            document.getElementById('progress-bar').style.width = data.progress + "%";
-            
-            // Logic Category
-            currentCategoryCode = 'Seimbang';
-            if(data.kategori.includes('Sembelit')) currentCategoryCode = 'A';
-            else if(data.kategori.includes('Kembung')) currentCategoryCode = 'B';
-            else if(data.kategori.includes('Sensitif')) currentCategoryCode = 'C';
-
-            document.getElementById('u-type-badge').innerText = data.kategori.toUpperCase();
-            document.getElementById('quiz-cat').innerText = data.kategori;
-
-            // 2. Render AI Insight (Initial Load)
-            const analysisList = aiAnalysisDB[currentCategoryCode] || aiAnalysisDB['Seimbang'];
-            const initialText = analysisList[0]; 
-            typeWriter(initialText, 'ai-insight-text');
-
-            // 3. Render Achievements
-            if(data.hari >= 7) unlockBadge('badge-1');
-            if(data.hari >= 14) unlockBadge('badge-2');
-            if(data.hari >= 21) unlockBadge('badge-3');
-            if(data.hari >= 30) unlockBadge('badge-4');
-
-            // 4. Status & Cert
-            if (data.hari >= 30) {
-                document.getElementById('card-icon').innerText = "🏆";
-                document.getElementById('card-title').innerText = "LULUS PROGRAM!";
-                document.getElementById('card-title').classList.add("text-amber-400");
-                document.getElementById('u-status').innerText = "ALUMNI";
-                document.getElementById('u-status').classList.add("text-amber-500", "border-amber-500/50");
-                
-                document.getElementById('cert-section').classList.remove('hidden');
-                document.getElementById('cert-name').innerText = data.nama;
-                
-                const today = new Date();
-                document.getElementById('cert-date').innerText = today.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
-
-            } else {
-                document.getElementById('u-status').innerText = "ACTIVE";
-                document.getElementById('u-status').classList.add("text-green-500", "border-green-500/50");
-            }
-
-            // 5. Chart & List
-            if (data.history && data.history.length > 0) {
-                document.getElementById('chart-container').classList.remove('hidden');
-                renderChart(data.history);
-                renderEvaluasiList(data.history);
-            }
-
-            if (data.checkin_log && data.checkin_log.length > 0) {
-                document.getElementById('total-logs').innerText = data.checkin_log.length + " Data";
-                renderCheckinList(data.checkin_log);
-            }
-        }
-
-        function unlockBadge(id) {
-            const el = document.getElementById(id);
-            el.classList.remove('badge-locked');
-            el.classList.add('badge-unlocked', 'bg-gradient-to-br', 'from-neutral-800', 'to-neutral-900');
-        }
-
-        function renderEvaluasiList(history) {
-            const container = document.getElementById('list-evaluasi');
-            container.innerHTML = ''; 
-            
-            [...history].reverse().forEach(item => {
-                const stars = '★'.repeat(item.rating) + '☆'.repeat(5 - item.rating);
-                const html = `
-                    <div class="bg-white/5 p-3 rounded-xl border border-white/5 hover:bg-white/10 transition">
-                        <div class="flex justify-between items-start mb-1">
-                            <span class="text-[10px] text-neutral-400 font-mono bg-black/30 px-2 py-0.5 rounded">${item.date}</span>
-                            <span class="text-amber-500 text-xs tracking-widest text-shadow-sm">${stars}</span>
-                        </div>
-                        <p class="text-xs text-neutral-300 italic">"${item.comment}"</p>
-                    </div>
-                `;
-                container.insertAdjacentHTML('beforeend', html);
-            });
-        }
-
-        function renderCheckinList(logs) {
-            const container = document.getElementById('list-checkin');
-            container.innerHTML = ''; 
-
-            logs.forEach(log => {
-                const html = `
-                    <div class="flex items-center justify-between bg-white/5 p-2 px-3 rounded-lg border border-white/5 hover:border-green-500/30 transition">
-                        <div class="flex items-center gap-3">
-                            <div class="w-2 h-2 rounded-full bg-green-500 shadow-[0_0_5px_#22c55e]"></div>
-                            <div>
-                                <p class="text-xs font-bold text-white">${log.hari}</p>
-                                <p class="text-[10px] text-neutral-500">${log.tanggal}</p>
-                            </div>
-                        </div>
-                        <div class="text-right">
-                            <span class="text-[10px] font-mono text-amber-500 bg-amber-900/10 px-2 py-1 rounded border border-amber-500/20">
-                                ⏰ ${log.jam}
-                            </span>
-                        </div>
-                    </div>
-                `;
-                container.insertAdjacentHTML('beforeend', html);
-            });
-        }
-
-        function renderChart(history) {
-            const ctx = document.getElementById('healthChart').getContext('2d');
-            const sortedHist = [...history].reverse(); 
-            
-            const labels = sortedHist.map((h, i) => "Mgg " + (i + 1));
-            const ratings = sortedHist.map(h => h.rating);
-
-            new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Kenyamanan',
-                        data: ratings,
-                        borderColor: '#f59e0b',
-                        backgroundColor: (context) => {
-                            const ctx = context.chart.ctx;
-                            const gradient = ctx.createLinearGradient(0, 0, 0, 200);
-                            gradient.addColorStop(0, 'rgba(245, 158, 11, 0.4)');
-                            gradient.addColorStop(1, 'rgba(245, 158, 11, 0)');
-                            return gradient;
-                        },
-                        borderWidth: 2,
-                        pointBackgroundColor: '#fff',
-                        pointBorderColor: '#f59e0b',
-                        pointRadius: 4,
-                        tension: 0.4,
-                        fill: true
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: { beginAtZero: true, max: 5, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#666', font:{size:9} } },
-                        x: { grid: { display: false }, ticks: { color: '#666', font: {size: 9} } }
-                    },
-                    plugins: { legend: { display: false } }
-                }
-            });
-        }
-
-        function downloadCert() {
-            const wrapper = document.getElementById('certificate-wrapper');
-            wrapper.style.opacity = '1';
-            wrapper.style.zIndex = '9999';
-            
-            html2canvas(document.querySelector("#certificate-box"), {
-                scale: 2, 
-                useCORS: true,
-                backgroundColor: "#000000"
-            }).then(canvas => {
-                wrapper.style.opacity = '0';
-                wrapper.style.zIndex = '-50';
-                
-                const link = document.createElement('a');
-                link.download = 'Sertifikat-Usus-Sehat-Jates9.png';
-                link.href = canvas.toDataURL('image/png');
-                link.click();
-            }).catch(err => {
-                console.error("Gagal generate sertifikat:", err);
-                alert("Maaf, gagal mengunduh sertifikat. Coba screenshot manual.");
-                wrapper.style.opacity = '0';
-            });
-        }
-    </script>
-</body>
-</html>
+});
+};
