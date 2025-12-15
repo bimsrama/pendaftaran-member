@@ -3,175 +3,350 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Evaluasi Mingguan</title>
+    <title>Evaluasi Mingguan | My Gut Journey</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;500;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #050505; color: white; }
-        .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); }
-        .input-field { background: rgba(0,0,0,0.5); border: 1px solid #333; color: white; transition: 0.3s; }
-        .input-field:focus { border-color: #fbbf24; outline: none; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #0a0a0a; color: white; }
         
-        /* Star Rating */
-        .rating input { display: none; }
-        .rating label { cursor: pointer; color: #444; font-size: 28px; transition: 0.3s; }
-        .rating input:checked ~ label, .rating label:hover, .rating label:hover ~ label { color: #fbbf24; }
+        /* Glassmorphism Effect */
+        .glass { 
+            background: rgba(30, 30, 30, 0.6); 
+            backdrop-filter: blur(20px); 
+            border: 1px solid rgba(255, 255, 255, 0.08); 
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Gradient Text */
+        .text-gold { 
+            background: linear-gradient(135deg, #FDE68A 0%, #D97706 100%); 
+            -webkit-background-clip: text; 
+            -webkit-text-fill-color: transparent; 
+        }
+
+        /* Star Rating Styling */
         .rating { display: flex; flex-direction: row-reverse; justify-content: center; gap: 8px; }
-        
-        /* History Item */
-        .history-item { 
-            border-left: 2px solid #333; 
-            padding-left: 15px; 
-            position: relative; 
-            margin-bottom: 20px; 
-            padding-bottom: 5px;
+        .rating input { display: none; }
+        .rating label { cursor: pointer; color: #333; font-size: 32px; transition: 0.3s; }
+        .rating input:checked ~ label, .rating label:hover, .rating label:hover ~ label { color: #fbbf24; filter: drop-shadow(0 0 5px rgba(251, 191, 36, 0.5)); }
+
+        /* Custom Scrollbar */
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #1a1a1a; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #555; border-radius: 4px; }
+
+        /* Animation */
+        .fade-in { animation: fadeIn 0.6s ease-out forwards; opacity: 0; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Loader */
+        .loader-spin {
+            border: 3px solid rgba(255,255,255,0.1);
+            border-left-color: #d97706;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
         }
-        .history-item::before { 
-            content: ''; position: absolute; left: -6px; top: 0; 
-            width: 10px; height: 10px; border-radius: 50%; background: #fbbf24; 
-            box-shadow: 0 0 10px rgba(251, 191, 36, 0.5);
-        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
-<body class="min-h-screen flex flex-col items-center justify-center p-4 relative overflow-hidden">
+<body class="min-h-screen pb-10 relative overflow-x-hidden">
 
-    <div class="fixed inset-0 -z-10">
-        <div class="absolute top-[-10%] left-[-10%] w-96 h-96 bg-amber-900/20 blur-[100px] rounded-full"></div>
-        <div class="absolute bottom-[-10%] right-[-10%] w-96 h-96 bg-yellow-900/10 blur-[100px] rounded-full"></div>
+    <div class="fixed inset-0 -z-10 pointer-events-none">
+        <div class="absolute top-[-10%] left-[-10%] w-96 h-96 bg-amber-900/10 blur-[100px] rounded-full"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-96 h-96 bg-blue-900/10 blur-[100px] rounded-full"></div>
     </div>
 
-    <div class="w-full max-w-md glass p-8 rounded-3xl relative">
-        <div class="text-center mb-6">
-            <h1 class="text-2xl font-bold">Check-Point <span class="text-amber-500">Mingguan</span></h1>
-            <p class="text-xs text-neutral-400" id="welcome-text">Bagaimana progres kesehatanmu minggu ini?</p>
+    <div class="fixed top-0 left-0 w-full z-40 bg-[#0a0a0a]/90 backdrop-blur-md border-b border-white/5">
+        <div class="max-w-md mx-auto px-5 py-4 flex items-center justify-between">
+            <h1 class="text-lg font-bold flex items-center gap-2">
+                <span class="text-amber-500"><i class="fas fa-clipboard-check"></i></span>
+                <span class="tracking-wide text-white">EVALUASI MINGGUAN</span>
+            </h1>
+            <span id="date-display" class="text-[10px] text-neutral-400 font-mono border border-white/10 px-2 py-1 rounded">...</span>
+        </div>
+    </div>
+
+    <div class="max-w-md mx-auto px-4 mt-20 space-y-5">
+
+        <div id="loading-screen" class="flex flex-col items-center justify-center py-20">
+            <div class="loader-spin mb-4"></div>
+            <p class="text-[10px] text-neutral-500 tracking-widest animate-pulse">MEMUAT PROFIL...</p>
         </div>
 
-        <form id="form-eval" class="space-y-5 text-left">
-            <div>
-                <input type="tel" id="whatsapp" required class="input-field w-full px-4 py-3 rounded-xl text-sm" placeholder="Nomor WhatsApp (Contoh: 0812xxx)">
-                <p class="text-[10px] text-amber-500 mt-1 hidden animate-pulse" id="wa-loading">Mencari data...</p>
-            </div>
+        <div id="error-screen" class="hidden text-center py-10 bg-red-900/10 rounded-2xl border border-red-500/20 p-5 mx-4">
+            <i class="fas fa-exclamation-circle text-3xl text-red-500 mb-3"></i>
+            <h3 class="font-bold text-red-400 text-sm">Gagal Memuat Data</h3>
+            <p class="text-xs text-neutral-400 mt-2">Pastikan link dibuka dari WhatsApp.</p>
+        </div>
 
-            <div class="glass p-4 rounded-2xl bg-black/20 text-center border border-white/5">
-                <p class="text-xs text-neutral-400 mb-2 uppercase tracking-widest">Kondisi Perut Minggu Ini</p>
-                <div class="rating">
-                    <input type="radio" name="rating" id="s5" value="5"><label for="s5">★</label>
-                    <input type="radio" name="rating" id="s4" value="4"><label for="s4">★</label>
-                    <input type="radio" name="rating" id="s3" value="3"><label for="s3">★</label>
-                    <input type="radio" name="rating" id="s2" value="2"><label for="s2">★</label>
-                    <input type="radio" name="rating" id="s1" value="1"><label for="s1">★</label>
+        <div id="dashboard-content" class="hidden space-y-5">
+            
+            <div class="glass rounded-3xl p-6 relative overflow-hidden fade-in" style="animation-delay: 0.1s;">
+                <div class="absolute -top-10 -right-10 w-32 h-32 bg-amber-600/20 rounded-full blur-[50px]"></div>
+
+                <div class="flex items-center justify-between relative z-10">
+                    <div>
+                        <p class="text-[10px] text-neutral-400 uppercase tracking-widest mb-1">Evaluasi Progress,</p>
+                        <h2 id="user-name" class="text-xl font-bold text-white truncate max-w-[180px]">...</h2>
+                        <div class="flex items-center gap-2 mt-1">
+                            <span id="user-category" class="text-[10px] bg-amber-500/10 text-amber-500 px-2 py-0.5 rounded border border-amber-500/20 font-bold">...</span>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-4xl font-bold text-gold" id="current-day">0</div>
+                        <div class="text-[10px] text-neutral-500 uppercase font-bold">Hari Ke</div>
+                    </div>
                 </div>
             </div>
 
-            <textarea id="saran" rows="3" class="input-field w-full px-4 py-3 rounded-xl text-sm" placeholder="Ceritakan perubahan yang dirasakan... (Contoh: Perut lebih enteng, BAB lancar)"></textarea>
+            <div class="fade-in" style="animation-delay: 0.2s;">
+                <a id="btn-to-report" href="#" class="group relative w-full flex items-center justify-between p-4 bg-gradient-to-r from-neutral-800 to-neutral-900 rounded-2xl border border-white/10 hover:border-amber-500/50 transition-all duration-300">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-amber-500/10 flex items-center justify-center text-amber-500 group-hover:scale-110 transition">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div class="text-left">
+                            <p class="text-sm font-bold text-white">Buka Dashboard Laporan</p>
+                            <p class="text-[10px] text-neutral-400">Lihat grafik perkembanganmu</p>
+                        </div>
+                    </div>
+                    <div class="text-neutral-500 group-hover:text-amber-500 transition group-hover:translate-x-1">
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
+                </a>
+            </div>
 
-            <button type="submit" id="btn-submit" class="w-full bg-gradient-to-r from-neutral-800 to-neutral-900 border border-neutral-700 text-white font-bold py-4 rounded-xl hover:scale-[1.02] transition-transform">
-                KIRIM LAPORAN
-            </button>
-        </form>
+            <div class="glass rounded-3xl p-6 border-t-2 border-amber-500 fade-in" style="animation-delay: 0.3s;">
+                <h3 class="font-bold text-sm text-white mb-4 flex items-center gap-2">
+                    <i class="fas fa-edit text-amber-500"></i> ISI EVALUASI MINGGUAN
+                </h3>
+                
+                <form id="form-eval" class="space-y-6">
+                    <input type="hidden" id="wa-input" name="whatsapp">
 
-        <div id="history-section" class="mt-10 pt-8 border-t border-white/10 hidden">
-            <h3 class="text-sm font-bold text-white mb-6 flex items-center gap-2">
-                <span class="text-amber-500">⏳</span> Riwayat Evaluasi
-            </h3>
-            <div id="history-list" class="space-y-2">
+                    <div class="text-center bg-black/20 p-4 rounded-2xl border border-white/5">
+                        <p class="text-xs text-neutral-400 mb-2 uppercase tracking-widest">Kenyamanan Perut Minggu Ini</p>
+                        <div class="rating">
+                            <input type="radio" name="rating" id="s5" value="5"><label for="s5">★</label>
+                            <input type="radio" name="rating" id="s4" value="4"><label for="s4">★</label>
+                            <input type="radio" name="rating" id="s3" value="3"><label for="s3">★</label>
+                            <input type="radio" name="rating" id="s2" value="2"><label for="s2">★</label>
+                            <input type="radio" name="rating" id="s1" value="1"><label for="s1">★</label>
+                        </div>
+                        <p class="text-[10px] text-neutral-500 mt-2">(5 Bintang = Sangat Nyaman)</p>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-neutral-400 mb-2 uppercase tracking-wider">
+                            Catatan Perubahan
+                        </label>
+                        <textarea id="saran" rows="3" 
+                            class="w-full bg-black/30 border border-white/10 rounded-xl p-3 text-sm text-white placeholder-neutral-600 focus:outline-none focus:border-amber-500 transition resize-none"
+                            placeholder="Contoh: Perut terasa lebih ringan, BAB lebih lancar..."></textarea>
+                    </div>
+
+                    <button type="submit" id="btn-submit" 
+                        class="w-full bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-500 hover:to-orange-500 text-white font-bold py-3.5 px-4 rounded-xl shadow-lg shadow-amber-900/20 transform transition active:scale-95 flex justify-center items-center gap-2">
+                        <span>KIRIM EVALUASI</span>
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </form>
+            </div>
+
+            <div class="glass rounded-3xl p-5 fade-in" style="animation-delay: 0.4s;">
+                <h3 class="font-bold text-xs text-neutral-400 mb-4 flex items-center gap-2 border-b border-white/5 pb-2">
+                    <i class="fas fa-history"></i> RIWAYAT EVALUASI
+                </h3>
+                
+                <div class="overflow-y-auto max-h-80 pr-2 custom-scrollbar">
+                    <div id="history-list" class="space-y-4 pl-2">
+                        </div>
+                    
+                    <div id="empty-history" class="hidden text-center py-8">
+                        <i class="fas fa-clipboard text-4xl text-neutral-700 mb-2"></i>
+                        <p class="text-[10px] text-neutral-600 italic">Belum ada data evaluasi.</p>
+                    </div>
                 </div>
+            </div>
+
+        </div>
+        
+        <div class="text-center pb-6 pt-4">
+            <p class="text-[10px] text-neutral-600">My Gut Journey &copy; 2024</p>
         </div>
     </div>
 
     <script>
-        // ⚠️ PASTE URL SCRIPT DI SINI
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz60TyDP9sE1JGXJJ9RZtvinrcQlOH-_UDRi2-baMbNHve1OjMfKRA0w-VI4xoLRQuY/exec';
-
-        const waInput = document.getElementById('whatsapp');
-        const historySection = document.getElementById('history-section');
-        const historyList = document.getElementById('history-list');
+        // ============================================
+        // 🔗 KONFIGURASI
+        // ============================================
+        // URL App Script yang sama dengan checkin.html
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx67JX5mM-n-W1h6ehURHgONXBPiyUvESRLMCveTV04wXighQQhLErXQwC07Yf5Zkkw/exec';
         
-        // 1. Cek URL Parameter (Auto Load)
-        const urlParams = new URLSearchParams(window.location.search);
-        const waParam = urlParams.get('wa');
+        // Nama file dashboard laporan
+        const REPORT_PAGE_URL = "laporan.html"; 
 
-        if (waParam) {
-            waInput.value = waParam;
-            loadData(waParam); 
-        }
+        // Variables
+        let waNumber = "";
 
-        // 2. Listener Input Manual (Debounce)
-        let timeout = null;
-        waInput.addEventListener('keyup', function (e) {
-            clearTimeout(timeout);
-            timeout = setTimeout(function () {
-                if(waInput.value.length > 9) loadData(waInput.value);
-            }, 1000);
+        // 1. Inisialisasi
+        document.addEventListener('DOMContentLoaded', () => {
+            // Set Tanggal Header
+            const options = { weekday: 'long', day: 'numeric', month: 'short' };
+            document.getElementById('date-display').textContent = new Date().toLocaleDateString('id-ID', options);
+
+            // Ambil WA dari URL
+            const urlParams = new URLSearchParams(window.location.search);
+            let waParam = urlParams.get('wa');
+
+            if (waParam) {
+                waParam = waParam.replace(/[^0-9]/g, ""); // Bersihkan non-angka
+                waNumber = waParam;
+                
+                // Isi Hidden Input WA
+                document.getElementById('wa-input').value = waNumber;
+
+                // Update Link Tombol Laporan
+                document.getElementById('btn-to-report').href = `${REPORT_PAGE_URL}?wa=${waNumber}`;
+
+                // Load Data Profil & History
+                loadData(waNumber);
+            } else {
+                showError("Link tidak valid. Pastikan link dibuka dari WhatsApp.");
+            }
         });
 
-        // 3. Fungsi Load Data & History
+        // 2. Load Data Profil & History
         function loadData(wa) {
-            document.getElementById('wa-loading').classList.remove('hidden');
-            
             fetch(`${SCRIPT_URL}?action=getData&wa=${encodeURIComponent(wa)}`)
             .then(res => res.json())
             .then(data => {
-                document.getElementById('wa-loading').classList.add('hidden');
-                
                 if (data.status === 'success') {
-                    document.getElementById('welcome-text').innerText = `Halo ${data.nama}, saatnya update progress minggu ini!`;
-                    
-                    // Render History
-                    if (data.history && data.history.length > 0) {
-                        historySection.classList.remove('hidden');
-                        historyList.innerHTML = ''; // Reset konten lama
-
-                        data.history.forEach(item => {
-                            const stars = '★'.repeat(item.rating) + '☆'.repeat(5 - item.rating);
-                            const html = `
-                                <div class="history-item">
-                                    <div class="flex justify-between items-start mb-2">
-                                        <span class="text-[10px] text-neutral-400 bg-neutral-900 border border-neutral-800 px-2 py-1 rounded-md font-mono">${item.date}</span>
-                                        <span class="text-amber-500 text-xs tracking-widest drop-shadow-[0_0_5px_rgba(245,158,11,0.5)]">${stars}</span>
-                                    </div>
-                                    <p class="text-xs text-neutral-300 italic leading-relaxed">"${item.comment}"</p>
-                                </div>
-                            `;
-                            historyList.insertAdjacentHTML('beforeend', html);
-                        });
-                    } else {
-                        historySection.classList.add('hidden');
-                    }
+                    renderPage(data);
+                } else {
+                    showError("Data user tidak ditemukan.");
                 }
             })
             .catch(err => {
                 console.error(err);
-                document.getElementById('wa-loading').classList.add('hidden');
+                showError("Gagal terhubung ke server.");
             });
         }
 
-        // 4. Submit Evaluasi Baru
+        // 3. Render Halaman
+        function renderPage(data) {
+            document.getElementById('loading-screen').classList.add('hidden');
+            document.getElementById('dashboard-content').classList.remove('hidden');
+
+            // Render Profil
+            document.getElementById('user-name').innerText = data.nama;
+            document.getElementById('user-category').innerText = data.kategori.toUpperCase();
+            document.getElementById('current-day').innerText = data.hari;
+
+            // Render History
+            renderHistory(data.history);
+        }
+
+        // 4. Render History List
+        function renderHistory(history) {
+            const listContainer = document.getElementById('history-list');
+            listContainer.innerHTML = ''; // Reset
+
+            if (!history || history.length === 0) {
+                document.getElementById('empty-history').classList.remove('hidden');
+                return;
+            }
+
+            // Loop data history (reverse agar yang terbaru di atas)
+            [...history].reverse().forEach(item => {
+                const stars = '★'.repeat(item.rating) + '☆'.repeat(5 - item.rating);
+                
+                const html = `
+                    <div class="relative pl-6 border-l-2 border-white/10 pb-2 group">
+                        <div class="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-neutral-800 border-2 border-amber-500 group-hover:bg-amber-500 transition"></div>
+                        
+                        <div class="bg-white/5 p-3 rounded-xl border border-white/5 hover:bg-white/10 transition">
+                            <div class="flex justify-between items-start mb-1">
+                                <span class="text-[10px] text-neutral-400 font-mono bg-black/30 px-2 py-0.5 rounded">${item.date}</span>
+                                <span class="text-amber-500 text-xs tracking-widest drop-shadow-[0_0_5px_rgba(245,158,11,0.5)]">${stars}</span>
+                            </div>
+                            <p class="text-xs text-neutral-300 italic leading-relaxed">"${item.comment}"</p>
+                        </div>
+                    </div>
+                `;
+                listContainer.insertAdjacentHTML('beforeend', html);
+            });
+        }
+
+        // 5. Handle Submit Evaluasi
         document.getElementById('form-eval').addEventListener('submit', function(e) {
             e.preventDefault();
+            
             const btn = document.getElementById('btn-submit');
-            const wa = waInput.value;
+            const originalText = btn.innerHTML;
+            
+            // Validasi Input
+            const wa = document.getElementById('wa-input').value;
             const saran = document.getElementById('saran').value;
             const rating = document.querySelector('input[name="rating"]:checked')?.value;
 
-            if (!wa) { alert("Isi nomor WhatsApp dulu ya."); return; }
-            if (!rating) { alert("Mohon berikan bintang rating dulu ya!"); return; }
+            if (!rating) { 
+                Swal.fire({
+                    background: '#1a1a1a', color: '#fff', icon: 'warning',
+                    title: 'Rating Kosong', text: 'Mohon berikan bintang rating dulu ya!', confirmButtonColor: '#fbbf24'
+                });
+                return; 
+            }
 
-            const originalText = btn.innerHTML;
-            btn.innerHTML = '<span class="animate-pulse">MENGIRIM...</span>';
+            // Loading State
+            btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> MENGIRIM...';
             btn.disabled = true;
+            btn.classList.add('opacity-70', 'cursor-not-allowed');
 
-            fetch(`${SCRIPT_URL}?action=evaluasi&whatsapp=${encodeURIComponent(wa)}&rating=${rating}&saran=${encodeURIComponent(saran)}`, { method: 'POST', mode: 'no-cors' })
-            .then(() => {
-                alert('Laporan diterima! Terima kasih atas feedback-nya.');
-                window.location.reload(); // Refresh halaman agar history muncul
+            // Kirim Data (Menggunakan mode no-cors untuk form submission sederhana, atau handle json jika script support)
+            // Note: Script App Anda mereturn JSON, jadi lebih baik pakai fetch biasa.
+            
+            // Construct URL Query (Sesuai App Script GET/POST handler yang ada)
+            // App Script Anda: doGet/doPost menangani parameter query string.
+            const submitUrl = `${SCRIPT_URL}?action=evaluasi&whatsapp=${encodeURIComponent(wa)}&rating=${rating}&saran=${encodeURIComponent(saran)}`;
+
+            fetch(submitUrl, { method: 'POST' })
+            .then(res => res.json())
+            .then(response => {
+                if(response.result === 'success') {
+                    Swal.fire({
+                        background: '#1a1a1a', color: '#fff', icon: 'success',
+                        title: 'Terima Kasih!', text: 'Evaluasi mingguanmu berhasil disimpan.', confirmButtonColor: '#fbbf24'
+                    }).then(() => {
+                        window.location.reload();
+                    });
+                } else {
+                    throw new Error("Gagal menyimpan.");
+                }
             })
             .catch(err => {
-                alert('Gagal mengirim. Cek internet Anda.');
+                Swal.fire({
+                    background: '#1a1a1a', color: '#fff', icon: 'error',
+                    title: 'Gagal', text: 'Terjadi kesalahan jaringan.', confirmButtonColor: '#ef4444'
+                });
                 btn.innerHTML = originalText;
                 btn.disabled = false;
+                btn.classList.remove('opacity-70', 'cursor-not-allowed');
             });
         });
+
+        // Helper: Show Error
+        function showError(msg) {
+            document.getElementById('loading-screen').classList.add('hidden');
+            document.getElementById('error-screen').classList.remove('hidden');
+            document.querySelector('#error-screen p').textContent = msg;
+        }
+
     </script>
 </body>
 </html>
