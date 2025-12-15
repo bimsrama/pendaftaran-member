@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laporan Kesehatan Final</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #0a0a0a; color: white; }
+        .glass { background: rgba(30, 30, 30, 0.6); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .text-gold { background: linear-gradient(135deg, #FDE68A 0%, #D97706 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .btn-nav { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); transition: 0.3s; }
+        .btn-nav:hover { background: rgba(255,255,255,0.1); transform: translateY(-2px); }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center p-4">
+
+    <div id="loading" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black">
+        <div class="w-10 h-10 border-4 border-neutral-800 border-t-amber-500 rounded-full animate-spin mb-4"></div>
+        <p class="text-[10px] text-neutral-500 tracking-widest animate-pulse">GENERATING REPORT...</p>
+    </div>
+
+    <div id="report-content" class="w-full max-w-md hidden">
+        
+        <div class="glass rounded-3xl p-6 mb-4 text-center relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-amber-500 to-orange-600"></div>
+            <div class="w-20 h-20 mx-auto rounded-full border-4 border-amber-500/20 p-1 mb-3">
+                <img id="u-avatar" src="" class="w-full h-full rounded-full object-cover bg-neutral-800">
+            </div>
+            <h1 class="text-2xl font-bold text-white mb-1" id="u-name">...</h1>
+            <p class="text-xs text-amber-500 font-semibold tracking-widest uppercase">GRADUATED MEMBER</p>
+        </div>
+
+        <div class="glass rounded-3xl p-6 mb-4 text-center border-amber-500/30 shadow-[0_0_30px_rgba(245,158,11,0.1)]">
+            <div class="text-4xl mb-2">🏆</div>
+            <h2 class="text-xl font-bold text-gold">SELAMAT!</h2>
+            <p class="text-xs text-neutral-400 mt-2 leading-relaxed">
+                Anda telah menyelesaikan program <br><strong class="text-white">30 Hari Usus Sehat</strong>.
+            </p>
+            <div class="mt-4 grid grid-cols-2 gap-3">
+                <div class="bg-white/5 p-3 rounded-xl">
+                    <p class="text-xl font-bold text-white">30</p>
+                    <p class="text-[10px] text-neutral-500 uppercase">Hari Selesai</p>
+                </div>
+                <div class="bg-white/5 p-3 rounded-xl">
+                    <p class="text-xl font-bold text-green-400">100%</p>
+                    <p class="text-[10px] text-neutral-500 uppercase">Komitmen</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="glass rounded-3xl p-6 mb-4">
+            <h3 class="text-sm font-bold text-white mb-4 flex items-center gap-2">
+                <span class="text-amber-500">📈</span> Grafik Kenyamanan Perut
+            </h3>
+            <div class="h-48 w-full">
+                <canvas id="healthChart"></canvas>
+            </div>
+            <p class="text-[10px] text-center text-neutral-500 mt-2 italic">*Berdasarkan evaluasi mingguan Anda</p>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+            <a id="link-dashboard" href="#" class="btn-nav p-4 rounded-2xl flex flex-col items-center justify-center gap-2 text-center group">
+                <span class="text-2xl group-hover:scale-110 transition">🏠</span>
+                <span class="text-xs font-bold text-neutral-300">Dashboard</span>
+            </a>
+            <a id="link-quiz" href="#" class="btn-nav p-4 rounded-2xl flex flex-col items-center justify-center gap-2 text-center group">
+                <span class="text-2xl group-hover:scale-110 transition">📝</span>
+                <span class="text-xs font-bold text-neutral-300">Cek Quiz Lagi</span>
+            </a>
+            <a href="https://shopee.co.id/jates9" target="_blank" class="btn-nav col-span-2 p-4 rounded-2xl flex items-center justify-center gap-3 bg-gradient-to-r from-amber-700 to-amber-600 border-none group">
+                <span class="text-xl">🛍️</span>
+                <div class="text-left">
+                    <p class="text-xs font-bold text-white">Order Maintenance Pack</p>
+                    <p class="text-[10px] text-amber-200">Jaga usus tetap sehat</p>
+                </div>
+            </a>
+        </div>
+        
+        <div class="text-center mt-8 mb-4">
+            <p class="text-[10px] text-neutral-600">Terima kasih telah berjuang bersama kami.</p>
+        </div>
+
+    </div>
+
+    <script>
+        // ⚠️ PASTE URL SCRIPT ANDA DISINI
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz60TyDP9sE1JGXJJ9RZtvinrcQlOH-_UDRi2-baMbNHve1OjMfKRA0w-VI4xoLRQuY/exec';
+
+        // Links
+        const LINK_DASHBOARD = "https://bimsrama.github.io/pendaftaran-member/checkin"; // Dashboard checkin
+        const LINK_QUIZ = "https://bimsrama.github.io/pendaftaran-member/quiz";
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const waNumber = urlParams.get('wa');
+
+        window.onload = function() {
+            if(!waNumber) { alert("Link Error"); return; }
+            
+            // Set Link Navigasi
+            document.getElementById('link-dashboard').href = LINK_DASHBOARD + "?wa=" + waNumber;
+            document.getElementById('link-quiz').href = LINK_QUIZ + "?wa=" + waNumber;
+
+            fetch(`${SCRIPT_URL}?action=getData&wa=${encodeURIComponent(waNumber)}`)
+            .then(res => res.json())
+            .then(data => {
+                if(data.status === 'success'){
+                    renderReport(data);
+                } else {
+                    alert('Data tidak ditemukan');
+                }
+            });
+        };
+
+        function renderReport(data) {
+            document.getElementById('loading').classList.add('hidden');
+            document.getElementById('report-content').classList.remove('hidden');
+
+            // 1. Profile
+            document.getElementById('u-name').innerText = data.nama;
+            document.getElementById('u-avatar').src = `https://api.dicebear.com/7.x/notionists/svg?seed=${data.nama}`;
+
+            // 2. Chart Logic
+            const ctx = document.getElementById('healthChart').getContext('2d');
+            
+            // Siapkan data dari history
+            let labels = [];
+            let ratings = [];
+
+            if (data.history && data.history.length > 0) {
+                // Balik urutan agar timeline kiri ke kanan (awal -> akhir)
+                const sortedHist = data.history.reverse(); 
+                sortedHist.forEach((h, index) => {
+                    labels.push("Minggu " + (index + 1)); // Atau gunakan h.date
+                    ratings.push(h.rating);
+                });
+            } else {
+                // Dummy Data jika kosong (biar chart tetap muncul cantik)
+                labels = ["Start", "Minggu 1", "Minggu 2", "Finish"];
+                ratings = [2, 3, 4, 5]; 
+            }
+
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Kenyamanan',
+                        data: ratings,
+                        borderColor: '#f59e0b',
+                        backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                        borderWidth: 3,
+                        pointBackgroundColor: '#fff',
+                        pointBorderColor: '#f59e0b',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { 
+                            beginAtZero: true, 
+                            max: 5, 
+                            grid: { color: 'rgba(255,255,255,0.1)' },
+                            ticks: { color: '#888' }
+                        },
+                        x: { 
+                            grid: { display: false },
+                            ticks: { color: '#888', font: {size: 10} }
+                        }
+                    },
+                    plugins: { legend: { display: false } }
+                }
+            });
+        }
+    </script>
+</body>
+</html>
