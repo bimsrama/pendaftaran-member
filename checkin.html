@@ -3,246 +3,256 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Check-in Usus Sehat 30 Hari</title>
+    <title>Check-in Harian | My Gut Journey</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
-        body { font-family: 'Poppins', sans-serif; background-color: #f0fdf4; }
-        .glass-card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 16px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #0a0a0a; color: white; }
+        
+        /* Glassmorphism Effect */
+        .glass { 
+            background: rgba(30, 30, 30, 0.6); 
+            backdrop-filter: blur(20px); 
+            border: 1px solid rgba(255, 255, 255, 0.08); 
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
         }
-        .loader {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #16a34a;
+        
+        /* Gradient Text */
+        .text-gold { 
+            background: linear-gradient(135deg, #FDE68A 0%, #D97706 100%); 
+            -webkit-background-clip: text; 
+            -webkit-text-fill-color: transparent; 
+        }
+
+        /* Custom Scrollbar */
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #1a1a1a; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #555; border-radius: 4px; }
+
+        /* Animation */
+        .fade-in { animation: fadeIn 0.6s ease-out forwards; opacity: 0; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Loader */
+        .loader-spin {
+            border: 3px solid rgba(255,255,255,0.1);
+            border-left-color: #d97706;
             border-radius: 50%;
-            width: 40px;
-            height: 40px;
+            width: 30px;
+            height: 30px;
             animation: spin 1s linear infinite;
         }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        
-        .gradient-text {
-            background: linear-gradient(to right, #16a34a, #15803d);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        
-        /* Animasi halus untuk input muncul */
-        .animate-fade-in {
-            animation: fadeIn 0.5s ease-in-out;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
     </style>
 </head>
-<body class="text-gray-800 pb-10">
+<body class="min-h-screen pb-10">
 
-    <div class="bg-white shadow-sm sticky top-0 z-50">
-        <div class="max-w-md mx-auto px-4 py-4 flex items-center justify-between">
-            <h1 class="text-xl font-bold text-green-700 flex items-center">
-                <i class="fas fa-leaf mr-2"></i>Usus Sehat
+    <div class="fixed top-0 left-0 w-full z-40 bg-[#0a0a0a]/90 backdrop-blur-md border-b border-white/5">
+        <div class="max-w-md mx-auto px-5 py-4 flex items-center justify-between">
+            <h1 class="text-lg font-bold flex items-center gap-2">
+                <span class="text-amber-500"><i class="fas fa-leaf"></i></span>
+                <span class="tracking-wide text-white">DAILY CHECK-IN</span>
             </h1>
-            <span id="date-display" class="text-xs text-gray-500 font-medium"></span>
+            <span id="date-display" class="text-[10px] text-neutral-400 font-mono border border-white/10 px-2 py-1 rounded">...</span>
         </div>
     </div>
 
-    <div class="max-w-md mx-auto px-4 mt-6 space-y-6">
+    <div class="max-w-md mx-auto px-4 mt-20 space-y-5">
 
         <div id="loading-screen" class="flex flex-col items-center justify-center py-20">
-            <div class="loader mb-4"></div>
-            <p class="text-gray-500 animate-pulse text-sm">Menghubungkan ke database...</p>
+            <div class="loader-spin mb-4"></div>
+            <p class="text-[10px] text-neutral-500 tracking-widest animate-pulse">CONNECTING TO DATABASE...</p>
         </div>
 
-        <div id="error-screen" class="hidden text-center py-10 bg-white rounded-xl shadow p-5">
-            <i class="fas fa-exclamation-triangle text-4xl text-red-500 mb-3"></i>
-            <h3 class="font-bold text-gray-700">Data Tidak Ditemukan</h3>
-            <p class="text-sm text-gray-500 mt-2 mb-4">Pastikan Anda membuka halaman ini melalui link resmi dari WhatsApp.</p>
-            <p id="error-detail" class="text-xs text-red-400 font-mono bg-red-50 p-2 rounded">Error detail...</p>
+        <div id="error-screen" class="hidden text-center py-10 bg-red-900/10 rounded-2xl border border-red-500/20 p-5 mx-4">
+            <i class="fas fa-wifi text-3xl text-red-500 mb-3"></i>
+            <h3 class="font-bold text-red-400 text-sm">Gagal Memuat Data</h3>
+            <p class="text-xs text-neutral-400 mt-2">Pastikan link WhatsApp benar.</p>
         </div>
 
-        <div id="dashboard-content" class="hidden space-y-6">
+        <div id="dashboard-content" class="hidden space-y-5">
             
-            <div class="glass-card p-5 border-l-4 border-green-500">
-                <div class="flex items-center justify-between mb-4">
+            <div class="glass rounded-3xl p-6 relative overflow-hidden fade-in" style="animation-delay: 0.1s;">
+                <div class="absolute -top-10 -right-10 w-32 h-32 bg-amber-600/20 rounded-full blur-[50px]"></div>
+
+                <div class="flex items-center justify-between mb-4 relative z-10">
                     <div>
-                        <p class="text-xs text-gray-500 uppercase tracking-wider">Halo Bestie,</p>
-                        <h2 id="user-name" class="text-2xl font-bold gradient-text">Loading...</h2>
-                        <span id="user-category" class="inline-block bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full mt-1 font-semibold">...</span>
+                        <p class="text-[10px] text-neutral-400 uppercase tracking-widest mb-1">Welcome Back,</p>
+                        <h2 id="user-name" class="text-xl font-bold text-white truncate max-w-[180px]">...</h2>
+                        <div class="flex items-center gap-2 mt-1">
+                            <span id="user-category" class="text-[10px] bg-amber-500/10 text-amber-500 px-2 py-0.5 rounded border border-amber-500/20 font-bold">...</span>
+                        </div>
                     </div>
                     <div class="text-right">
-                        <div class="text-3xl font-bold text-green-600" id="current-day">0</div>
-                        <div class="text-xs text-gray-500 font-medium">Hari ke-</div>
+                        <div class="text-4xl font-bold text-gold" id="current-day">0</div>
+                        <div class="text-[10px] text-neutral-500 uppercase font-bold">Hari Ke</div>
                     </div>
                 </div>
 
-                <div class="w-full bg-gray-200 rounded-full h-2.5 mb-2 overflow-hidden">
-                    <div id="progress-bar" class="bg-green-600 h-2.5 rounded-full transition-all duration-1000 ease-out" style="width: 0%"></div>
+                <div class="w-full bg-neutral-800 rounded-full h-2 mb-2 overflow-hidden border border-white/5">
+                    <div id="progress-bar" class="bg-gradient-to-r from-amber-500 to-orange-600 h-2 rounded-full transition-all duration-1000" style="width: 0%"></div>
                 </div>
-                <div class="flex justify-between text-xs text-gray-500 font-medium">
-                    <span id="progress-text">0% Selesai</span>
-                    <span>Target: 30 Hari</span>
+                <div class="flex justify-between text-[10px] text-neutral-500 font-mono">
+                    <span id="progress-text">0%</span>
+                    <span>GOAL: 30 DAYS</span>
                 </div>
             </div>
 
-            <div class="glass-card p-5 bg-gradient-to-br from-green-50 to-white relative overflow-hidden border border-green-100">
-                <i class="fas fa-robot absolute -top-2 -right-2 text-green-100 text-6xl opacity-60"></i>
-                <h3 class="font-bold text-green-800 mb-2 flex items-center relative z-10">
-                    <i class="fas fa-lightbulb text-yellow-500 mr-2"></i> Insight Hari Ini
+            <div class="fade-in" style="animation-delay: 0.2s;">
+                <a id="btn-to-report" href="#" class="group relative w-full flex items-center justify-between p-4 bg-gradient-to-r from-neutral-800 to-neutral-900 rounded-2xl border border-white/10 hover:border-amber-500/50 transition-all duration-300">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-amber-500/10 flex items-center justify-center text-amber-500 group-hover:scale-110 transition">
+                            <i class="fas fa-chart-pie"></i>
+                        </div>
+                        <div class="text-left">
+                            <p class="text-sm font-bold text-white">Buka Laporan Final</p>
+                            <p class="text-[10px] text-neutral-400">Lihat grafik & statistik lengkap</p>
+                        </div>
+                    </div>
+                    <div class="text-neutral-500 group-hover:text-amber-500 transition group-hover:translate-x-1">
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
+                </a>
+            </div>
+
+            <div class="glass rounded-3xl p-5 border border-blue-500/20 relative overflow-hidden fade-in" style="animation-delay: 0.3s;">
+                <i class="fas fa-robot absolute -bottom-3 -right-3 text-blue-500/10 text-6xl"></i>
+                <h3 class="font-bold text-xs text-blue-400 mb-2 flex items-center gap-2">
+                    <i class="fas fa-lightbulb"></i> AI DAILY TIP
                 </h3>
-                <p id="ai-insight-text" class="text-sm text-gray-700 italic leading-relaxed relative z-10">
-                    "Memuat tips cerdas untuk pencernaanmu..."
+                <p id="ai-insight-text" class="text-xs text-neutral-300 italic leading-relaxed relative z-10">
+                    "Memuat tips cerdas..."
                 </p>
             </div>
 
-            <div class="glass-card p-6 border-t-4 border-green-600">
-                <h3 class="font-bold text-lg mb-4 text-gray-800 flex items-center">
-                    <i class="fas fa-calendar-check text-green-600 mr-2"></i> Lapor Check-in
+            <div class="glass rounded-3xl p-6 border-t-2 border-amber-500 fade-in" style="animation-delay: 0.4s;">
+                <h3 class="font-bold text-sm text-white mb-4 flex items-center gap-2">
+                    <i class="fas fa-calendar-check text-amber-500"></i> FORM CHECK-IN
                 </h3>
                 
                 <form id="checkin-form">
                     <input type="hidden" id="wa-input" name="whatsapp">
                     
                     <div class="mb-5">
-                        <label id="question-label" class="block text-sm font-semibold text-gray-700 mb-2">
-                            Apakah tantangan hari ini sudah dilakukan?
+                        <label id="question-label" class="block text-xs font-semibold text-neutral-400 mb-2 uppercase tracking-wider">
+                            Status Tantangan Hari Ini
                         </label>
                         
-                        <div id="special-input-container" class="hidden animate-fade-in">
-                            <div class="p-3 bg-yellow-50 border border-yellow-200 rounded-lg mb-2 shadow-sm">
-                                <p class="text-xs text-yellow-800 mb-2 font-medium">
-                                    <i class="fas fa-star mr-1"></i> <strong>Special Question!</strong>
+                        <div id="special-input-container" class="hidden mb-3">
+                            <div class="p-3 bg-amber-500/10 border border-amber-500/30 rounded-xl">
+                                <p class="text-[10px] text-amber-400 mb-2 font-bold flex items-center gap-1">
+                                    <i class="fas fa-star"></i> SPECIAL DAY QUESTION
                                 </p>
                                 <textarea id="detail-jawaban" rows="3" 
-                                    class="w-full p-3 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition"
-                                    placeholder="Apa yang Anda suka atau alami mengenai usus Anda akhir-akhir ini?"></textarea>
+                                    class="w-full bg-black/30 border border-white/10 rounded-lg p-3 text-sm text-white placeholder-neutral-600 focus:outline-none focus:border-amber-500 transition"
+                                    placeholder="Ceritakan perubahan apa yang Anda rasakan pada pencernaan Anda?"></textarea>
                             </div>
                         </div>
 
                         <input type="hidden" id="default-jawaban" value="Selesai">
+                        
+                        <div class="flex items-center gap-2 text-xs text-neutral-500 mb-2">
+                            <i class="fas fa-info-circle"></i> Pastikan sudah melakukan tantangan di WA.
+                        </div>
                     </div>
 
                     <button type="submit" id="btn-submit" 
-                        class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3.5 px-4 rounded-xl shadow-lg transform transition active:scale-95 flex justify-center items-center">
-                        <span>Check-in Sekarang</span>
-                        <i class="fas fa-paper-plane ml-2"></i>
+                        class="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 text-white font-bold py-3.5 px-4 rounded-xl shadow-lg shadow-green-900/20 transform transition active:scale-95 flex justify-center items-center gap-2">
+                        <span>LAPOR SELESAI</span>
+                        <i class="fas fa-check-circle"></i>
                     </button>
                 </form>
             </div>
 
-            <div class="glass-card p-5">
-                <h3 class="font-bold text-gray-800 mb-4 flex items-center">
-                    <i class="fas fa-history text-gray-400 mr-2"></i> Riwayat Perjalanan
+            <div class="glass rounded-3xl p-5 fade-in" style="animation-delay: 0.5s;">
+                <h3 class="font-bold text-xs text-neutral-400 mb-4 flex items-center gap-2 border-b border-white/5 pb-2">
+                    <i class="fas fa-history"></i> RIWAYAT PERJALANAN
                 </h3>
-                <div class="overflow-y-auto max-h-64 pr-2 custom-scrollbar">
-                    <ul id="history-list" class="space-y-4 relative border-l-2 border-gray-200 ml-3 pl-6 pb-2">
+                <div class="overflow-y-auto max-h-56 pr-2 custom-scrollbar">
+                    <ul id="history-list" class="space-y-3">
                         </ul>
-                    <div id="empty-history" class="hidden text-center text-sm text-gray-400 py-6 bg-gray-50 rounded-lg border border-dashed border-gray-300">
-                        Belum ada data check-in.
+                    <div id="empty-history" class="hidden text-center py-6">
+                        <p class="text-[10px] text-neutral-600 italic">Belum ada data check-in.</p>
                     </div>
                 </div>
             </div>
 
         </div>
         
-        <div class="text-center text-xs text-gray-400 mt-10 mb-6">
-            <p>&copy; 2024 Usus Sehat Program</p>
-            <p class="mt-1 opacity-70">Sehat dimulai dari pencernaan</p>
+        <div class="text-center pb-6 pt-4">
+            <p class="text-[10px] text-neutral-600">My Gut Journey &copy; 2024</p>
         </div>
     </div>
 
     <script>
         // ============================================
-        // 🔗 KONFIGURASI LINK APP SCRIPT (SUDAH DIISI)
+        // 🔗 KONFIGURASI
         // ============================================
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx67JX5mM-n-W1h6ehURHgONXBPiyUvESRLMCveTV04wXighQQhLErXQwC07Yf5Zkkw/exec"; 
-        
+        const REPORT_PAGE_URL = "laporan.html"; // Nama file laporan Anda
+
         // State Variables
         let userCategory = 'Seimbang';
         let currentDay = 0;
+        let waNumber = "";
 
-        // Database Tips AI (Diolah di Client-Side agar cepat)
+        // Tips AI Database
         const aiTips = {
-            'A': [ // Si Sembelit
-                "Pagi ini, cobalah minum air hangat segera setelah bangun tidur untuk merangsang usus.",
-                "Serat dari pepaya atau buah naga sangat lembut untuk membantu pelancaranmu hari ini.",
-                "Hindari menahan keinginan ke belakang, respon tubuhmu segera ya!",
-                "Gerakan jalan kaki ringan 15 menit bisa membantu peristaltik ususmu."
-            ],
-            'B': [ // Si Kembung
-                "Makanlah perlahan dan kunyah sampai halus agar enzim di mulut bekerja maksimal.",
-                "Hindari minuman bersoda atau menggunakan sedotan hari ini untuk mengurangi gas.",
-                "Jahe hangat adalah teman terbaikmu saat perut terasa penuh.",
-                "Kurangi porsi makan tapi makanlah lebih sering (Small Frequent Feeding)."
-            ],
-            'C': [ // Si Sensitif
-                "Hari ini fokus pada makanan yang dimasak matang (bukan mentah/salad) agar mudah dicerna.",
-                "Kelola stresmu, karena usus dan otakmu sangat terhubung (Gut-Brain Axis).",
-                "Hindari makanan pedas atau terlalu berlemak untuk mengistirahatkan usus.",
-                "Teh chamomile atau peppermint bisa membantu menenangkan saraf usus."
-            ],
-            'Seimbang': [
-                "Pertahankan kebiasaan baikmu! Usus sehat = Imunitas kuat.",
-                "Cobalah variasi warna dalam piringmu hari ini untuk memberi makan bakteri baik.",
-                "Pastikan hidrasi cukup, air adalah kunci metabolisme lancar.",
-                "Dengarkan tubuhmu, berhenti makan sebelum terlalu kenyang."
-            ]
+            'A': [ "Minum air hangat pagi ini untuk 'membangunkan' usus.", "Serat pepaya sangat lembut untukmu hari ini.", "Lakukan pernapasan perut 5 menit." ],
+            'B': [ "Hindari sedotan agar tidak menelan udara.", "Kunyah makanan hingga benar-benar halus.", "Jahe hangat meredakan gas." ],
+            'C': [ "Makan makanan hangat dan matang hari ini.", "Kelola stres, ususmu peka terhadap pikiran.", "Makan porsi kecil tapi sering." ],
+            'Seimbang': [ "Pertahankan konsistensi!", "Variasikan warna di piringmu.", "Jangan lupa hidrasi yang cukup." ]
         };
 
-        // 1. Inisialisasi Saat Halaman Dibuka
+        // 1. Init
         document.addEventListener('DOMContentLoaded', () => {
-            // Set Tanggal Hari Ini di Header (Format Indonesia)
-            const options = { weekday: 'long', day: 'numeric', month: 'short', year: 'numeric' };
+            const options = { weekday: 'long', day: 'numeric', month: 'short' };
             document.getElementById('date-display').textContent = new Date().toLocaleDateString('id-ID', options);
 
-            // Ambil Parameter WA dari URL
             const urlParams = new URLSearchParams(window.location.search);
-            // Membersihkan karakter non-angka jika ada
             let waParam = urlParams.get('wa');
-            if(waParam) waParam = waParam.replace(/[^0-9]/g, "");
+            
+            if(waParam) {
+                waParam = waParam.replace(/[^0-9]/g, "");
+                waNumber = waParam;
+                document.getElementById('wa-input').value = waNumber;
+                
+                // Update Link Tombol Laporan
+                document.getElementById('btn-to-report').href = `${REPORT_PAGE_URL}?wa=${waNumber}`;
 
-            if (waParam) {
-                document.getElementById('wa-input').value = waParam;
-                fetchUserData(waParam);
+                fetchUserData(waNumber);
             } else {
-                showError("Link tidak valid. Tidak ada nomor WhatsApp terdeteksi.");
+                showError("Link tidak valid. Buka dari WhatsApp.");
             }
         });
 
-        // 2. Fungsi Ambil Data User (GET Request)
+        // 2. Fetch Data
         function fetchUserData(wa) {
-            console.log("Fetching data for:", wa);
             fetch(`${SCRIPT_URL}?action=getData&wa=${wa}`)
                 .then(response => response.json())
                 .then(data => {
-                    console.log("Data received:", data);
                     if (data.status === 'success') {
                         renderDashboard(data);
                     } else {
-                        showError(data.message || "Nomor WhatsApp tidak ditemukan di database.");
+                        showError("Data user tidak ditemukan.");
                     }
                 })
                 .catch(error => {
-                    console.error('Fetch Error:', error);
-                    showError("Gagal terhubung ke server. Coba refresh halaman.");
+                    console.error(error);
+                    showError("Gagal koneksi ke server.");
                 });
         }
 
-        // 3. Render Tampilan Dashboard
+        // 3. Render Dashboard
         function renderDashboard(data) {
-            // Hide Loader, Show Content
             document.getElementById('loading-screen').classList.add('hidden');
             document.getElementById('dashboard-content').classList.remove('hidden');
 
-            // Mapping Kategori dari App Script ke Kode (A/B/C)
-            const catName = data.kategori; // Misal: "Si Sembelit"
+            // Set Category Code
+            const catName = data.kategori;
             if (catName.includes('Sembelit')) userCategory = 'A';
             else if (catName.includes('Kembung')) userCategory = 'B';
             else if (catName.includes('Sensitif')) userCategory = 'C';
@@ -250,52 +260,48 @@
 
             currentDay = parseInt(data.hari);
 
-            // Populate Profile UI
+            // Profile Data
             document.getElementById('user-name').textContent = data.nama;
-            document.getElementById('user-category').textContent = catName;
+            document.getElementById('user-category').textContent = catName.toUpperCase();
             document.getElementById('current-day').textContent = currentDay;
             
-            // Progress Bar Animation
-            const progress = data.progress;
+            // Progress Bar
             setTimeout(() => {
-                document.getElementById('progress-bar').style.width = `${progress}%`;
+                document.getElementById('progress-bar').style.width = `${data.progress}%`;
             }, 500);
-            document.getElementById('progress-text').textContent = `${progress}% Perjalanan`;
+            document.getElementById('progress-text').textContent = `${data.progress}%`;
 
-            // Generate AI Insight
+            // AI Tip
             const tipsList = aiTips[userCategory] || aiTips['Seimbang'];
             const randomTip = tipsList[Math.floor(Math.random() * tipsList.length)];
             document.getElementById('ai-insight-text').innerHTML = `"${randomTip}"`;
 
-            // Setup Form (Logic Kelipatan 6 Hari)
+            // Setup Form Logic
             setupCheckinForm(currentDay);
 
-            // Render History Log
+            // Render History
             renderHistory(data.checkin_log);
         }
 
-        // 4. Logika Form Check-in Khusus
+        // 4. Form Logic (Kelipatan 6 Hari)
         function setupCheckinForm(day) {
             const specialContainer = document.getElementById('special-input-container');
-            const label = document.getElementById('question-label');
             const detailInput = document.getElementById('detail-jawaban');
+            const label = document.getElementById('question-label');
 
-            // Jika Hari > 0 DAN Kelipatan 6 (6, 12, 18, 24, 30)
             if (day > 0 && day % 6 === 0) {
                 specialContainer.classList.remove('hidden');
                 detailInput.required = true;
-                label.innerHTML = `🌟 <strong>Evaluasi Hari ke-${day}:</strong>`;
-                label.classList.add('text-green-700');
+                label.innerHTML = `<span class="text-amber-500">★</span> EVALUASI HARI KE-${day}`;
             } else {
                 specialContainer.classList.add('hidden');
                 detailInput.required = false;
                 detailInput.value = ""; 
-                label.textContent = "Apakah tantangan hari ini sudah dilakukan?";
-                label.classList.remove('text-green-700');
+                label.innerHTML = "STATUS TANTANGAN HARI INI";
             }
         }
 
-        // 5. Render History List
+        // 5. Render History (Dark Theme Style)
         function renderHistory(logs) {
             const listContainer = document.getElementById('history-list');
             listContainer.innerHTML = '';
@@ -306,100 +312,93 @@
             }
 
             logs.forEach(log => {
-                // Log format: { tanggal, jam, waktu, ket, detail, hari }
-                const isSpecialAnswer = log.detail && log.detail !== "Selesai" && log.detail !== "-";
+                const isSpecial = log.detail && log.detail !== "Selesai" && log.detail !== "-";
                 
                 const li = document.createElement('li');
-                li.className = "mb-4 relative animate-fade-in";
+                li.className = "bg-white/5 p-3 rounded-xl border border-white/5 hover:bg-white/10 transition group";
                 
-                let contentHTML = `
-                    <div class="absolute -left-[31px] mt-1.5 w-4 h-4 rounded-full bg-green-500 border-2 border-white shadow ring-2 ring-green-100"></div>
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <span class="block text-sm font-bold text-gray-800">${log.ket}</span>
-                            <span class="text-xs text-gray-500"><i class="far fa-clock mr-1"></i>${log.waktu}</span>
+                let html = `
+                    <div class="flex justify-between items-center">
+                        <div class="flex items-center gap-3">
+                            <div class="w-2 h-2 rounded-full bg-green-500 shadow-[0_0_8px_#22c55e]"></div>
+                            <div>
+                                <p class="text-xs font-bold text-white group-hover:text-amber-500 transition">${log.ket}</p>
+                                <p class="text-[10px] text-neutral-500">${log.waktu}</p>
+                            </div>
                         </div>
+                        <i class="fas fa-check text-green-500/50 text-xs"></i>
                     </div>
                 `;
 
-                if (isSpecialAnswer) {
-                    contentHTML += `
-                        <div class="mt-2 bg-gray-50 p-3 rounded-lg text-xs text-gray-600 italic border-l-4 border-green-300 shadow-sm">
+                if (isSpecial) {
+                    html += `
+                        <div class="mt-2 text-[10px] text-neutral-400 italic bg-black/20 p-2 rounded border-l-2 border-amber-500">
                             "${log.detail}"
                         </div>
                     `;
                 }
 
-                li.innerHTML = contentHTML;
+                li.innerHTML = html;
                 listContainer.appendChild(li);
             });
         }
 
-        // 6. Handle Submit Check-in
+        // 6. Handle Submit
         document.getElementById('checkin-form').addEventListener('submit', function(e) {
             e.preventDefault();
 
             const btn = document.getElementById('btn-submit');
-            const originalBtnText = btn.innerHTML;
+            const originalText = btn.innerHTML;
             
-            // UI Loading State
             btn.disabled = true;
-            btn.classList.add('opacity-75', 'cursor-not-allowed');
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Mengirim...';
+            btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> SENDING...';
+            btn.classList.add('opacity-70', 'cursor-not-allowed');
 
-            const wa = document.getElementById('wa-input').value;
             let detail = "Selesai";
-            const specialInput = document.getElementById('detail-jawaban');
-            
-            // Jika input khusus sedang aktif, ambil nilainya
             if (!document.getElementById('special-input-container').classList.contains('hidden')) {
-                detail = specialInput.value;
+                detail = document.getElementById('detail-jawaban').value;
             }
 
-            // Kirim Data via POST (FormData)
             const formData = new FormData();
             formData.append('action', 'checkin');
-            formData.append('whatsapp', wa);
+            formData.append('whatsapp', waNumber);
             formData.append('detail', detail);
 
-            fetch(SCRIPT_URL, {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
+            fetch(SCRIPT_URL, { method: 'POST', body: formData })
+            .then(res => res.json())
             .then(data => {
                 if (data.result === 'success') {
                     Swal.fire({
-                        title: 'Berhasil!',
-                        text: 'Laporan check-in harianmu sudah tersimpan.',
+                        background: '#1a1a1a',
+                        color: '#fff',
                         icon: 'success',
-                        confirmButtonColor: '#16a34a',
-                        confirmButtonText: 'Mantap!'
-                    }).then(() => {
-                        window.location.reload(); // Reload untuk refresh data terbaru
-                    });
+                        title: 'Check-in Berhasil!',
+                        text: 'Progresmu telah disimpan.',
+                        confirmButtonColor: '#d97706'
+                    }).then(() => window.location.reload());
                 } else {
                     throw new Error(data.message);
                 }
             })
-            .catch(error => {
+            .catch(err => {
                 Swal.fire({
-                    title: 'Gagal Check-in',
-                    text: error.message || 'Terjadi kesalahan koneksi.',
+                    background: '#1a1a1a',
+                    color: '#fff',
                     icon: 'error',
-                    confirmButtonColor: '#d33'
+                    title: 'Gagal',
+                    text: err.message || 'Error koneksi.',
+                    confirmButtonColor: '#ef4444'
                 });
                 btn.disabled = false;
-                btn.classList.remove('opacity-75', 'cursor-not-allowed');
-                btn.innerHTML = originalBtnText;
+                btn.classList.remove('opacity-70', 'cursor-not-allowed');
+                btn.innerHTML = originalText;
             });
         });
 
-        // Helper: Tampilkan Error Screen
         function showError(msg) {
             document.getElementById('loading-screen').classList.add('hidden');
             document.getElementById('error-screen').classList.remove('hidden');
-            document.getElementById('error-detail').textContent = msg;
+            document.querySelector('#error-screen p').textContent = msg;
         }
 
     </script>
