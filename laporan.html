@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Laporan Kesehatan Final</title>
+    <title>Laporan Kesehatan Final | My Gut Journey</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -72,6 +72,11 @@
             opacity: 0.15;
         }
         .font-serif { font-family: 'Playfair Display', serif; }
+        
+        /* Utils */
+        .hidden { display: none; }
+        .fade-in { animation: fadeIn 0.5s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body class="min-h-screen flex flex-col items-center justify-center p-4">
@@ -79,6 +84,7 @@
     <div id="loading" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black">
         <div class="w-12 h-12 border-4 border-neutral-800 border-t-amber-500 rounded-full animate-spin mb-4"></div>
         <p class="text-[10px] text-neutral-500 tracking-[0.3em] animate-pulse">GENERATING REPORT...</p>
+        <p id="error-msg" class="text-[9px] text-red-500 mt-4 hidden text-center px-4"></p>
     </div>
 
     <div id="report-content" class="w-full max-w-md hidden pb-10 fade-in">
@@ -279,11 +285,11 @@
 
     <script>
         // ⚠️ PASTE URL SCRIPT ANDA DISINI
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz60TyDP9sE1JGXJJ9RZtvinrcQlOH-_UDRi2-baMbNHve1OjMfKRA0w-VI4xoLRQuY/exec';
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx67JX5mM-n-W1h6ehURHgONXBPiyUvESRLMCveTV04wXighQQhLErXQwC07Yf5Zkkw/exec';
 
         // Links
-        const LINK_DASHBOARD = "https://bimsrama.github.io/pendaftaran-member/checkin"; 
-        const LINK_QUIZ = "https://bimsrama.github.io/pendaftaran-member/quiz";
+        const LINK_DASHBOARD = "checkin.html"; 
+        const LINK_QUIZ = "quiz.html";
 
         const urlParams = new URLSearchParams(window.location.search);
         const waNumber = urlParams.get('wa');
@@ -297,10 +303,13 @@
         };
 
         window.onload = function() {
-            if(!waNumber) { alert("Link Error. Buka dari WhatsApp."); return; }
+            if(!waNumber) { 
+                document.getElementById('loading').innerHTML = '<div class="text-center text-white"><p class="text-red-500 font-bold mb-2">LINK TIDAK VALID</p><p class="text-[10px] text-gray-400">Buka link ini dari pesan WhatsApp.</p></div>';
+                return; 
+            }
             
-            document.getElementById('link-dashboard').href = LINK_DASHBOARD + "?wa=" + waNumber;
-            document.getElementById('link-quiz').href = LINK_QUIZ + "?wa=" + waNumber;
+            document.getElementById('link-dashboard').href = `${LINK_DASHBOARD}?wa=${waNumber}`;
+            document.getElementById('link-quiz').href = `${LINK_QUIZ}?wa=${waNumber}`;
 
             fetch(`${SCRIPT_URL}?action=getData&wa=${encodeURIComponent(waNumber)}`)
             .then(res => res.json())
@@ -308,12 +317,14 @@
                 if(data.status === 'success'){
                     renderReport(data);
                 } else {
-                    alert('Data user tidak ditemukan di database.');
+                    document.getElementById('loading').innerHTML = '<div class="text-center text-white"><p class="text-red-500 font-bold">USER TIDAK DITEMUKAN</p><p class="text-xs">Nomor WA tidak terdaftar.</p></div>';
                 }
             })
             .catch(err => {
                 console.error(err);
-                alert("Gagal memuat data. Periksa koneksi.");
+                document.getElementById('loading').innerHTML = '<div class="text-center text-white"><p class="text-red-500 font-bold mb-2">GAGAL KONEKSI SERVER</p><p class="text-[10px] text-gray-400">Pastikan Script di-Deploy sebagai "Anyone".</p></div>';
+                document.getElementById('error-msg').innerText = err.message;
+                document.getElementById('error-msg').classList.remove('hidden');
             });
         };
 
