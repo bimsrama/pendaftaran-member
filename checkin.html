@@ -211,7 +211,7 @@
     </div>
 
     <script>
-        // ⚠️ PASTE URL SCRIPT GOOGLE APPS SCRIPT ANDA DI SINI
+        // ✅ URL SCRIPT ANDA SUDAH DIPASANG DI SINI
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz60TyDP9sE1JGXJJ9RZtvinrcQlOH-_UDRi2-baMbNHve1OjMfKRA0w-VI4xoLRQuY/exec';
         
         const REPORT_PAGE = "laporan.html";
@@ -222,7 +222,7 @@
         let userKategoriRaw = "";
         let userHistoryData = [];
 
-        // DATABASE PERTANYAAN (Khusus Kelipatan 6)
+        // Database Pertanyaan
         const questionsDB = {
             'A': { 
                 6: ['Apakah buang air besar masih keras?', 'Apakah masih terasa mengejan saat BAB?'],
@@ -258,20 +258,19 @@
         };
 
         window.onload = function() {
-            if(!wa) { alert("Link Error: Buka dari WhatsApp dengan parameter ?wa="); return; }
+            if(!wa) { alert("Link Error: Buka dari WhatsApp."); return; }
             document.getElementById('btn-to-report').href = `${REPORT_PAGE}?wa=${wa}`;
 
             fetch(`${SCRIPT_URL}?action=getData&wa=${wa}`)
             .then(res => res.json())
             .then(data => {
                 if(data.status === 'success'){
-                    // --- SETUP DATA ---
                     userCurrentDay = parseInt(data.hari);
-                    const checkinDay = userCurrentDay + 1; // Hari yang harus dicheckin
+                    const checkinDay = userCurrentDay + 1;
                     userKategoriRaw = data.kategori;
                     if(data.checkin_log) userHistoryData = data.checkin_log;
 
-                    // --- ISI PROFILE UI ---
+                    // UI Updates
                     document.getElementById('user-name').innerText = data.nama;
                     document.getElementById('user-kategori').innerText = data.kategori.toUpperCase();
                     document.getElementById('user-streak').innerText = data.hari;
@@ -282,29 +281,17 @@
                     document.getElementById('progress-percent').innerText = data.progress + "%";
                     setTimeout(() => { document.getElementById('progress-ring').style.strokeDasharray = `${data.progress}, 100`; }, 500);
 
-                    // --- RENDER COMPONENT ---
                     updateTimeline(data.hari);
                     showDailyInsight();
-
-                    // --- LOGIC FORM: QUIZ vs NORMAL ---
-                    if (checkinDay > 0 && checkinDay % 6 === 0 && checkinDay < 30) {
-                        setupQuiz(data.kategori, checkinDay);
-                        document.getElementById('daily-form-quiz').classList.remove('hidden'); // Show Quiz Form
-                        document.getElementById('daily-form-normal').classList.add('hidden');  // Hide Normal Form
-                        document.getElementById('quiz-section').classList.remove('hidden');    // Show Header Quiz
-                    } else {
-                        document.getElementById('daily-form-quiz').classList.add('hidden');
-                        document.getElementById('daily-form-normal').classList.remove('hidden');
-                        document.getElementById('normal-checkin-section').classList.remove('hidden');
-                    }
+                    setupQuestionForm(checkinDay);
 
                     document.getElementById('loading').classList.add('hidden');
                     document.getElementById('main-content').classList.remove('hidden');
-                } else { alert("Data User Tidak Ditemukan. Cek kembali nomor WA."); }
+                } else { alert("Data User Tidak Ditemukan."); }
             })
             .catch(err => { 
                 console.error(err);
-                document.getElementById('loading').innerHTML = '<p class="text-red-500 text-xs font-bold text-center">Gagal koneksi ke server.<br>Cek internet & URL Script.</p>'; 
+                document.getElementById('loading').innerHTML = '<div class="text-center text-red-500 font-bold px-4"><p class="text-xs mb-2">GAGAL KONEKSI SERVER</p><p class="text-[10px]">Coba refresh atau pastikan Script Deploy ke "Anyone".</p></div>'; 
             });
         };
 
@@ -335,15 +322,26 @@
             document.getElementById('daily-insight').classList.remove('hidden');
         }
 
-        function setupQuiz(kategoriRaw, day) {
+        function setupQuestionForm(day) {
             let code = 'Seimbang';
-            if (kategoriRaw.includes('Sembelit')) code = 'A';
-            else if (kategoriRaw.includes('Kembung')) code = 'B';
-            else if (kategoriRaw.includes('Sensitif')) code = 'C';
-            const qSet = questionsDB[code][day] || questionsDB['Seimbang'][day] || questionsDB['Seimbang'][6];
-            document.getElementById('quiz-day-num').innerText = day;
-            document.getElementById('q1-text').innerText = "1. " + qSet[0];
-            document.getElementById('q2-text').innerText = "2. " + qSet[1];
+            if (userKategoriRaw.includes('Sembelit')) code = 'A';
+            else if (userKategoriRaw.includes('Kembung')) code = 'B';
+            else if (userKategoriRaw.includes('Sensitif')) code = 'C';
+
+            if (day > 0 && day % 6 === 0 && day < 30) {
+                const qSet = questionsDB[code][day] || questionsDB['Seimbang'][day] || questionsDB['Seimbang'][6];
+                document.getElementById('q1-text').innerText = qSet[0];
+                document.getElementById('q2-text').innerText = qSet[1];
+                document.getElementById('quiz-section').classList.remove('hidden');
+                document.getElementById('daily-form-quiz').classList.remove('hidden');
+                document.getElementById('normal-checkin-section').classList.add('hidden');
+                document.getElementById('daily-form-normal').classList.add('hidden');
+            } else {
+                document.getElementById('quiz-section').classList.add('hidden');
+                document.getElementById('daily-form-quiz').classList.add('hidden');
+                document.getElementById('normal-checkin-section').classList.remove('hidden');
+                document.getElementById('daily-form-normal').classList.remove('hidden');
+            }
         }
 
         // --- SUBMIT: FORM QUIZ ---
@@ -353,8 +351,6 @@
             const q2 = document.querySelector('input[name="q2"]:checked')?.value;
             if(!q1 || !q2) { alert("Mohon jawab kedua pertanyaan."); return; }
             const detail = `Quiz: ${q1}, ${q2}`;
-            // Logic masalah sederhana untuk Quiz: Jika ada "Ya" di pertanyaan gejala (A/B/C biasanya gejala)
-            // Namun karena pertanyaan dinamis, kita anggap checkin quiz selalu butuh perhatian
             doCheckin(document.getElementById('btn-submit-quiz'), detail, true);
         });
 
@@ -365,8 +361,6 @@
             const q2 = document.querySelector('input[name="normal_q2"]:checked')?.value;
             if(!q1 || !q2) { alert("Mohon isi refleksi harian."); return; }
             const detail = `Perut: ${q1} | Tantangan: ${q2}`;
-            
-            // Cek ada keluhan?
             const hasIssue = (q1 === 'Kurang Nyaman' || q2 === 'Tidak');
             doCheckin(document.getElementById('btn-submit-normal'), detail, hasIssue);
         });
@@ -388,8 +382,8 @@
                         else if (userKategoriRaw.includes('Sensitif')) code = 'C';
 
                         let aiSolution = "Istirahat yang cukup dan perbanyak air putih ya.";
-                        if (code === 'A') aiSolution = "Coba tambah porsi serat malam ini dan minum air hangat sebelum tidur.";
-                        else if (code === 'B') aiSolution = "Hindari makan terlalu cepat dan kurangi makanan pemicu gas.";
+                        if (code === 'A') aiSolution = "Coba tambah porsi serat malam ini dan minum air hangat.";
+                        else if (code === 'B') aiSolution = "Hindari makan terlalu cepat dan kurangi makanan bergas.";
                         else if (code === 'C') aiSolution = "Makan bubur atau makanan lunak dulu untuk menenangkan perut.";
 
                         document.getElementById('success-tip-text').innerText = aiSolution;
@@ -397,7 +391,7 @@
                     } else {
                         document.getElementById('success-insight').classList.add('hidden');
                     }
-                }, 1000); // Delay sedikit biar kerasa loading
+                }, 1000); 
             })
             .catch(() => {
                 alert("Gagal koneksi. Coba lagi.");
@@ -414,10 +408,6 @@
                 container.innerHTML = '<p class="text-xs text-neutral-500 text-center mt-10">Belum ada riwayat check-in.</p>';
             } else {
                 userHistoryData.forEach(item => {
-                    // Cek detail jawaban untuk display icon
-                    let statusIcon = "✅";
-                    if(item.detail && item.detail.includes("Kurang")) statusIcon = "⚠️";
-                    
                     const html = `
                         <div class="bg-white/5 p-3 rounded-xl border border-white/5 flex justify-between items-center mb-2">
                             <div>
