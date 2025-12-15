@@ -30,6 +30,18 @@
             -webkit-text-fill-color: transparent; 
         }
 
+        /* Hover & Scrollbar */
+        .btn-nav { 
+            background: rgba(255,255,255,0.03); 
+            border: 1px solid rgba(255,255,255,0.05); 
+            transition: all 0.3s ease; 
+        }
+        .btn-nav:hover { 
+            background: rgba(255,255,255,0.08); 
+            transform: translateY(-2px); 
+            border-color: rgba(255,255,255,0.1);
+        }
+        
         .scrollbar-hide::-webkit-scrollbar { display: none; }
         .scroller::-webkit-scrollbar { width: 3px; }
         .scroller::-webkit-scrollbar-track { background: #1a1a1a; }
@@ -149,6 +161,15 @@
                 </div>
         </div>
 
+        <div class="glass rounded-3xl p-5 mb-6 fade-in-up hidden" id="chart-container" style="animation-delay: 0.45s;">
+            <h3 class="text-sm font-bold text-white mb-4 flex items-center gap-2">
+                <i class="fas fa-chart-line text-amber-500"></i> Tren Kenyamanan
+            </h3>
+            <div class="h-48 w-full">
+                <canvas id="healthChart"></canvas>
+            </div>
+        </div>
+
         <div class="glass rounded-3xl p-5 mb-6 fade-in-up" style="animation-delay: 0.5s;">
             <h3 class="text-sm font-bold text-white mb-4 border-b border-white/5 pb-3 flex items-center gap-2">
                 <i class="fas fa-map-signs text-amber-500"></i> Perjalanan Kesehatan
@@ -160,8 +181,8 @@
                 </div>
             </div>
             
-            <a href="evaluasi.html" class="block mt-4 text-center text-xs text-amber-500 hover:text-amber-400 font-bold py-2 border border-amber-500/30 rounded-xl hover:bg-amber-500/10 transition">
-                LIHAT SEMUA EVALUASI <i class="fas fa-arrow-right ml-1"></i>
+            <a id="btn-view-all" href="#" class="block mt-4 text-center text-xs text-amber-500 hover:text-amber-400 font-bold py-3 border border-amber-500/30 rounded-xl hover:bg-amber-500/10 transition">
+                LIHAT DAILY CHECKIN ANDA <i class="fas fa-arrow-right ml-1"></i>
             </a>
         </div>
 
@@ -216,16 +237,12 @@
                 <i class="fas fa-award text-6xl text-amber-500 mb-6 block"></i>
                 <h1 class="text-6xl font-serif text-transparent bg-clip-text bg-gradient-to-r from-amber-300 to-orange-600 mb-2 font-bold tracking-wide">SERTIFIKAT KELULUSAN</h1>
                 <p class="text-lg text-neutral-400 uppercase tracking-[0.4em] mb-10">PROGRAM USUS SEHAT 30 HARI</p>
-                
                 <p class="text-2xl text-neutral-300 italic font-serif">Diberikan kepada:</p>
                 <h2 class="text-5xl font-bold text-white my-6 font-serif" id="cert-name">Nama Peserta</h2>
-                
                 <div class="w-1/2 mx-auto h-0.5 bg-gradient-to-r from-transparent via-amber-500 to-transparent my-8"></div>
-                
                 <p class="text-lg text-neutral-400 px-20 leading-relaxed font-serif">
                     Atas keberhasilan menyelesaikan tantangan kesehatan pencernaan selama 30 hari penuh dengan dedikasi yang luar biasa.
                 </p>
-
                 <div class="mt-12 flex justify-between items-end w-3/4 mx-auto">
                     <div class="text-center">
                         <div class="h-20 w-40 border-b border-neutral-600 mb-2 mx-auto"></div>
@@ -246,11 +263,12 @@
     </div>
 
     <script>
-        // ⚠️ PASTE URL APP SCRIPT ANDA DISINI (Pastikan sudah Deploy New Version)
+        // ⚠️ PASTE URL APP SCRIPT ANDA DISINI
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx67JX5mM-n-W1h6ehURHgONXBPiyUvESRLMCveTV04wXighQQhLErXQwC07Yf5Zkkw/exec';
         
-        // Link Pendaftaran untuk Referral
+        // Link Pendaftaran & Halaman Lain
         const REG_LINK = "https://bimsrama.github.io/pendaftaran-member/index.html"; 
+        const CHECKIN_PAGE = "checkin.html"; // Target baru tombol bawah
 
         const urlParams = new URLSearchParams(window.location.search);
         const waNumber = urlParams.get('wa');
@@ -297,6 +315,10 @@
                 Swal.fire({icon:'error', title:'Link Error', text:'Buka link ini dari pesan WhatsApp ya!', background:'#111', color:'#fff'});
                 return;
             }
+            
+            // Set Link Checkin (Target baru sesuai request)
+            document.getElementById('btn-view-all').href = `${CHECKIN_PAGE}?wa=${waNumber}`;
+            
             fetchData();
         });
 
@@ -357,13 +379,19 @@
             // 4. Badges (Kelipatan 5 Hari)
             renderBadges(currentDay);
 
-            // 5. Journey List (Checkin + Evaluasi Gabung)
+            // 5. Chart (Render jika ada history evaluasi)
+            if(data.history && data.history.length > 0) {
+                document.getElementById('chart-container').classList.remove('hidden');
+                renderChart(data.history);
+            }
+
+            // 6. Journey List (Checkin + Evaluasi Gabung)
             renderJourney(data.checkin_log, data.history);
 
-            // 6. Product Promo
+            // 7. Product Promo
             renderProductPromo();
 
-            // 7. Sertifikat (Day 30 Check)
+            // 8. Sertifikat (Day 30 Check)
             if (currentDay >= 30) {
                 document.getElementById('cert-section').classList.remove('hidden');
                 document.getElementById('cert-name').innerText = data.nama;
@@ -386,7 +414,6 @@
             let i = 0;
             function type() {
                 if (i < text.length) {
-                    // Simple HTML tag skipper
                     if (text.charAt(i) === '<') {
                         let tag = '';
                         while (text.charAt(i) !== '>' && i < text.length) { tag += text.charAt(i); i++; }
@@ -415,7 +442,6 @@
                 const tips = aiTipsDB[currentCategory] || aiTipsDB['Seimbang'];
                 let newTip = tips[Math.floor(Math.random() * tips.length)];
                 
-                // Pastikan beda jika refresh
                 if(!initial && textEl.innerHTML.includes(newTip) && tips.length > 1) {
                     newTip = tips[Math.floor(Math.random() * tips.length)];
                 }
@@ -446,22 +472,61 @@
             container.innerHTML = html;
         }
 
-        // Journey Render (Gabungan Checkin & Evaluasi)
+        // Render Chart
+        function renderChart(history) {
+            const ctx = document.getElementById('healthChart').getContext('2d');
+            const sortedHist = [...history].reverse(); 
+            
+            const labels = sortedHist.map((h, i) => "Mgg " + (i + 1));
+            const ratings = sortedHist.map(h => h.rating);
+
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Kenyamanan',
+                        data: ratings,
+                        borderColor: '#f59e0b',
+                        backgroundColor: (context) => {
+                            const ctx = context.chart.ctx;
+                            const gradient = ctx.createLinearGradient(0, 0, 0, 200);
+                            gradient.addColorStop(0, 'rgba(245, 158, 11, 0.4)');
+                            gradient.addColorStop(1, 'rgba(245, 158, 11, 0)');
+                            return gradient;
+                        },
+                        borderWidth: 2,
+                        pointBackgroundColor: '#fff',
+                        pointBorderColor: '#f59e0b',
+                        pointRadius: 4,
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { beginAtZero: true, max: 5, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#666', font:{size:9} } },
+                        x: { grid: { display: false }, ticks: { color: '#666', font: {size: 9} } }
+                    },
+                    plugins: { legend: { display: false } }
+                }
+            });
+        }
+
+        // Journey Render (Checkin & Evaluasi)
         function renderJourney(checkins, evals) {
             const list = document.getElementById('journey-list');
             let content = '';
 
-            // Gabung data & sort (Sederhana: Tampilkan Evaluasi di atas, lalu Checkin recent)
-            // Note: Idealnya di sort by Date object, tapi format string dari GAS butuh parsing.
-            // Kita tampilkan 5 checkin terakhir saja agar ringkas.
-            
             if (!checkins || checkins.length === 0) {
                 list.innerHTML = '<p class="text-center text-xs text-neutral-500 py-4">Belum ada aktivitas.</p>';
                 return;
             }
 
             checkins.forEach((log) => {
-                const isSpecial = log.detail && log.detail !== "Selesai";
+                const isSpecial = log.detail && log.detail !== "Selesai" && log.detail !== "-";
                 content += `
                     <div class="relative pl-6 border-l-2 border-neutral-800 pb-4 last:pb-0 group">
                         <div class="absolute -left-[5px] top-1 w-2.5 h-2.5 rounded-full bg-green-500 ring-4 ring-[#050505] group-hover:bg-green-400 transition"></div>
